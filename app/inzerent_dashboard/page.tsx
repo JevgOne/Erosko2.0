@@ -16,6 +16,12 @@ export default function InzerentDashboard() {
   const [loading, setLoading] = useState(true);
   const [activeSection, setActiveSection] = useState<MenuItem>('dashboard');
 
+  // Profile limits
+  const PROFILE_LIMIT = 10; // Free tier limit
+  const totalProfiles = profiles.length + businesses.length;
+  const remainingProfiles = PROFILE_LIMIT - totalProfiles;
+  const canAddMore = totalProfiles < PROFILE_LIMIT;
+
   useEffect(() => {
     if (status === 'loading') return;
 
@@ -130,9 +136,14 @@ export default function InzerentDashboard() {
                         <h3 className="text-lg font-semibold">Aktivní profily</h3>
                         <Users className="w-6 h-6 text-primary-400" />
                       </div>
-                      <p className="text-3xl font-bold">{profiles.length + businesses.length}</p>
+                      <p className="text-3xl font-bold">
+                        {totalProfiles}/{PROFILE_LIMIT}
+                      </p>
                       <p className="text-sm text-gray-400 mt-1">
                         {profiles.length} solo • {businesses.length} podniků
+                      </p>
+                      <p className={`text-sm font-medium mt-2 ${remainingProfiles > 0 ? 'text-green-400' : 'text-red-400'}`}>
+                        {remainingProfiles > 0 ? `Zbývá ${remainingProfiles} ${remainingProfiles === 1 ? 'profil' : remainingProfiles < 5 ? 'profily' : 'profilů'}` : 'Limit dosažen'}
                       </p>
                     </div>
 
@@ -251,15 +262,35 @@ export default function InzerentDashboard() {
               {/* Profiles */}
               {activeSection === 'profiles' && (
                 <div className="space-y-6">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between flex-wrap gap-4">
                     <div>
                       <h1 className="text-3xl font-bold mb-2">Profily</h1>
-                      <p className="text-gray-400">Spravujte profily vašich dívek</p>
+                      <p className="text-gray-400">
+                        Spravujte profily vašich dívek •
+                        <span className={`ml-2 font-semibold ${remainingProfiles > 0 ? 'text-primary-400' : 'text-red-400'}`}>
+                          {totalProfiles}/{PROFILE_LIMIT} použito
+                        </span>
+                      </p>
                     </div>
-                    <button className="flex items-center gap-2 px-4 py-2 gradient-primary rounded-lg hover:opacity-90 transition-opacity">
-                      <Plus className="w-5 h-5" />
-                      Přidat profil
-                    </button>
+                    <div className="flex flex-col items-end gap-2">
+                      <button
+                        className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
+                          canAddMore
+                            ? 'gradient-primary hover:opacity-90'
+                            : 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                        }`}
+                        disabled={!canAddMore}
+                      >
+                        <Plus className="w-5 h-5" />
+                        Přidat profil
+                      </button>
+                      {!canAddMore && (
+                        <p className="text-xs text-red-400">Dosažen limit profilů</p>
+                      )}
+                      {canAddMore && remainingProfiles <= 3 && (
+                        <p className="text-xs text-yellow-400">Zbývá {remainingProfiles} {remainingProfiles === 1 ? 'profil' : 'profily'}</p>
+                      )}
+                    </div>
                   </div>
 
                   {profiles.length > 0 ? (

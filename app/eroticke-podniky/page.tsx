@@ -6,11 +6,12 @@ import SearchWithMap from '@/components/SearchWithMap';
 import BusinessGrid from '@/components/BusinessGrid';
 import { profiles } from '@/components/TopProfiles';
 import { Building2 } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
 
 export default function PodnikyPage() {
-  // Filtering is handled by SearchWithMap component
-  const cityFilter = null;
-  const typeFilter = null;
+  const searchParams = useSearchParams();
+  const cityFilter = searchParams.get('city');
+  const typeFilter = searchParams.get('type');
 
   // Map business type labels to profile types
   const getProfileType = (typeLabel: string) => {

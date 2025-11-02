@@ -6,13 +6,30 @@ import SearchWithMap from '@/components/SearchWithMap';
 import ProfileGrid from '@/components/ProfileGrid';
 import { profiles } from '@/components/TopProfiles';
 import { Flame } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
 
 export default function BDSMPage() {
+  const searchParams = useSearchParams();
+  const cityFilter = searchParams.get('city');
+  const serviceFilter = searchParams.get('service');
 
   // Filter profiles for "Domina" category
   let bdsmProfiles = profiles.filter(profile => profile.category === 'Domina');
 
   // Apply city filter if present
+  if (cityFilter) {
+    bdsmProfiles = bdsmProfiles.filter(profile =>
+      profile.location.toUpperCase().includes(cityFilter.toUpperCase())
+    );
+  }
+
+  // Apply service filter if present
+  if (serviceFilter) {
+    // TODO: Filter by service when profile data includes services array
+    // bdsmProfiles = bdsmProfiles.filter(profile =>
+    //   profile.services?.includes(serviceFilter)
+    // );
+  }
 
   return (
     <main className="min-h-screen">

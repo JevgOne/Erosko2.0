@@ -69,6 +69,21 @@ function SearchWithMapContent({ cityPrefix = 'SEX', pageType, businessMode = fal
     return parts[parts.length - 1];
   };
 
+  // Generate URL based on page type
+  const getCityUrl = (city: string) => {
+    // Map pageType to URL path
+    const pageUrls: Record<string, string> = {
+      'holky-na-sex': '/holky-na-sex',
+      'eroticke-masaze': '/eroticke-masaze',
+      'bdsm': '/bdsm',
+      'online-sex': '/online-sex',
+      'eroticke-podniky': '/eroticke-podniky',
+    };
+
+    const basePath = pageType && pageUrls[pageType] ? pageUrls[pageType] : '/holky-na-sex';
+    return `${basePath}?city=${encodeURIComponent(city)}`;
+  };
+
   return (
     <div className="w-full">
       {/* City Buttons */}
@@ -78,7 +93,7 @@ function SearchWithMapContent({ cityPrefix = 'SEX', pageType, businessMode = fal
           return (
             <Link
               key={button.label}
-              href={`?city=${encodeURIComponent(button.city)}`}
+              href={getCityUrl(button.city)}
               className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
                 isActive
                   ? 'bg-gradient-to-r from-primary-500 to-pink-500 text-white'

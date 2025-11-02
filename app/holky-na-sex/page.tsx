@@ -6,13 +6,32 @@ import SearchWithMap from '@/components/SearchWithMap';
 import ProfileGrid from '@/components/ProfileGrid';
 import { profiles } from '@/components/TopProfiles';
 import { Heart } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
 
 export default function HolkyNaSexPage() {
+  const searchParams = useSearchParams();
+  const cityFilter = searchParams.get('city');
+  const serviceFilter = searchParams.get('service');
 
   // Filter profiles for "Holky na sex" category
   let holkyProfiles = profiles.filter(profile => profile.category === 'Holky na sex');
 
   // Apply city filter if present
+  if (cityFilter) {
+    holkyProfiles = holkyProfiles.filter(profile =>
+      profile.location.toUpperCase().includes(cityFilter.toUpperCase())
+    );
+  }
+
+  // Apply service filter if present
+  // Note: This requires profiles to have a 'services' array field
+  // For now, we'll just pass it through - actual filtering will work when data is updated
+  if (serviceFilter) {
+    // TODO: Filter by service when profile data includes services array
+    // holkyProfiles = holkyProfiles.filter(profile =>
+    //   profile.services?.includes(serviceFilter)
+    // );
+  }
 
   return (
     <main className="min-h-screen">

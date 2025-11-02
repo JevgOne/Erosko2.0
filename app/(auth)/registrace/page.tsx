@@ -41,6 +41,7 @@ export default function RegistracePage() {
   const [city, setCity] = useState('');
   const [address, setAddress] = useState('');
   const [phone, setPhone] = useState('');
+  const [contactEmail, setContactEmail] = useState(''); // Kontaktní email pro profil
   const [businessName, setBusinessName] = useState('');
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [selectedMassageTypes, setSelectedMassageTypes] = useState<string[]>([]);
@@ -333,6 +334,7 @@ export default function RegistracePage() {
               city,
               address,
               phone,
+              email: contactEmail || null, // Kontaktní email pro profil
               profileType,
               category,
               businessName: profileType !== 'SOLO' ? businessName : null,
@@ -731,6 +733,23 @@ export default function RegistracePage() {
                       {phoneAvailable === true && (
                         <p className="text-xs text-green-400 mt-1">Telefonní číslo je volné ✓</p>
                       )}
+                    </div>
+
+                    <div>
+                      <label htmlFor="contactEmail" className="block text-sm font-medium mb-2">
+                        Kontaktní email (volitelné)
+                      </label>
+                      <input
+                        type="email"
+                        id="contactEmail"
+                        value={contactEmail}
+                        onChange={(e) => setContactEmail(e.target.value)}
+                        className="w-full px-4 py-3 rounded-xl bg-dark-800/50 backdrop-blur border border-white/20 focus:border-primary-500 focus:outline-none transition-all hover:border-white/30"
+                        placeholder="email@priklad.cz"
+                      />
+                      <p className="text-xs text-gray-400 mt-1">
+                        Email pro kontakt s klienty (pokud je jiný než přihlašovací)
+                      </p>
                     </div>
 
                     {/* Služby - jen pro SOLO */}

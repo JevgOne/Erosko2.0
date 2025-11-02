@@ -2,40 +2,48 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useSession, signOut } from 'next-auth/react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { Building2, User, Settings, LogOut, Plus } from 'lucide-react';
+import { Building2, User, Settings, LogOut, Plus, Eye, Edit, Trash2 } from 'lucide-react';
 
 export default function InzerentDashboard() {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
+  const { data: session, status } = useSession();
+  const [profiles, setProfiles] = useState<any[]>([]);
+  const [businesses, setBusinesses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is logged in
-    const token = localStorage.getItem('token');
-    const userData = localStorage.getItem('user');
+    if (status === 'loading') return;
 
-    if (!token || !userData) {
+    if (status === 'unauthenticated') {
       router.push('/prihlaseni');
       return;
     }
 
+    if (session?.user) {
+      fetchUserData();
+    }
+  }, [status, session, router]);
+
+  const fetchUserData = async () => {
     try {
-      const parsedUser = JSON.parse(userData);
-      setUser(parsedUser);
+      const response = await fetch('/api/user/profiles');
+      if (response.ok) {
+        const data = await response.json();
+        setProfiles(data.profiles || []);
+        setBusinesses(data.businesses || []);
+      }
     } catch (error) {
-      console.error('Error parsing user data:', error);
-      router.push('/prihlaseni');
+      console.error('Error fetching user data:', error);
     } finally {
       setLoading(false);
     }
-  }, [router]);
+  };
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    router.push('/');
+  const handleLogout = async () => {
+    await signOut({ callbackUrl: '/' });
   };
 
   if (loading) {
@@ -68,7 +76,7 @@ export default function InzerentDashboard() {
               <span className="gradient-text">Dashboard inzerenta</span>
             </h1>
             <p className="text-xl text-gray-400">
-              Vítejte zpět, {user?.email}
+              Vítejte zpět, {session?.user?.email}
             </p>
           </div>
 
@@ -79,14 +87,16 @@ export default function InzerentDashboard() {
                 <h3 className="text-lg font-semibold text-gray-300">Aktivní profily</h3>
                 <User className="w-6 h-6 text-primary-400" />
               </div>
-              <p className="text-3xl font-bold">0</p>
-              <p className="text-sm text-gray-400 mt-1">Žádné profily zatím</p>
+              <p className="text-3xl font-bold">{profiles.length + businesses.length}</p>
+              <p className="text-sm text-gray-400 mt-1">
+                {profiles.length} solo • {businesses.length} podniků
+              </p>
             </div>
 
             <div className="glass rounded-2xl p-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-gray-300">Zobrazení</h3>
-                <Building2 className="w-6 h-6 text-primary-400" />
+                <Eye className="w-6 h-6 text-primary-400" />
               </div>
               <p className="text-3xl font-bold">0</p>
               <p className="text-sm text-gray-400 mt-1">Za tento měsíc</p>
@@ -154,13 +164,11 @@ export default function InzerentDashboard() {
                 <div className="space-y-3">
                   <div>
                     <p className="text-sm text-gray-400">Email</p>
-                    <p className="font-medium">{user?.email}</p>
+                    <p className="font-medium">{session?.user?.email}</p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-400">Typ účtu</p>
-                    <p className="font-medium">
-                      {user?.role === 'PROVIDER' ? 'Poskytovatel' : 'Uživatel'}
-                    </p>
+                    <p className="font-medium">Poskytovatel</p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-400">Status</p>

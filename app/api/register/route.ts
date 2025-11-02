@@ -59,7 +59,7 @@ export async function POST(request: Request) {
             address: profile.address || null,
             city: profile.city,
             profileType: profileType,
-            equipment: profile.equipment || [],
+            equipment: profile.equipment && profile.equipment.length > 0 ? profile.equipment : null,
             openingHours: profile.openingHours || null,
             ownerId: user.id,
             verified: false,

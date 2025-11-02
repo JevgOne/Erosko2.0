@@ -516,6 +516,26 @@ export default function ProfileDetailPage() {
                     </div>
                   </div>
                 )}
+
+                {/* SEO Tags sekce */}
+                {(profile as any).tags && (profile as any).tags.length > 0 && (
+                  <div className="mt-8">
+                    <h4 className="text-xl font-bold mb-4 flex items-center gap-2">
+                      <Award className="w-5 h-5 text-primary-400" />
+                      Klíčová slova
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      {(profile as any).tags.map((tag: string, index: number) => (
+                        <span
+                          key={index}
+                          className="px-4 py-2 bg-dark-800/50 border border-white/10 rounded-full text-sm text-gray-300"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 

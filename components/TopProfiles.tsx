@@ -42,6 +42,7 @@ export const profiles = [
     ageCategory: 'young',
     experienceLevel: 'professional',
     roles: ['student', 'nurse', 'secretary'],
+    tags: ['Escort Praha', 'Escort Praha 1', 'Holky na sex Praha', 'Blondýnky Praha', 'Escort služby Praha 1', 'Verified escort Praha'],
   },
   {
     id: 2,
@@ -68,6 +69,7 @@ export const profiles = [
     ageCategory: 'young',
     experienceLevel: 'professional',
     roles: ['teacher', 'nurse', 'neighbor'],
+    tags: ['Erotická masáž Brno', 'Masáže Brno', 'Tantra Brno', 'Paradise Massage', 'Ruské masérky Brno', 'Masáž s happy endem Brno'],
   },
   {
     id: 3,
@@ -94,6 +96,7 @@ export const profiles = [
     ageCategory: 'student',
     experienceLevel: 'professional',
     roles: ['domina', 'boss', 'police'],
+    tags: ['Domina Praha', 'BDSM Praha 2', 'Domina služby Praha', 'Bondage Praha', 'Česká domina', 'Dominatrix Praha'],
   },
   {
     id: 4,
@@ -120,6 +123,7 @@ export const profiles = [
     ageCategory: 'young',
     experienceLevel: 'premium',
     roles: ['secretary', 'waitress', 'cosplay'],
+    tags: ['Escort Ostrava', 'Premium escort Ostrava', 'Zrzky Ostrava', 'Luxury Private Ostrava', 'VIP escort Ostrava', 'Slovenky escort'],
   },
   {
     id: 5,

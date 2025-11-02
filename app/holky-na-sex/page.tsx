@@ -12,6 +12,13 @@ export default function HolkyNaSexPage() {
   const searchParams = useSearchParams();
   const cityFilter = searchParams.get('city');
   const serviceFilter = searchParams.get('service');
+  const hairColorFilter = searchParams.get('hairColor');
+  const bodyTypeFilter = searchParams.get('bodyType');
+  const nationalityFilter = searchParams.get('nationality');
+  const ageCategoryFilter = searchParams.get('ageCategory');
+  const experienceLevelFilter = searchParams.get('experienceLevel');
+  const breastTypeFilter = searchParams.get('breastType');
+  const roleFilter = searchParams.get('role');
 
   // Filter profiles for "Holky na sex" category
   let holkyProfiles = profiles.filter(profile => profile.category === 'Holky na sex');
@@ -20,6 +27,55 @@ export default function HolkyNaSexPage() {
   if (cityFilter) {
     holkyProfiles = holkyProfiles.filter(profile =>
       profile.location.toUpperCase().includes(cityFilter.toUpperCase())
+    );
+  }
+
+  // Apply hair color filter
+  if (hairColorFilter) {
+    holkyProfiles = holkyProfiles.filter(profile =>
+      (profile as any).hairColor === hairColorFilter
+    );
+  }
+
+  // Apply body type filter
+  if (bodyTypeFilter) {
+    holkyProfiles = holkyProfiles.filter(profile =>
+      (profile as any).bodyType === bodyTypeFilter
+    );
+  }
+
+  // Apply nationality filter
+  if (nationalityFilter) {
+    holkyProfiles = holkyProfiles.filter(profile =>
+      (profile as any).nationality === nationalityFilter
+    );
+  }
+
+  // Apply age category filter
+  if (ageCategoryFilter) {
+    holkyProfiles = holkyProfiles.filter(profile =>
+      (profile as any).ageCategory === ageCategoryFilter
+    );
+  }
+
+  // Apply experience level filter
+  if (experienceLevelFilter) {
+    holkyProfiles = holkyProfiles.filter(profile =>
+      (profile as any).experienceLevel === experienceLevelFilter
+    );
+  }
+
+  // Apply breast type filter
+  if (breastTypeFilter) {
+    holkyProfiles = holkyProfiles.filter(profile =>
+      (profile as any).breastType === breastTypeFilter
+    );
+  }
+
+  // Apply role filter
+  if (roleFilter) {
+    holkyProfiles = holkyProfiles.filter(profile =>
+      (profile as any).roles?.includes(roleFilter)
     );
   }
 

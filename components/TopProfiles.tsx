@@ -39,6 +39,9 @@ export const profiles = [
     nationality: 'czech',
     breastSize: 'medium',
     breastType: 'natural',
+    ageCategory: 'young',
+    experienceLevel: 'professional',
+    roles: ['student', 'nurse', 'secretary'],
   },
   {
     id: 2,
@@ -62,6 +65,9 @@ export const profiles = [
     nationality: 'russian',
     breastSize: 'large',
     breastType: 'natural',
+    ageCategory: 'young',
+    experienceLevel: 'professional',
+    roles: ['teacher', 'nurse', 'neighbor'],
   },
   {
     id: 3,
@@ -85,6 +91,9 @@ export const profiles = [
     nationality: 'czech',
     breastSize: 'medium',
     breastType: 'natural',
+    ageCategory: 'student',
+    experienceLevel: 'professional',
+    roles: ['domina', 'boss', 'police'],
   },
   {
     id: 4,
@@ -108,6 +117,9 @@ export const profiles = [
     nationality: 'slovak',
     breastSize: 'xlarge',
     breastType: 'silicone',
+    ageCategory: 'young',
+    experienceLevel: 'premium',
+    roles: ['secretary', 'waitress', 'cosplay'],
   },
   {
     id: 5,

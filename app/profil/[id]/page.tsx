@@ -6,7 +6,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ProfileSchema from '@/components/ProfileSchema';
 import { profiles } from '@/components/TopProfiles';
-import { Star, MapPin, CheckCircle, Phone, Heart, MessageCircle, Clock, Shield, Award, Video } from 'lucide-react';
+import { Star, MapPin, CheckCircle, Phone, Heart, MessageCircle, Clock, Shield, Award, Video, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 
 // Profile types with their colors
@@ -370,6 +370,17 @@ export default function ProfileDetailPage() {
                     <div className="text-gray-400 text-sm mb-1">Věk</div>
                     <div className="text-white font-semibold text-lg">{profile.age} let</div>
                   </div>
+                  {(profile as any).ageCategory && (
+                    <div className="bg-dark-800/50 rounded-xl p-4 border border-white/10">
+                      <div className="text-gray-400 text-sm mb-1">Kategorie</div>
+                      <div className="text-white font-semibold text-lg">
+                        {(profile as any).ageCategory === 'student' ? 'Studentka' :
+                         (profile as any).ageCategory === 'young' ? 'Holky' :
+                         (profile as any).ageCategory === 'milf' ? 'MILF' :
+                         (profile as any).ageCategory === 'mature' ? 'Zralé' : (profile as any).ageCategory}
+                      </div>
+                    </div>
+                  )}
                   <div className="bg-dark-800/50 rounded-xl p-4 border border-white/10">
                     <div className="text-gray-400 text-sm mb-1">Váha</div>
                     <div className="text-white font-semibold text-lg">58 kg</div>
@@ -378,26 +389,71 @@ export default function ProfileDetailPage() {
                     <div className="text-gray-400 text-sm mb-1">Výška</div>
                     <div className="text-white font-semibold text-lg">168 cm</div>
                   </div>
-                  <div className="bg-dark-800/50 rounded-xl p-4 border border-white/10">
-                    <div className="text-gray-400 text-sm mb-1">Velikost prsou</div>
-                    <div className="text-white font-semibold text-lg">3</div>
-                  </div>
-                  <div className="bg-dark-800/50 rounded-xl p-4 border border-white/10">
-                    <div className="text-gray-400 text-sm mb-1">Barva vlasů</div>
-                    <div className="text-white font-semibold text-lg">Blond</div>
-                  </div>
+                  {(profile as any).breastSize && (
+                    <div className="bg-dark-800/50 rounded-xl p-4 border border-white/10">
+                      <div className="text-gray-400 text-sm mb-1">Velikost prsou</div>
+                      <div className="text-white font-semibold text-lg">{(profile as any).breastSize}</div>
+                    </div>
+                  )}
+                  {(profile as any).breastType && (
+                    <div className="bg-dark-800/50 rounded-xl p-4 border border-white/10">
+                      <div className="text-gray-400 text-sm mb-1">Typ prsou</div>
+                      <div className="text-white font-semibold text-lg">
+                        {(profile as any).breastType === 'natural' ? 'Přirozená' :
+                         (profile as any).breastType === 'silicone' ? 'Silikonová' :
+                         (profile as any).breastType === 'large' ? 'Velká' :
+                         (profile as any).breastType === 'small' ? 'Malá' : (profile as any).breastType}
+                      </div>
+                    </div>
+                  )}
+                  {(profile as any).hairColor && (
+                    <div className="bg-dark-800/50 rounded-xl p-4 border border-white/10">
+                      <div className="text-gray-400 text-sm mb-1">Barva vlasů</div>
+                      <div className="text-white font-semibold text-lg">
+                        {(profile as any).hairColor === 'blonde' ? 'Blond' :
+                         (profile as any).hairColor === 'brunette' ? 'Hnědé' :
+                         (profile as any).hairColor === 'redhead' ? 'Zrzavé' :
+                         (profile as any).hairColor === 'black' ? 'Černé' : (profile as any).hairColor}
+                      </div>
+                    </div>
+                  )}
                   <div className="bg-dark-800/50 rounded-xl p-4 border border-white/10">
                     <div className="text-gray-400 text-sm mb-1">Barva očí</div>
                     <div className="text-white font-semibold text-lg">Modré</div>
                   </div>
-                  <div className="bg-dark-800/50 rounded-xl p-4 border border-white/10">
-                    <div className="text-gray-400 text-sm mb-1">Typ postavy</div>
-                    <div className="text-white font-semibold text-lg">Atletická</div>
-                  </div>
-                  <div className="bg-dark-800/50 rounded-xl p-4 border border-white/10">
-                    <div className="text-gray-400 text-sm mb-1">Národnost</div>
-                    <div className="text-white font-semibold text-lg">Česká</div>
-                  </div>
+                  {(profile as any).bodyType && (
+                    <div className="bg-dark-800/50 rounded-xl p-4 border border-white/10">
+                      <div className="text-gray-400 text-sm mb-1">Typ postavy</div>
+                      <div className="text-white font-semibold text-lg">
+                        {(profile as any).bodyType === 'slim' ? 'Hubená' :
+                         (profile as any).bodyType === 'fit' ? 'Štíhlá' :
+                         (profile as any).bodyType === 'athletic' ? 'Atletická' :
+                         (profile as any).bodyType === 'curvy' ? 'Krev a mléko' : (profile as any).bodyType}
+                      </div>
+                    </div>
+                  )}
+                  {(profile as any).nationality && (
+                    <div className="bg-dark-800/50 rounded-xl p-4 border border-white/10">
+                      <div className="text-gray-400 text-sm mb-1">Národnost</div>
+                      <div className="text-white font-semibold text-lg">
+                        {(profile as any).nationality === 'czech' ? 'Česká' :
+                         (profile as any).nationality === 'slovak' ? 'Slovenská' :
+                         (profile as any).nationality === 'russian' ? 'Ruská' :
+                         (profile as any).nationality === 'ukrainian' ? 'Ukrajinská' : (profile as any).nationality}
+                      </div>
+                    </div>
+                  )}
+                  {(profile as any).experienceLevel && (
+                    <div className="bg-dark-800/50 rounded-xl p-4 border border-white/10">
+                      <div className="text-gray-400 text-sm mb-1">Úroveň</div>
+                      <div className="text-white font-semibold text-lg">
+                        {(profile as any).experienceLevel === 'amateur' ? 'Amatérka' :
+                         (profile as any).experienceLevel === 'professional' ? 'Profesionálka' :
+                         (profile as any).experienceLevel === 'pornstar' ? 'Porno herečka' :
+                         (profile as any).experienceLevel === 'premium' ? 'Premium' : (profile as any).experienceLevel}
+                      </div>
+                    </div>
+                  )}
                   <div className="bg-dark-800/50 rounded-xl p-4 border border-white/10">
                     <div className="text-gray-400 text-sm mb-1">Tetování</div>
                     <div className="text-white font-semibold text-lg">Malé</div>
@@ -423,6 +479,43 @@ export default function ProfileDetailPage() {
                     <div className="text-white font-semibold text-lg">♌ Lev</div>
                   </div>
                 </div>
+
+                {/* Oblíbené role sekce */}
+                {(profile as any).roles && (profile as any).roles.length > 0 && (
+                  <div className="mt-8">
+                    <h4 className="text-xl font-bold mb-4 flex items-center gap-2">
+                      <Sparkles className="w-5 h-5 text-primary-400" />
+                      Oblíbené role
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      {(profile as any).roles.map((role: string, index: number) => {
+                        const roleLabels: Record<string, string> = {
+                          student: 'Studentka',
+                          teacher: 'Učitelka',
+                          nurse: 'Zdravotní sestra',
+                          secretary: 'Sekretářka',
+                          police: 'Policistka',
+                          boss: 'Šéfová',
+                          waitress: 'Servírka',
+                          domina: 'Domina',
+                          neighbor: 'Sousedka',
+                          fitness: 'Fitneska',
+                          catgirl: 'Kočička',
+                          cosplay: 'Cosplay',
+                        };
+                        return (
+                          <Link
+                            key={index}
+                            href={`/holky-na-sex?role=${role}`}
+                            className="px-4 py-2 bg-gradient-to-r from-primary-500/20 to-pink-500/20 border border-primary-500/30 rounded-full hover:from-primary-500/30 hover:to-pink-500/30 hover:border-primary-500/50 transition-all"
+                          >
+                            {roleLabels[role] || role}
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 

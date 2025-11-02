@@ -5,7 +5,7 @@ import Footer from '@/components/Footer';
 import Link from 'next/link';
 import { Star } from 'lucide-react';
 
-export default function UrovenPage() {
+export default function ZkusenostiPage() {
   const experienceLevels = [
     { label: 'Amatérka', value: 'amateur', count: 87, description: 'Nové holky s menšími zkušenostmi', icon: '🌸', color: 'from-pink-500 to-rose-500' },
     { label: 'Profesionálka', value: 'professional', count: 234, description: 'Zkušené escort profesionálky', icon: '💎', color: 'from-purple-500 to-pink-500' },
@@ -27,13 +27,13 @@ export default function UrovenPage() {
           <div className="text-center max-w-3xl mx-auto mb-16">
             <div className="inline-flex items-center space-x-2 glass px-4 py-2 rounded-full mb-6">
               <Star className="w-4 h-4 text-primary-400" fill="currentColor" />
-              <span className="text-sm font-medium">Filtrování podle úrovně</span>
+              <span className="text-sm font-medium">Filtrování podle zkušeností</span>
             </div>
             <h1 className="text-5xl md:text-6xl font-bold mb-6">
-              <span className="gradient-text">Vyberte úroveň zkušenosti</span>
+              <span className="gradient-text">Vyberte zkušenosti</span>
             </h1>
             <p className="text-xl text-gray-400">
-              Najděte profily podle úrovně zkušenosti - od amatérek po premium escort
+              Najděte profily podle zkušeností - od amatérek po premium escort
             </p>
           </div>
 
@@ -66,10 +66,10 @@ export default function UrovenPage() {
       <section className="py-16 bg-dark-900/50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto prose prose-invert">
-            <h2 className="text-3xl font-bold mb-6">Escort podle úrovně zkušenosti</h2>
+            <h2 className="text-3xl font-bold mb-6">Escort podle zkušeností</h2>
 
             <p className="text-gray-300 mb-4">
-              Vyberte si escort služby podle úrovně zkušenosti. Od amatérek až po luxusní
+              Vyberte si escort služby podle zkušeností. Od amatérek až po luxusní
               premium escort a známé porno herečky.
             </p>
 

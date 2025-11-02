@@ -6,7 +6,7 @@ import { useSession, signOut } from 'next-auth/react';
 import Header from '@/components/Header';
 import { Building2, User, Settings, LogOut, Plus, Eye, Edit, Trash2, LayoutDashboard, CreditCard, Users, CheckCircle, Clock, Star } from 'lucide-react';
 
-type MenuItem = 'dashboard' | 'business' | 'profiles' | 'pricing';
+type MenuItem = 'dashboard' | 'business' | 'profiles';
 
 export default function InzerentDashboard() {
   const router = useRouter();
@@ -21,6 +21,18 @@ export default function InzerentDashboard() {
   const totalProfiles = profiles.length + businesses.length;
   const remainingProfiles = PROFILE_LIMIT - totalProfiles;
   const canAddMore = totalProfiles < PROFILE_LIMIT;
+
+  // Calculate statistics
+  const totalViews = profiles.reduce((sum, p) => sum + (p.viewCount || 0), 0) +
+                     businesses.reduce((sum, b) => sum + (b.viewCount || 0), 0);
+
+  const totalReviews = profiles.reduce((sum, p) => sum + (p.reviewCount || 0), 0) +
+                       businesses.reduce((sum, b) => sum + (b.reviewCount || 0), 0);
+
+  const avgRating = totalProfiles > 0
+    ? (profiles.reduce((sum, p) => sum + (p.rating || 0), 0) +
+       businesses.reduce((sum, b) => sum + (b.rating || 0), 0)) / totalProfiles
+    : 0;
 
   useEffect(() => {
     if (status === 'loading') return;
@@ -70,7 +82,6 @@ export default function InzerentDashboard() {
     { id: 'dashboard' as MenuItem, label: 'Dashboard', icon: LayoutDashboard },
     { id: 'business' as MenuItem, label: 'Informace o podniku', icon: Building2 },
     { id: 'profiles' as MenuItem, label: 'Profily', icon: Users },
-    { id: 'pricing' as MenuItem, label: 'Placená inzerce', icon: CreditCard },
   ];
 
   return (
@@ -152,8 +163,10 @@ export default function InzerentDashboard() {
                         <h3 className="text-lg font-semibold">Zobrazení</h3>
                         <Eye className="w-6 h-6 text-primary-400" />
                       </div>
-                      <p className="text-3xl font-bold">0</p>
-                      <p className="text-sm text-gray-400 mt-1">Za tento měsíc</p>
+                      <p className="text-3xl font-bold">{totalViews.toLocaleString('cs-CZ')}</p>
+                      <p className="text-sm text-gray-400 mt-1">
+                        {totalViews === 0 ? 'Zatím bez zobrazení' : 'Celkem zobrazení'}
+                      </p>
                     </div>
 
                     <div className="glass rounded-xl p-6">
@@ -161,8 +174,12 @@ export default function InzerentDashboard() {
                         <h3 className="text-lg font-semibold">Hodnocení</h3>
                         <Star className="w-6 h-6 text-yellow-400" />
                       </div>
-                      <p className="text-3xl font-bold">—</p>
-                      <p className="text-sm text-gray-400 mt-1">Zatím bez hodnocení</p>
+                      <p className="text-3xl font-bold">
+                        {avgRating > 0 ? avgRating.toFixed(1) : '—'}
+                      </p>
+                      <p className="text-sm text-gray-400 mt-1">
+                        {totalReviews > 0 ? `Z ${totalReviews} hodnocení` : 'Zatím bez hodnocení'}
+                      </p>
                     </div>
                   </div>
 
@@ -341,107 +358,6 @@ export default function InzerentDashboard() {
                 </div>
               )}
 
-              {/* Pricing */}
-              {activeSection === 'pricing' && (
-                <div className="space-y-6">
-                  <div>
-                    <h1 className="text-3xl font-bold mb-2">Placená inzerce</h1>
-                    <p className="text-gray-400">Zvyšte viditelnost vašich profilů</p>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {/* Basic Plan */}
-                    <div className="glass rounded-xl p-6 border border-white/10">
-                      <h3 className="text-xl font-bold mb-2">Basic</h3>
-                      <p className="text-3xl font-bold mb-4">
-                        299 Kč<span className="text-sm text-gray-400">/měsíc</span>
-                      </p>
-                      <ul className="space-y-3 mb-6">
-                        <li className="flex items-center gap-2 text-sm">
-                          <CheckCircle className="w-4 h-4 text-green-400" />
-                          <span>Základní viditelnost</span>
-                        </li>
-                        <li className="flex items-center gap-2 text-sm">
-                          <CheckCircle className="w-4 h-4 text-green-400" />
-                          <span>5 fotek</span>
-                        </li>
-                        <li className="flex items-center gap-2 text-sm">
-                          <CheckCircle className="w-4 h-4 text-green-400" />
-                          <span>Základní statistiky</span>
-                        </li>
-                      </ul>
-                      <button className="w-full py-3 bg-white/10 rounded-lg hover:bg-white/20 transition-colors">
-                        Vybrat plán
-                      </button>
-                    </div>
-
-                    {/* Premium Plan */}
-                    <div className="glass rounded-xl p-6 border-2 border-primary-500/50 relative">
-                      <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-primary-500 to-pink-500 rounded-full text-xs font-semibold">
-                        POPULÁRNÍ
-                      </div>
-                      <h3 className="text-xl font-bold mb-2">Premium</h3>
-                      <p className="text-3xl font-bold mb-4">
-                        599 Kč<span className="text-sm text-gray-400">/měsíc</span>
-                      </p>
-                      <ul className="space-y-3 mb-6">
-                        <li className="flex items-center gap-2 text-sm">
-                          <CheckCircle className="w-4 h-4 text-green-400" />
-                          <span>Zvýšená viditelnost</span>
-                        </li>
-                        <li className="flex items-center gap-2 text-sm">
-                          <CheckCircle className="w-4 h-4 text-green-400" />
-                          <span>15 fotek</span>
-                        </li>
-                        <li className="flex items-center gap-2 text-sm">
-                          <CheckCircle className="w-4 h-4 text-green-400" />
-                          <span>Pokročilé statistiky</span>
-                        </li>
-                        <li className="flex items-center gap-2 text-sm">
-                          <CheckCircle className="w-4 h-4 text-green-400" />
-                          <span>Zvýraznění v seznamu</span>
-                        </li>
-                      </ul>
-                      <button className="w-full py-3 gradient-primary rounded-lg hover:opacity-90 transition-opacity">
-                        Vybrat plán
-                      </button>
-                    </div>
-
-                    {/* VIP Plan */}
-                    <div className="glass rounded-xl p-6 border border-white/10">
-                      <h3 className="text-xl font-bold mb-2">VIP</h3>
-                      <p className="text-3xl font-bold mb-4">
-                        999 Kč<span className="text-sm text-gray-400">/měsíc</span>
-                      </p>
-                      <ul className="space-y-3 mb-6">
-                        <li className="flex items-center gap-2 text-sm">
-                          <CheckCircle className="w-4 h-4 text-green-400" />
-                          <span>Maximální viditelnost</span>
-                        </li>
-                        <li className="flex items-center gap-2 text-sm">
-                          <CheckCircle className="w-4 h-4 text-green-400" />
-                          <span>Neomezené fotky</span>
-                        </li>
-                        <li className="flex items-center gap-2 text-sm">
-                          <CheckCircle className="w-4 h-4 text-green-400" />
-                          <span>Kompletní statistiky</span>
-                        </li>
-                        <li className="flex items-center gap-2 text-sm">
-                          <CheckCircle className="w-4 h-4 text-green-400" />
-                          <span>TOP umístění</span>
-                        </li>
-                        <li className="flex items-center gap-2 text-sm">
-                          <CheckCircle className="w-4 h-4 text-green-400" />
-                          <span>VIP badge</span>
-                        </li>
-                      </ul>
-                      <button className="w-full py-3 bg-white/10 rounded-lg hover:bg-white/20 transition-colors">
-                        Vybrat plán
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
 
             </div>
           </div>

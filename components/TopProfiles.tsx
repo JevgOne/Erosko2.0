@@ -5,15 +5,15 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 // Profile types with their colors
-const profileTypes = {
-  solo: { color: 'bg-purple-500' },
-  privat: { color: 'bg-indigo-500' },
-  salon: { color: 'bg-teal-500' },
-  escort_agency: { color: 'bg-pink-500' },
-  digital_agency: { color: 'bg-blue-500', label: 'Digitální Agentura' },
-  swingers_club: { color: 'bg-red-500', label: 'Swingers klub' },
-  night_club: { color: 'bg-orange-500', label: 'Night Club' },
-  strip_club: { color: 'bg-yellow-500', label: 'Strip Club' },
+const profileTypes: Record<string, { color: string; label?: string }> = {
+  SOLO: { color: 'bg-purple-500' },
+  PRIVAT: { color: 'bg-indigo-500' },
+  MASSAGE_SALON: { color: 'bg-teal-500' },
+  ESCORT_AGENCY: { color: 'bg-pink-500' },
+  DIGITAL_AGENCY: { color: 'bg-blue-500', label: 'Digitální Agentura' },
+  SWINGERS_CLUB: { color: 'bg-red-500', label: 'Swingers klub' },
+  NIGHT_CLUB: { color: 'bg-orange-500', label: 'Night Club' },
+  STRIP_CLUB: { color: 'bg-yellow-500', label: 'Strip Club' },
 };
 
 // Demo profiles removed - all data now comes from database
@@ -75,13 +75,13 @@ export default function TopProfiles() {
                 {/* Profile Type Badge - Large */}
                 <div className="mb-2">
                   <span className={`${profileTypes[profile.profileType].color} px-2 py-1 rounded-md text-xs font-bold inline-block truncate max-w-full`}>
-                    {profile.profileType === 'solo'
+                    {profile.profileType === 'SOLO'
                       ? 'SOLO'
-                      : profile.profileType === 'salon'
+                      : profile.profileType === 'MASSAGE_SALON'
                       ? `Salon ${profile.businessName}`
-                      : profile.profileType === 'privat'
+                      : profile.profileType === 'PRIVAT'
                       ? `Privát ${profile.businessName}`
-                      : profile.profileType === 'escort_agency'
+                      : profile.profileType === 'ESCORT_AGENCY'
                       ? profile.businessName
                       : profile.businessName
                     }

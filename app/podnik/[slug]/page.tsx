@@ -404,7 +404,6 @@ export default function BusinessDetailPage() {
                   { icon: '💳', label: 'Platba kartou' },
                   { icon: '🚪', label: 'Diskrétní vchod' },
                   { icon: '🌐', label: 'Wi-Fi' },
-                  { icon: '🛋️', label: 'Odpočívárna' },
                   { icon: '🔒', label: 'Bezpečné prostředí' },
                   { icon: '🧖', label: 'Sauna' },
                   { icon: '🛁', label: 'Whirlpool' },

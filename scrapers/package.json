@@ -1,0 +1,34 @@
+{
+  "name": "erosko-scrapers",
+  "version": "1.0.0",
+  "description": "Web scrapers for dobryprivat.cz, eroguide.cz, banging.cz",
+  "type": "module",
+  "scripts": {
+    "scrape:dobryprivat": "tsx dobryprivat/scraper.ts",
+    "scrape:dobryprivat:quick": "tsx dobryprivat/scraper-quick.ts",
+    "scrape:dobryprivat:v2": "tsx dobryprivat/scraper-v2.ts",
+    "scrape:dobryprivat:batch": "tsx dobryprivat/scraper-batch.ts",
+    "scrape:eroguide": "tsx eroguide/scraper.ts",
+    "scrape:banging": "tsx banging/scraper.ts",
+    "scrape:all": "npm run scrape:dobryprivat && npm run scrape:eroguide && npm run scrape:banging",
+    "fix:names": "tsx fix-names.ts",
+    "fix:all": "tsx fix-all-profiles.ts",
+    "merge": "tsx merge-all.ts",
+    "import": "tsx import-to-prisma.ts",
+    "download:photos": "tsx download-photos-web.ts",
+    "upload:firebase": "tsx upload-firebase-oauth.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.19.0",
+    "axios": "^1.6.0",
+    "bcryptjs": "^3.0.3",
+    "cheerio": "^1.0.0-rc.12",
+    "firebase-admin": "^13.6.0"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "^20.10.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.0"
+  }
+}

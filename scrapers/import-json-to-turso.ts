@@ -17,8 +17,9 @@ function generateId() {
 }
 
 async function clearDatabase() {
-  console.log('🗑️  Clearing Turso database...\n');
+  console.log('🗑️  Clearing profiles and photos from Turso database...\n');
 
+  // Only clear profile-related data, DO NOT DELETE USERS!
   await turso.execute('DELETE FROM Favorite');
   await turso.execute('DELETE FROM ProfileService');
   await turso.execute('DELETE FROM Review');
@@ -27,10 +28,10 @@ async function clearDatabase() {
   await turso.execute('DELETE FROM Profile');
   await turso.execute('DELETE FROM Business');
   await turso.execute('DELETE FROM Service');
-  await turso.execute('DELETE FROM VerificationCode');
-  await turso.execute('DELETE FROM User');
+  await turso.execute('DELETE FROM VerificationCode WHERE userId IS NOT NULL'); // Only verification codes tied to profiles
+  // NOTE: User table is NOT cleared to preserve existing admin/user accounts
 
-  console.log('✅ Database cleared\n');
+  console.log('✅ Profiles and photos cleared (users preserved)\n');
 }
 
 async function createAdminUser() {
@@ -176,7 +177,20 @@ async function main() {
 
   try {
     await clearDatabase();
-    const adminId = await createAdminUser();
+
+    // Get existing admin user (don't create new one!)
+    const adminResult = await turso.execute("SELECT id FROM User WHERE role = 'ADMIN' LIMIT 1");
+    let adminId: string;
+
+    if (adminResult.rows.length === 0) {
+      // Only create admin if none exists
+      console.log('⚠️  No admin user found, creating one...\n');
+      adminId = await createAdminUser();
+    } else {
+      adminId = adminResult.rows[0].id as string;
+      console.log(`✅ Using existing admin user (ID: ${adminId})\n`);
+    }
+
     const imported = await importProfiles(adminId);
 
     // Verify

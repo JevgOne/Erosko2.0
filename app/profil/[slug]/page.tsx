@@ -268,6 +268,32 @@ export default function ProfileDetailPage() {
             </div>
           </div>
 
+          {/* 🔥 NABÍZENÉ SLUŽBY - PROMINENTNÍ SEKCE (ALFA OMEGA) */}
+          {services.length > 0 && (
+            <div className="glass rounded-2xl p-8 mt-8 border-2 border-primary-500/30">
+              <h2 className="text-4xl font-bold mb-6 text-center gradient-text flex items-center justify-center gap-3">
+                <CheckCircle className="w-10 h-10 text-primary-500" />
+                Nabízené služby
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+                {services.map((service, index) => (
+                  <Link
+                    key={index}
+                    href={service.url}
+                    className="group flex items-center gap-4 p-4 bg-dark-800/30 border border-white/10 rounded-xl hover:bg-dark-800/50 hover:border-primary-500/50 transition-all"
+                  >
+                    <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <CheckCircle className="w-6 h-6 text-white" />
+                    </div>
+                    <span className="text-lg font-medium group-hover:text-primary-400 transition-colors">
+                      {service.label}
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Tab Navigation */}
           <div className="glass rounded-2xl p-2 mt-8">
             <div className="flex flex-wrap gap-2">
@@ -290,16 +316,6 @@ export default function ProfileDetailPage() {
                 }`}
               >
                 Osobní údaje
-              </button>
-              <button
-                onClick={() => setActiveTab('sluzby')}
-                className={`flex-1 px-6 py-3 rounded-xl font-semibold transition-all ${
-                  activeTab === 'sluzby'
-                    ? 'bg-gradient-to-r from-primary-500 to-pink-500 text-white'
-                    : 'text-gray-400 hover:text-white hover:bg-white/5'
-                }`}
-              >
-                Služby
               </button>
             </div>
           </div>
@@ -558,31 +574,6 @@ export default function ProfileDetailPage() {
                     </div>
                   </div>
                 )}
-              </div>
-            )}
-
-            {/* Služby Tab */}
-            {activeTab === 'sluzby' && (
-              <div className="glass rounded-2xl p-8">
-                <h3 className="text-3xl font-bold mb-8 text-center gradient-text">
-                  Nabízené služby
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
-                  {services.map((service, index) => (
-                    <Link
-                      key={index}
-                      href={service.url}
-                      className="group flex items-center gap-4 p-4 bg-dark-800/30 border border-white/10 rounded-xl hover:bg-dark-800/50 hover:border-primary-500/50 transition-all"
-                    >
-                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <CheckCircle className="w-6 h-6 text-white" />
-                      </div>
-                      <span className="text-lg font-medium group-hover:text-primary-400 transition-colors">
-                        {service.label}
-                      </span>
-                    </Link>
-                  ))}
-                </div>
               </div>
             )}
           </div>

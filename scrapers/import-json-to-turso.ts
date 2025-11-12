@@ -87,22 +87,43 @@ async function importProfiles(adminId: string) {
         sourceSite: 'eroguide.cz',
       });
 
+      // Determine breast type from services
+      let breastType = null;
+      if (profile.services) {
+        if (profile.services.includes('Přírodní prsa')) breastType = 'natural';
+        else if (profile.services.includes('Silikonová prsa')) breastType = 'silicone';
+      }
+
+      // Determine body type from services
+      let bodyType = null;
+      if (profile.services) {
+        if (profile.services.includes('Štíhlá')) bodyType = 'slim';
+        else if (profile.services.includes('Atletická')) bodyType = 'athletic';
+        else if (profile.services.includes('Plnoštíhlá')) bodyType = 'curvy';
+      }
+
+      // Prepare services JSON
+      const servicesJson = profile.services && profile.services.length > 0
+        ? JSON.stringify(profile.services)
+        : null;
+
       // Insert profile
       await turso.execute({
         sql: `INSERT INTO Profile (
           id, name, slug, age, description, phone, email, city, address, location,
-          profileType, category, height, weight, bust, hairColor,
+          profileType, category, height, weight, bust, hairColor, hairLength,
+          breastType, bodyType, ageCategory, pubicHair, role,
           nationality, languages, orientation, tattoos, piercing,
-          offersEscort, travels, openingHours, privateContacts,
+          offersEscort, travels, openingHours, privateContacts, servicesJson,
           approved, verified, isNew, isPopular, isOnline,
           rating, reviewCount, viewCount, createdAt, updatedAt, ownerId
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         args: [
           profileId,
           profile.name,
           profile.slug,
           profile.age || 25,
-          profile.description || `Profil ${profile.name} z eroguide.cz`,
+          profile.description || '',
           cleanPhone,
           profile.email || null,
           profile.city || 'Praha',
@@ -114,6 +135,12 @@ async function importProfiles(adminId: string) {
           profile.weight || null,
           profile.bust || null,
           profile.hairColor || null,
+          profile.hairLength || null,
+          breastType,
+          bodyType,
+          profile.ageCategory || null,
+          profile.pubicHair || null,
+          profile.role || profile.rolePlay || null,
           profile.nationality || null,
           profile.languages ? JSON.stringify(profile.languages) : null,
           profile.orientation || null,
@@ -123,6 +150,7 @@ async function importProfiles(adminId: string) {
           profile.travels ? 1 : 0,
           profile.openingHours ? JSON.stringify(profile.openingHours) : null,
           privateContacts,
+          servicesJson,
           1, // approved - AUTO-APPROVE scraped profiles
           1, // verified - AUTO-VERIFY scraped profiles
           1, // isNew

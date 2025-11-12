@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "@libsql/client": "^0.15.15",
+    "@prisma/adapter-libsql": "^6.19.0",
+    "@prisma/client": "^6.18.0",
     "bcryptjs": "^3.0.2",
     "dotenv": "^17.2.3",
     "framer-motion": "^11.0.0",
@@ -26,8 +28,6 @@
     "twilio": "^5.10.4"
   },
   "devDependencies": {
-    "@prisma/adapter-libsql": "^6.19.0",
-    "@prisma/client": "^6.18.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",
     "@types/react": "^18",

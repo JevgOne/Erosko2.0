@@ -10,9 +10,6 @@
     "db:seed": "tsx prisma/seed.ts",
     "db:reset": "npx prisma db push --force-reset && npm run db:seed"
   },
-  "prisma": {
-    "seed": "tsx prisma/seed.ts"
-  },
   "dependencies": {
     "@libsql/client": "^0.15.15",
     "@prisma/adapter-libsql": "^6.19.0",

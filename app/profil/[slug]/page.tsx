@@ -45,16 +45,16 @@ export default function ProfileDetailPage() {
     );
   }
 
-  // Parse services from scraped data (stored in servicesJson field)
+  // Get services for profile
   const getServicesForProfile = () => {
-    // Try to get services from servicesJson field (scraped data)
+    // Try to get services from servicesJson field
     if ((profile as any).servicesJson) {
       try {
         const parsedServices = typeof (profile as any).servicesJson === 'string'
           ? JSON.parse((profile as any).servicesJson)
           : (profile as any).servicesJson;
 
-        // Convert scraped services to display format
+        // Convert services to display format
         return parsedServices.map((serviceName: string) => ({
           label: serviceName,
           url: `/holky-na-sex?service=${encodeURIComponent(serviceName.toLowerCase().replace(/\s+/g, '-'))}`
@@ -64,7 +64,7 @@ export default function ProfileDetailPage() {
       }
     }
 
-    // Fallback: Return empty array if no services
+    // Return empty array if no services
     return [];
   };
 

@@ -148,7 +148,11 @@ model Profile {
   weight      Int?        // kg
   bust        String?     // 1, 2, 3, 4
   hairColor   String?     // blonde, brunette, black, red, other
+  hairLength  String?     // short, medium, long
   breastType  String?     // natural, silicone
+  bodyType    String?     // slim, athletic, curvy, plus-size
+  ageCategory String?     // 18-25, 26-35, 36-45, 46+
+  pubicHair   String?     // shaved, trimmed, natural
 
   // Additional attributes
   role        String?     // active, passive, switch, dominant, submissive
@@ -166,7 +170,7 @@ model Profile {
   openingHours Json?      // Opening hours by day: { monday: "9:00-22:00", ... }
 
   // Private contacts (ADMIN ONLY - NOT displayed publicly)
-  privateContacts Json?   // { phone, whatsapp, email, telegram } - scraped contacts
+  privateContacts Json?   // { phone, whatsapp, email, telegram } - internal contacts
 
   // Metadata
   approved    Boolean    @default(false)  // Admin approved for public display

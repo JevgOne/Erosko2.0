@@ -3,10 +3,5 @@
   "devCommand": "npm run dev",
   "installCommand": "npm install",
   "framework": "nextjs",
-  "regions": ["fra1"],
-  "env": {
-    "AUTH_SECRET": "@auth_secret",
-    "AUTH_TRUST_HOST": "true",
-    "NEXT_PUBLIC_APP_URL": "@next_public_app_url"
-  }
+  "regions": ["fra1"]
 }

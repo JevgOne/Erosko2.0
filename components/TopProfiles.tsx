@@ -8132,7 +8132,7 @@ export const profiles: Profile[] = [
     "city": "Maiselova",
     "category": "HOLKY_NA_SEX",
     "profileType": "solo",
-    "description": "Zara na tebe čeká! Zavolej na +420 773 667 250 a dopřej si smyslnou erotickou masáž od mladé černovlásky asiatky ze salonu Candy Shop Masáže. Zara ti nabídne zážitek plný něhy, vzrušení a dokonalého uvolnění. K dispozici v Praze 1 a Praze 2. Nečekej a zažij výjimečný relax s Eroguide.cz!",
+    "description": "Zara na tebe čeká! Zavolej na +420 773 667 250 a dopřej si smyslnou erotickou masáž od mladé černovlásky asiatky ze salonu Candy Shop Masáže. Zara ti nabídne zážitek plný něhy, vzrušení a dokonalého uvolnění. K dispozici v Praze 1 a Praze 2. Nečekej a zažij výjimečný relax!",
     "image": "https://cdn.eroguide.cz/zara-9-1-400x300.webp",
     "images": [
       "https://cdn.eroguide.cz/zara-9-1-400x300.webp",

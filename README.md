@@ -44,4 +44,3 @@ colors: {
 - **NASAZENI-PRAZDNA-DB.md** - Deployment
 
 ✅ **Kompletní template!**
-# Force redeploy

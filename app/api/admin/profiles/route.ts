@@ -3,6 +3,8 @@ import { auth } from '@/auth';
 import prisma from '@/lib/prisma';
 import { UserRole } from '@prisma/client';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     console.log('[API /admin/profiles] Request received');

@@ -1,5 +1,6 @@
 'use client';
 
+import { Suspense } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import SearchWithMap from '@/components/SearchWithMap';
@@ -10,7 +11,7 @@ import { Flame } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import type { Profile } from '@prisma/client';
 
-export default function BDSMPage() {
+function BDSMContent() {
   const searchParams = useSearchParams();
   const cityFilter = searchParams.get('city');
   const serviceFilter = searchParams.get('service');
@@ -34,9 +35,7 @@ export default function BDSMPage() {
   }
 
   return (
-    <main className="min-h-screen">
-      <Header />
-
+    <>
       <section className="relative pt-32 pb-16 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <div className="absolute top-20 left-10 w-96 h-96 bg-red-500/20 rounded-full blur-3xl"></div>
@@ -67,7 +66,17 @@ export default function BDSMPage() {
       {/* Display filtered profiles */}
       {/* @ts-ignore */}
       <ProfileGrid profiles={bdsmProfiles} />
+    </>
+  );
+}
 
+export default function BDSMPage() {
+  return (
+    <main className="min-h-screen">
+      <Header />
+      <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Načítání...</div>}>
+        <BDSMContent />
+      </Suspense>
       <Footer />
     </main>
   );

@@ -1,5 +1,6 @@
 'use client';
 
+import { Suspense } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import SearchWithMap from '@/components/SearchWithMap';
@@ -8,38 +9,31 @@ import Breadcrumb from '@/components/Breadcrumb';
 import { profiles } from '@/components/TopProfiles';
 import { Sparkles } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
+import type { Profile } from '@prisma/client';
 
-export default function ErotickeMasazePage() {
+function MasazeContent() {
   const searchParams = useSearchParams();
   const cityFilter = searchParams.get('city');
   const serviceFilter = searchParams.get('service');
 
-  // Filter profiles for "Erotické masérky" category
-  let masazeProfiles = profiles.filter(profile => profile.category === 'Erotické masérky');
+  let masazeProfiles = profiles.filter(profile => profile.category === 'Erotická masérka');
 
-  // Apply city filter if present
   if (cityFilter) {
     masazeProfiles = masazeProfiles.filter(profile =>
       profile.location.toUpperCase().includes(cityFilter.toUpperCase())
     );
   }
 
-  // Apply service filter if present
   if (serviceFilter) {
     // TODO: Filter by service when profile data includes services array
-    // masazeProfiles = masazeProfiles.filter(profile =>
-    //   profile.services?.includes(serviceFilter)
-    // );
   }
 
   return (
-    <main className="min-h-screen">
-      <Header />
-
+    <>
       <section className="relative pt-32 pb-16 overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <div className="absolute top-20 left-10 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-pink-500/20 rounded-full blur-3xl"></div>
+          <div className="absolute top-20 left-10 w-96 h-96 bg-pink-500/20 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl"></div>
         </div>
 
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -54,19 +48,27 @@ export default function ErotickeMasazePage() {
               <span className="gradient-text">Erotické masáže</span>
             </h1>
             <p className="text-xl text-gray-400">
-              Relaxační a erotické masáže s profesionálními masérkami
+              Profesionální erotické masáže s ověřenými profily
             </p>
           </div>
 
-          {/* Search With Map */}
-          <SearchWithMap cityPrefix="MASÁŽE" pageType="eroticke-masaze" />
+          <SearchWithMap cityPrefix="Masáže" pageType="eroticke-masaze" />
         </div>
       </section>
 
-      {/* Display filtered profiles */}
       {/* @ts-ignore */}
       <ProfileGrid profiles={masazeProfiles} />
+    </>
+  );
+}
 
+export default function MasazePage() {
+  return (
+    <main className="min-h-screen">
+      <Header />
+      <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Načítání...</div>}>
+        <MasazeContent />
+      </Suspense>
       <Footer />
     </main>
   );

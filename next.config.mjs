@@ -1,3 +1,5 @@
+import webpack from 'webpack';
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
@@ -9,12 +11,14 @@ const nextConfig = {
       },
     ],
   },
-  webpack: (config, { isServer }) => {
+  webpack: (config) => {
     // Ignore README.md and LICENSE files from node_modules
-    config.module.rules.push({
-      test: /\.(md|txt)$/,
-      type: 'asset/source',
-    });
+    config.plugins.push(
+      new webpack.IgnorePlugin({
+        resourceRegExp: /\.(md|txt|LICENSE)$/i,
+        contextRegExp: /node_modules/,
+      })
+    );
 
     return config;
   },

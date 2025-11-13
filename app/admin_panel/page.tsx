@@ -119,6 +119,7 @@ export default function AdminPanel() {
   const fetchAdminData = async () => {
     setLoading(true);
     try {
+      console.log('[Admin Panel] Fetching admin data...');
       const [statsRes, usersRes, businessesRes, profilesRes, changesRes] = await Promise.all([
         fetch('/api/admin/stats'),
         fetch('/api/admin/users'),
@@ -127,32 +128,55 @@ export default function AdminPanel() {
         fetch('/api/admin/pending-changes'),
       ]);
 
+      console.log('[Admin Panel] API responses:', {
+        stats: statsRes.status,
+        users: usersRes.status,
+        businesses: businessesRes.status,
+        profiles: profilesRes.status,
+        changes: changesRes.status
+      });
+
       if (statsRes.ok) {
         const data = await statsRes.json();
         setStats(data);
+      } else {
+        console.error('[Admin Panel] Stats API failed:', statsRes.status, await statsRes.text());
       }
 
       if (usersRes.ok) {
         const data = await usersRes.json();
+        console.log('[Admin Panel] Users loaded:', data.users?.length || 0);
         setUsers(data.users || []);
+      } else {
+        console.error('[Admin Panel] Users API failed:', usersRes.status, await usersRes.text());
       }
 
       if (businessesRes.ok) {
         const data = await businessesRes.json();
+        console.log('[Admin Panel] Businesses loaded:', data.businesses?.length || 0);
         setBusinesses(data.businesses || []);
+      } else {
+        console.error('[Admin Panel] Businesses API failed:', businessesRes.status, await businessesRes.text());
       }
 
       if (profilesRes.ok) {
         const data = await profilesRes.json();
+        console.log('[Admin Panel] Profiles API response:', data);
+        console.log('[Admin Panel] Profiles loaded:', data.profiles?.length || 0);
         setProfiles(data.profiles || []);
+      } else {
+        console.error('[Admin Panel] Profiles API failed:', profilesRes.status, await profilesRes.text());
       }
 
       if (changesRes.ok) {
         const data = await changesRes.json();
+        console.log('[Admin Panel] Changes loaded:', data.changes?.length || 0);
         setPendingChanges(data.changes || []);
+      } else {
+        console.error('[Admin Panel] Changes API failed:', changesRes.status, await changesRes.text());
       }
     } catch (error) {
-      console.error('Error fetching admin data:', error);
+      console.error('[Admin Panel] Error fetching admin data:', error);
     } finally {
       setLoading(false);
     }

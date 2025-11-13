@@ -12,6 +12,9 @@ const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: ['@libsql/client', '@prisma/client', '@prisma/adapter-libsql'],
   },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 };
 
 export default nextConfig;

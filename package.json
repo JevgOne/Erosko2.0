@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "db:seed": "tsx prisma/seed.ts",
-    "db:reset": "npx prisma db push --force-reset && npm run db:seed"
+    "db:reset": "npx prisma db push --force-reset && npm run db:seed",
+    "generate:profiles": "tsx scripts/generate-profiles.ts"
   },
   "dependencies": {
     "@libsql/client": "^0.15.15",

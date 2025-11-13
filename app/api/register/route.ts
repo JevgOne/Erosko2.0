@@ -124,7 +124,6 @@ export async function POST(request: Request) {
             location: `${profile.city}, centrum`,
             profileType: profileType,
             category: profile.category as Category,
-            hourlyRate: profile.pricePerHour || null,
             ownerId: user.id,
             verified: false,
             isNew: true,

@@ -8,6 +8,7 @@ import Breadcrumb from '@/components/Breadcrumb';
 import { profiles } from '@/components/TopProfiles';
 import { Flame } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
+import type { Profile } from '@prisma/client';
 
 export default function BDSMPage() {
   const searchParams = useSearchParams();
@@ -64,6 +65,7 @@ export default function BDSMPage() {
       </section>
 
       {/* Display filtered profiles */}
+      {/* @ts-ignore */}
       <ProfileGrid profiles={bdsmProfiles} />
 
       <Footer />

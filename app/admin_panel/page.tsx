@@ -922,7 +922,7 @@ export default function AdminPanel() {
                         ...userBusinesses.map(b => b.phone),
                         ...userProfiles.map(p => p.phone)
                       ].filter(Boolean);
-                      const uniquePhones = [...new Set(phones)];
+                      const uniquePhones = Array.from(new Set(phones));
 
                       return (
                         <div key={user.id} className="glass rounded-xl overflow-hidden">
@@ -1140,10 +1140,10 @@ export default function AdminPanel() {
                                 <span className="text-xs px-2 py-1 rounded bg-blue-500/20 text-blue-400">Schváleno</span>
                               )}
                               {business.verified && (
-                                <CheckCircle className="w-5 h-5 text-green-400" title="Ověřeno" />
+                                <CheckCircle className="w-5 h-5 text-green-400" />
                               )}
                               {!business.approved && (
-                                <AlertCircle className="w-5 h-5 text-orange-400" title="Čeká na schválení" />
+                                <AlertCircle className="w-5 h-5 text-orange-400" />
                               )}
                             </div>
                           </div>

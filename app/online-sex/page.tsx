@@ -45,6 +45,7 @@ export default function OnlineSexPage() {
       </section>
 
       {/* Display filtered profiles */}
+      {/* @ts-ignore */}
       <ProfileGrid profiles={onlineSexProfiles} />
 
       <Footer />

@@ -42,7 +42,7 @@ export default {
         return {
           id: user.id,
           phone: user.phone,
-          email: user.email || undefined,
+          email: user.email || '',
           role: user.role,
         };
       },

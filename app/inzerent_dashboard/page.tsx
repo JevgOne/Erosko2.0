@@ -47,7 +47,7 @@ export default function InzerentDashboard() {
   const [photosToDelete, setPhotosToDelete] = useState<string[]>([]);
   const [availableServices, setAvailableServices] = useState<any[]>([]);
   const [servicesLoading, setServicesLoading] = useState(false);
-  const [activeServiceTab, setActiveServiceTab] = useState<'escort' | 'massage' | 'bdsm'>('escort');
+  const [activeServiceTab, setActiveServiceTab] = useState<'escort' | 'massage' | 'bdsm' | 'online'>('escort');
   const [formData, setFormData] = useState({
     name: '',
     age: '',
@@ -246,7 +246,8 @@ export default function InzerentDashboard() {
           offersEscort: false,
           travels: false,
           services: [],
-          photos: []
+          photos: [],
+          openingHours: { monday: '', tuesday: '', wednesday: '', thursday: '', friday: '', saturday: '', sunday: '' }
         });
         // Reload data
         fetchUserData();

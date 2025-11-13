@@ -40,7 +40,6 @@ export async function POST(request: Request) {
       bust: profile.bust,
       offersEscort: profile.offersEscort,
       travels: profile.travels,
-      hourlyRate: profile.hourlyRate,
     };
 
     // Create pending change request

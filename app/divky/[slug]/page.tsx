@@ -110,7 +110,7 @@ export default function ProfileDetailPage() {
                       Nový profil
                     </span>
                   )}
-                  {profile.isPopular && (
+                  {(profile as any).isPopular && (
                     <span className="bg-orange-500 px-3 py-1.5 rounded-full text-xs font-semibold inline-flex items-center justify-center gap-1">
                       <span>🔥</span> Populární
                     </span>
@@ -146,16 +146,16 @@ export default function ProfileDetailPage() {
             <div className="space-y-6">
               {/* Profile Type Badge */}
               <div>
-                <span className={`${profileTypes[profile.profileType].color} px-4 py-2 rounded-full text-sm font-bold inline-flex items-center justify-center`}>
+                <span className={`${profileTypes[profile.profileType as keyof typeof profileTypes].color} px-4 py-2 rounded-full text-sm font-semibold inline-flex items-center justify-center`}>
                   {profile.profileType === 'solo'
                     ? profileTypes.solo.label
                     : profile.profileType === 'salon'
-                    ? `Salon ${profile.businessName}`
+                    ? `Salon ${(profile as any).businessName}`
                     : profile.profileType === 'privat'
-                    ? `Privát ${profile.businessName}`
+                    ? `Privát ${(profile as any).businessName}`
                     : profile.profileType === 'escort_agency'
-                    ? profile.businessName
-                    : profile.businessName
+                    ? (profile as any).businessName
+                    : (profile as any).businessName
                   }
                 </span>
               </div>
@@ -164,7 +164,7 @@ export default function ProfileDetailPage() {
               <div>
                 <h1 className="text-5xl font-bold mb-2 flex items-center gap-3">
                   {profile.name}, {profile.age}
-                  {profile.verified && (
+                  {profile.isVerified && (
                     <CheckCircle className="w-8 h-8 text-green-500" />
                   )}
                 </h1>
@@ -183,7 +183,7 @@ export default function ProfileDetailPage() {
                   <span className="text-2xl font-bold">{profile.rating}</span>
                   <span className="text-gray-400">({profile.reviews} hodnocení)</span>
                 </div>
-                {profile.verified && (
+                {profile.isVerified && (
                   <div className="flex items-center gap-2 bg-green-500/20 backdrop-blur-sm px-4 py-2 rounded-xl">
                     <Shield className="w-5 h-5 text-green-400" />
                     <span className="text-sm font-semibold text-green-400">Ověřený profil</span>
@@ -568,7 +568,7 @@ export default function ProfileDetailPage() {
                   Nabízené služby
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
-                  {services.map((service, index) => (
+                  {services.map((service: any, index: number) => (
                     <Link
                       key={index}
                       href={service.url}

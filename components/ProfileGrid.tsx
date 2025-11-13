@@ -109,7 +109,7 @@ export default function ProfileGrid({ profiles, title, description }: ProfileGri
               {currentProfiles.map((profile) => (
               <Link
                 key={profile.id}
-                href={`/divky/${profile.slug || profile.id}`}
+                href={`/divky/${(profile as any).slug || profile.id}`}
                 className="glass rounded-2xl overflow-hidden card-hover group"
               >
                 {/* Image Container */}
@@ -151,7 +151,7 @@ export default function ProfileGrid({ profiles, title, description }: ProfileGri
                 <div className="p-3">
                   {/* Profile Type Badge - Large */}
                   <div className="mb-2">
-                    <span className={`${profileTypes[profile.profileType].color} px-2 py-1 rounded-md text-xs font-bold inline-block truncate max-w-full`}>
+                    <span className={`${profileTypes[profile.profileType]?.color || 'bg-gray-500'} px-2 py-1 rounded-md text-xs font-bold inline-block truncate max-w-full`}>
                       {profile.profileType === 'SOLO'
                         ? 'SOLO'
                         : profile.profileType === 'MASSAGE_SALON'

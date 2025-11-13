@@ -21,6 +21,7 @@ async function main() {
   // Create admin user
   const adminUser = await prisma.user.create({
     data: {
+      phone: '+420000000000',
       email: 'admin@erosko.cz',
       passwordHash: await bcrypt.hash('admin123', 10),
       role: UserRole.ADMIN,
@@ -187,7 +188,6 @@ async function main() {
         bust: ['85B', '90C', '75A', '95D'][i % 4],
         offersEscort: i % 3 === 0,
         travels: i % 2 === 0,
-        hourlyRate: 2000 + (i * 500),
         verified: i % 2 === 0,
         isNew: i < 5,
         isPopular: i % 4 === 0,
@@ -195,7 +195,7 @@ async function main() {
         rating: 3 + Math.random() * 2,
         reviewCount: Math.floor(Math.random() * 50),
         viewCount: Math.floor(Math.random() * 1000),
-        ownerId: providerUser.id,
+        ownerId: adminUser.id,
       },
     });
 
@@ -248,7 +248,7 @@ async function main() {
         rating: 3.5 + Math.random() * 1.5,
         reviewCount: Math.floor(Math.random() * 100),
         viewCount: Math.floor(Math.random() * 2000),
-        ownerId: providerUser.id,
+        ownerId: adminUser.id,
       },
     });
 
@@ -272,7 +272,6 @@ async function main() {
           bust: ['85B', '90C', '75A'][j % 3],
           offersEscort: true,
           travels: j % 2 === 0,
-          hourlyRate: 3000 + (j * 1000),
           verified: true,
           isNew: i < 2,
           isPopular: i % 2 === 0,
@@ -280,7 +279,7 @@ async function main() {
           rating: 4 + Math.random(),
           reviewCount: Math.floor(Math.random() * 30),
           viewCount: Math.floor(Math.random() * 500),
-          ownerId: providerUser.id,
+          ownerId: adminUser.id,
           businessId: business.id,
         },
       });

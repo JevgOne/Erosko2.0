@@ -161,9 +161,9 @@ export default function BusinessDetailPage() {
 
                 {/* Business Type Badge */}
                 <div className="absolute top-4 left-4 z-10">
-                  <span className={`${profileTypes[business.profileType]?.color || 'bg-gray-500'} px-4 py-2 rounded-full text-sm font-bold inline-flex items-center gap-2`}>
+                  <span className={`${profileTypes[business.profileType as keyof typeof profileTypes]?.color || 'bg-gray-500'} px-4 py-2 rounded-full text-sm font-bold inline-flex items-center gap-2`}>
                     <Building2 className="w-4 h-4" />
-                    {profileTypes[business.profileType]?.label || business.profileType}
+                    {profileTypes[business.profileType as keyof typeof profileTypes]?.label || business.profileType}
                   </span>
                 </div>
 
@@ -383,7 +383,7 @@ export default function BusinessDetailPage() {
               O podniku
             </h2>
             <p className="text-gray-300 text-lg leading-relaxed whitespace-pre-wrap">
-              {business.description || `Vítejte v ${business.name}! Jsme profesionální ${profileTypes[business.profileType]?.label.toLowerCase() || 'erotické služby'} v ${business.city}${business.profiles && business.profiles.length > 0 ? ` s týmem ${business.profiles.length} krásných a profesionálních dívek` : ''}. Nabízíme diskrétní prostředí, maximální hygienu a nezapomenutelné zážitky. Naše služby jsou vždy na vysoké úrovni a klademe důraz na spokojenost našich klientů. Těšíme se na vaši návštěvu!`}
+              {business.description || `Vítejte v ${business.name}! Jsme profesionální ${profileTypes[business.profileType as keyof typeof profileTypes]?.label.toLowerCase() || 'erotické služby'} v ${business.city}${business.profiles && business.profiles.length > 0 ? ` s týmem ${business.profiles.length} krásných a profesionálních dívek` : ''}. Nabízíme diskrétní prostředí, maximální hygienu a nezapomenutelné zážitky. Naše služby jsou vždy na vysoké úrovni a klademe důraz na spokojenost našich klientů. Těšíme se na vaši návštěvu!`}
             </p>
           </div>
 

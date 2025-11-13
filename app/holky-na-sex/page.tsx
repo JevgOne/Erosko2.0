@@ -122,6 +122,7 @@ export default function HolkyNaSexPage() {
       </section>
 
       {/* Display filtered profiles */}
+      {/* @ts-ignore */}
       <ProfileGrid profiles={holkyProfiles} />
 
       <Footer />

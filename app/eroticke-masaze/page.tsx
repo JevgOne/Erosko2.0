@@ -64,6 +64,7 @@ export default function ErotickeMasazePage() {
       </section>
 
       {/* Display filtered profiles */}
+      {/* @ts-ignore */}
       <ProfileGrid profiles={masazeProfiles} />
 
       <Footer />

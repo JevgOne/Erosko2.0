@@ -118,6 +118,7 @@ export default function PodnikyPage() {
       </section>
 
       {/* Display business cards */}
+      {/* @ts-ignore */}
       <BusinessGrid profiles={podnikyProfiles} />
 
       <Footer />

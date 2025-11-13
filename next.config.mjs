@@ -9,6 +9,15 @@ const nextConfig = {
       },
     ],
   },
+  webpack: (config, { isServer }) => {
+    // Ignore README.md and LICENSE files from node_modules
+    config.module.rules.push({
+      test: /\.(md|txt)$/,
+      type: 'asset/source',
+    });
+
+    return config;
+  },
 };
 
 export default nextConfig;

@@ -136,6 +136,18 @@ export async function POST(request: Request) {
       }
     }
 
+    // Connect services if provided
+    if (profileData.services && Array.isArray(profileData.services) && profileData.services.length > 0) {
+      for (const serviceId of profileData.services) {
+        await prisma.profileService.create({
+          data: {
+            profileId: profile.id,
+            serviceId: serviceId,
+          },
+        });
+      }
+    }
+
     return NextResponse.json({
       message: 'Profil úspěšně vytvořen',
       profile,

@@ -9,12 +9,10 @@ export async function GET(request: Request) {
     let services;
 
     if (category) {
-      // Filter services by category based on description field
+      // Filter services by category
       services = await prisma.service.findMany({
         where: {
-          description: {
-            contains: category,
-          },
+          category: category as any,
         },
         orderBy: {
           name: 'asc',

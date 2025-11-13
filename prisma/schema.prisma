@@ -35,6 +35,13 @@ enum UserRole {
   ADMIN
 }
 
+enum ServiceCategory {
+  PRAKTIKY        // Praktiky pro holky na sex
+  DRUHY_MASAZI    // Druhy masáží pro masérky
+  EXTRA_SLUZBY    // Extra služby pro masérky
+  BDSM_PRAKTIKY   // BDSM praktiky
+}
+
 // Models
 model User {
   id            String   @id @default(cuid())
@@ -225,10 +232,11 @@ model Photo {
 }
 
 model Service {
-  id          String   @id @default(cuid())
-  name        String   @unique
+  id          String          @id @default(cuid())
+  name        String          @unique
   description String?
-  icon        String?  // Icon name from lucide-react
+  icon        String?         // Icon name from lucide-react
+  category    ServiceCategory @default(PRAKTIKY)
 
   // Relations
   profiles    ProfileService[]

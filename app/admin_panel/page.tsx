@@ -95,9 +95,11 @@ export default function AdminPanel() {
     category: 'HOLKY_NA_SEX',
     description: '',
     businessId: '',
+    services: [] as string[], // Array of service IDs
   });
   const [newProfilePhotos, setNewProfilePhotos] = useState<File[]>([]);
   const [newProfilePhotosPreviews, setNewProfilePhotosPreviews] = useState<string[]>([]);
+  const [allServices, setAllServices] = useState<any[]>([]); // All services from database
 
   useEffect(() => {
     if (status === 'loading') return;
@@ -122,12 +124,13 @@ export default function AdminPanel() {
     setLoading(true);
     try {
       console.log('[Admin Panel] Fetching admin data...');
-      const [statsRes, usersRes, businessesRes, profilesRes, changesRes] = await Promise.all([
+      const [statsRes, usersRes, businessesRes, profilesRes, changesRes, servicesRes] = await Promise.all([
         fetch('/api/admin/stats'),
         fetch('/api/admin/users'),
         fetch('/api/admin/businesses'),
         fetch('/api/admin/profiles'),
         fetch('/api/admin/pending-changes'),
+        fetch('/api/services'),
       ]);
 
       console.log('[Admin Panel] API responses:', {
@@ -176,6 +179,14 @@ export default function AdminPanel() {
         setPendingChanges(data.changes || []);
       } else {
         console.error('[Admin Panel] Changes API failed:', changesRes.status, await changesRes.text());
+      }
+
+      if (servicesRes.ok) {
+        const data = await servicesRes.json();
+        console.log('[Admin Panel] Services loaded:', data.services?.length || 0);
+        setAllServices(data.services || []);
+      } else {
+        console.error('[Admin Panel] Services API failed:', servicesRes.status, await servicesRes.text());
       }
     } catch (error) {
       console.error('[Admin Panel] Error fetching admin data:', error);
@@ -2206,6 +2217,104 @@ export default function AdminPanel() {
                 />
               </div>
 
+              {/* Services based on category */}
+              <div className="space-y-4">
+                {newProfileFormData.category === 'EROTICKE_MASERKY' && (
+                  <>
+                    {/* Typy masáží */}
+                    <div>
+                      <label className="block text-sm font-medium mb-3">Typy masáží</label>
+                      <div className="grid grid-cols-2 gap-3">
+                        {allServices.filter(s => s.category === 'DRUHY_MASAZI').map((service) => (
+                          <label key={service.id} className="flex items-center space-x-2 p-2 hover:bg-white/5 rounded cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={newProfileFormData.services.includes(service.id)}
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  setNewProfileFormData({
+                                    ...newProfileFormData,
+                                    services: [...newProfileFormData.services, service.id]
+                                  });
+                                } else {
+                                  setNewProfileFormData({
+                                    ...newProfileFormData,
+                                    services: newProfileFormData.services.filter(id => id !== service.id)
+                                  });
+                                }
+                              }}
+                              className="w-4 h-4"
+                            />
+                            <span className="text-sm">{service.name}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Extra služby */}
+                    <div>
+                      <label className="block text-sm font-medium mb-3">Extra služby (volitelné)</label>
+                      <div className="grid grid-cols-2 gap-3">
+                        {allServices.filter(s => s.category === 'EXTRA_SLUZBY').map((service) => (
+                          <label key={service.id} className="flex items-center space-x-2 p-2 hover:bg-white/5 rounded cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={newProfileFormData.services.includes(service.id)}
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  setNewProfileFormData({
+                                    ...newProfileFormData,
+                                    services: [...newProfileFormData.services, service.id]
+                                  });
+                                } else {
+                                  setNewProfileFormData({
+                                    ...newProfileFormData,
+                                    services: newProfileFormData.services.filter(id => id !== service.id)
+                                  });
+                                }
+                              }}
+                              className="w-4 h-4"
+                            />
+                            <span className="text-sm">{service.name}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {newProfileFormData.category === 'HOLKY_NA_SEX' && (
+                  <div>
+                    <label className="block text-sm font-medium mb-3">Praktiky</label>
+                    <div className="grid grid-cols-2 gap-3">
+                      {allServices.filter(s => s.category === 'PRAKTIKY').map((service) => (
+                        <label key={service.id} className="flex items-center space-x-2 p-2 hover:bg-white/5 rounded cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={newProfileFormData.services.includes(service.id)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setNewProfileFormData({
+                                  ...newProfileFormData,
+                                  services: [...newProfileFormData.services, service.id]
+                                });
+                              } else {
+                                setNewProfileFormData({
+                                  ...newProfileFormData,
+                                  services: newProfileFormData.services.filter(id => id !== service.id)
+                                });
+                              }
+                            }}
+                            className="w-4 h-4"
+                          />
+                          <span className="text-sm">{service.name}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
               {/* Photos */}
               <div>
                 <label className="block text-sm font-medium mb-2">Fotky</label>
@@ -2278,7 +2387,7 @@ export default function AdminPanel() {
                     setShowAddProfileModal(false);
                     setNewProfileFormData({
                       name: '', age: '', phone: '', email: '', city: '', address: '',
-                      category: 'HOLKY_NA_SEX', description: '', businessId: '',
+                      category: 'HOLKY_NA_SEX', description: '', businessId: '', services: [],
                     });
                     setNewProfilePhotos([]);
                     setNewProfilePhotosPreviews([]);

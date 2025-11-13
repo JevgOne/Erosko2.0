@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -25,9 +25,40 @@ export default function ProfileDetailPage() {
   const params = useParams();
   const slug = params.slug as string;
   const [activeTab, setActiveTab] = useState('o-me');
+  const [services, setServices] = useState<Array<{label: string, url: string}>>([]);
+  const [servicesLoading, setServicesLoading] = useState(true);
 
   // Find the profile by slug
   const profile = profiles.find(p => p.slug === slug);
+
+  // Fetch services from API
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const response = await fetch(`/api/profiles/${slug}/services`);
+        if (response.ok) {
+          const data = await response.json();
+          const servicesData = data.services || [];
+
+          // Convert services to display format
+          const formattedServices = servicesData.map((serviceName: string) => ({
+            label: serviceName,
+            url: `/holky-na-sex?service=${encodeURIComponent(serviceName.toLowerCase().replace(/\s+/g, '-'))}`
+          }));
+
+          setServices(formattedServices);
+        }
+      } catch (error) {
+        console.error('Error fetching services:', error);
+      } finally {
+        setServicesLoading(false);
+      }
+    };
+
+    if (slug) {
+      fetchServices();
+    }
+  }, [slug]);
 
   if (!profile) {
     return (
@@ -44,31 +75,6 @@ export default function ProfileDetailPage() {
       </main>
     );
   }
-
-  // Get services for profile
-  const getServicesForProfile = () => {
-    // Try to get services from servicesJson field
-    if ((profile as any).servicesJson) {
-      try {
-        const parsedServices = typeof (profile as any).servicesJson === 'string'
-          ? JSON.parse((profile as any).servicesJson)
-          : (profile as any).servicesJson;
-
-        // Convert services to display format
-        return parsedServices.map((serviceName: string) => ({
-          label: serviceName,
-          url: `/holky-na-sex?service=${encodeURIComponent(serviceName.toLowerCase().replace(/\s+/g, '-'))}`
-        }));
-      } catch (e) {
-        console.error('Failed to parse servicesJson:', e);
-      }
-    }
-
-    // Return empty array if no services
-    return [];
-  };
-
-  const services = getServicesForProfile();
 
   const pricing = [
     { duration: '30 minut', price: '1500 Kč' },

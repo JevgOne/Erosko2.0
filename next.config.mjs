@@ -1,5 +1,3 @@
-import webpack from 'webpack';
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
@@ -11,16 +9,8 @@ const nextConfig = {
       },
     ],
   },
-  webpack: (config) => {
-    // Ignore README.md and LICENSE files from node_modules
-    config.plugins.push(
-      new webpack.IgnorePlugin({
-        resourceRegExp: /\.(md|txt|LICENSE)$/i,
-        contextRegExp: /node_modules/,
-      })
-    );
-
-    return config;
+  experimental: {
+    serverComponentsExternalPackages: ['@libsql/client', '@prisma/client', '@prisma/adapter-libsql'],
   },
 };
 

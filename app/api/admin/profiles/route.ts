@@ -6,6 +6,12 @@ import { UserRole } from '@prisma/client';
 export async function GET() {
   try {
     console.log('[API /admin/profiles] Request received');
+    console.log('[API /admin/profiles] Environment check:', {
+      hasDbUrl: !!process.env.DATABASE_URL,
+      hasTursoUrl: !!process.env.TURSO_DATABASE_URL,
+      nodeEnv: process.env.NODE_ENV,
+    });
+
     const session = await auth();
 
     if (!session || !session.user) {
@@ -28,6 +34,11 @@ export async function GET() {
     }
 
     console.log('[API /admin/profiles] Fetching profiles...');
+
+    // First check total count
+    const totalCount = await prisma.profile.count();
+    console.log('[API /admin/profiles] Total profile count in DB:', totalCount);
+
     // Fetch all profiles with owner and business info
     const profiles = await prisma.profile.findMany({
       include: {

@@ -55,7 +55,7 @@ export async function POST(request: Request) {
 
     if (!ownerId) {
       // If no owner specified, check if user with phone exists
-      const existingUser = await prisma.user.findUnique({
+      const existingUser = await prisma.user.findFirst({
         where: { phone: data.phone },
       });
 

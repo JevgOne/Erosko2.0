@@ -34,3 +34,19 @@ next-env.d.ts
 
 /app/generated/prisma
 .env
+
+# scrapers and utility scripts
+/scrapers/
+/eroguide/
+/scripts/
+/prisma/prisma/
+/public/uploads/
+*.log
+check-*.ts
+create-admin.ts
+delete-admin.ts
+fix-*.ts
+fix-*.sh
+recreate-admin.ts
+stats.ts
+test-*.ts

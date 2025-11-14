@@ -13,8 +13,13 @@ import { useSearchParams } from 'next/navigation';
 function ErotickePodnikyContent() {
   const searchParams = useSearchParams();
 
-  // Filter profiles that belong to businesses (have businessName)
-  const businessProfiles = profiles.filter(profile => profile.businessName);
+  // Filter profiles by business types (clubs, agencies, etc.)
+  const businessProfiles = profiles.filter(profile =>
+    profile.profileType === 'SWINGERS_CLUB' ||
+    profile.profileType === 'NIGHT_CLUB' ||
+    profile.profileType === 'STRIP_CLUB' ||
+    profile.profileType === 'ESCORT_AGENCY'
+  );
 
   return (
     <>

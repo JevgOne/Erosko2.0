@@ -46,7 +46,7 @@ enum ServiceCategory {
 model User {
   id            String   @id @default(cuid())
   phone         String   @unique  // Primary login method
-  email         String?  // Optional for notifications
+  email         String?  @unique  // Optional for notifications, unique for email login
   passwordHash  String
   phoneVerified Boolean  @default(false)
   role          UserRole @default(USER)

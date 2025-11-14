@@ -9,7 +9,7 @@ import Footer from '@/components/Footer';
 
 export default function PrihlaseniPage() {
   const router = useRouter();
-  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -21,13 +21,13 @@ export default function PrihlaseniPage() {
 
     try {
       const result = await signIn('credentials', {
-        phone,
+        email,
         password,
         redirect: false,
       });
 
       if (result?.error) {
-        setError('Nesprávné telefonní číslo nebo heslo');
+        setError('Nesprávný email nebo heslo');
         return;
       }
 
@@ -71,16 +71,16 @@ export default function PrihlaseniPage() {
                 )}
 
                 <div>
-                  <label htmlFor="phone" className="block text-sm font-medium mb-2">
-                    Telefonní číslo
+                  <label htmlFor="email" className="block text-sm font-medium mb-2">
+                    Email
                   </label>
                   <input
-                    type="tel"
-                    id="phone"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
+                    type="email"
+                    id="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     className="w-full px-4 py-3 rounded-lg bg-dark-800 border border-white/10 focus:border-primary-500 focus:outline-none transition-colors"
-                    placeholder="+420 123 456 789"
+                    placeholder="vas@email.cz"
                     required
                   />
                 </div>

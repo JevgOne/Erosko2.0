@@ -9,20 +9,17 @@ export default {
     Credentials({
       name: 'credentials',
       credentials: {
-        phone: { label: 'Telefon', type: 'tel' },
+        email: { label: 'Email', type: 'email' },
         password: { label: 'Heslo', type: 'password' },
       },
       async authorize(credentials) {
-        if (!credentials?.phone || !credentials?.password) {
+        if (!credentials?.email || !credentials?.password) {
           return null;
         }
 
-        // Normalize phone number
-        const normalizedPhone = normalizePhoneNumber(credentials.phone as string);
-
         const user = await prisma.user.findUnique({
           where: {
-            phone: normalizedPhone,
+            email: credentials.email as string,
           },
         });
 

@@ -34,13 +34,60 @@ const config: Config = {
           900: '#0f172a',
           950: '#020617',
         },
+        // Instagram-style card colors
+        pink: {
+          primary: '#ff0080',
+          light: '#ff4da6',
+        },
+        blue: {
+          verified: '#00d4ff',
+          'verified-end': '#0099ff',
+        },
+        green: {
+          online: '#00ff88',
+        },
+        gold: {
+          star: '#ffd700',
+        },
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: [
+          '-apple-system',
+          'BlinkMacSystemFont',
+          'Segoe UI',
+          'Helvetica Neue',
+          'sans-serif',
+        ],
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+        'gradient-pink': 'linear-gradient(135deg, #ff0080, #ff4da6)',
+        'gradient-blue': 'linear-gradient(135deg, #00d4ff, #0099ff)',
+      },
+      boxShadow: {
+        'pink-glow': '0 8px 24px rgba(255, 0, 128, 0.4)',
+        'online-pulse': '0 0 10px rgba(0, 255, 136, 0.6)',
+      },
+      animation: {
+        'pulse-dot': 'pulseDot 2s ease-in-out infinite',
+      },
+      keyframes: {
+        pulseDot: {
+          '0%, 100%': {
+            opacity: '1',
+            transform: 'scale(1)',
+            boxShadow: '0 0 10px rgba(0, 255, 136, 0.6)',
+          },
+          '50%': {
+            opacity: '0.7',
+            transform: 'scale(0.95)',
+            boxShadow: '0 0 6px rgba(0, 255, 136, 0.4)',
+          },
+        },
+      },
+      backdropBlur: {
+        glass: '20px',
       },
     },
   },

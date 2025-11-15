@@ -26,19 +26,61 @@ export const metadata: Metadata = {
 };
 
 import Hero from '@/components/Hero';
-import AllGirlsTabs from '@/components/AllGirlsTabs';
 import Categories from '@/components/Categories';
 import TrustSignals from '@/components/TrustSignals';
 import HowItWorks from '@/components/HowItWorks';
 import Footer from '@/components/Footer';
 import AdBanner from '@/components/AdBanner';
+import ProfileCardGrid from '@/components/ProfileCardGrid';
+import prisma from '@/lib/prisma';
+import { profilesToCards } from '@/lib/profile-card-adapter';
 
-export default function Home() {
+async function getProfiles() {
+  const profiles = await prisma.profile.findMany({
+    where: {
+      approved: true,
+    },
+    include: {
+      photos: {
+        take: 1,
+        orderBy: {
+          order: 'asc',
+        },
+      },
+      business: true,
+    },
+    take: 18,
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
+
+  return profilesToCards(profiles);
+}
+
+export default async function Home() {
+  const cards = await getProfiles();
+
   return (
     <main className="min-h-screen">
       <Header />
       <Hero />
-      <AllGirlsTabs />
+
+      {/* Instagram-Style Profile Cards */}
+      <section className="py-12 sm:py-16 lg:py-20 bg-black">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold mb-4">
+              <span className="gradient-text">Všechny erotické profily</span>
+            </h2>
+            <p className="text-gray-400 text-lg">
+              Prohlédněte si naše ověřené profily · {cards.length} profilů
+            </p>
+          </div>
+
+          <ProfileCardGrid cards={cards} />
+        </div>
+      </section>
 
       {/* Subtle horizontal banner between sections */}
       <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">

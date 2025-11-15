@@ -1,0 +1,502 @@
+/* Business Cards CSS */
+/* Modern design for erotic business establishments */
+
+/* ========================================
+   CONTAINER & GRID
+   ======================================== */
+
+.business-cards-container {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.business-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+
+/* ========================================
+   CARD WRAPPER
+   ======================================== */
+
+.business-card {
+  background: #000;
+  border-radius: 20px;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+}
+
+.business-card:hover {
+  transform: translateY(-8px);
+  border-color: rgba(255, 0, 128, 0.3);
+}
+
+/* ========================================
+   IMAGE WRAPPER
+   ======================================== */
+
+.business-card-image-wrapper {
+  position: relative;
+  aspect-ratio: 4/5;
+  overflow: hidden;
+  background: #0a0a0a;
+  flex-shrink: 0;
+}
+
+.business-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.business-card:hover .business-card-image {
+  transform: scale(1.05);
+}
+
+/* ========================================
+   STATUS INDICATORS
+   ======================================== */
+
+.business-status-indicators {
+  position: absolute;
+  top: 1.2rem;
+  left: 1.2rem;
+  right: 1.2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  z-index: 2;
+}
+
+.business-status-left {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+/* Type badge */
+.business-badge-type {
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 0.5rem 1rem;
+  border-radius: 100px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+.business-badge-type.salon {
+  background: rgba(138, 43, 226, 0.25);
+  border-color: rgba(138, 43, 226, 0.4);
+  color: #da70d6;
+}
+
+.business-badge-type.privat {
+  background: rgba(255, 0, 128, 0.25);
+  border-color: rgba(255, 0, 128, 0.4);
+  color: #ff4da6;
+}
+
+.business-badge-type.bdsm {
+  background: rgba(220, 20, 60, 0.25);
+  border-color: rgba(220, 20, 60, 0.4);
+  color: #ff6b8a;
+}
+
+.business-badge-type.online {
+  background: rgba(0, 212, 255, 0.25);
+  border-color: rgba(0, 212, 255, 0.4);
+  color: #00d4ff;
+}
+
+/* Favorite */
+.business-favorite-btn {
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #fff;
+  font-size: 1.3rem;
+}
+
+.business-favorite-btn:hover {
+  background: rgba(255, 0, 128, 0.2);
+  border-color: rgba(255, 0, 128, 0.4);
+  transform: scale(1.1);
+}
+
+.business-favorite-btn.active {
+  background: rgba(255, 0, 128, 0.3);
+  color: #ff0080;
+}
+
+/* ========================================
+   CARD CONTENT
+   ======================================== */
+
+.business-card-content {
+  padding: 1.2rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Category tag */
+.business-category-tag {
+  display: block;
+  font-size: 0.9rem;
+  color: #ff0080;
+  font-weight: 700;
+  margin-bottom: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Header */
+.business-card-header {
+  margin-bottom: 1rem;
+}
+
+.business-card-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.3rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #fff;
+}
+
+.business-online-dot {
+  width: 10px;
+  height: 10px;
+  background: #00ff88;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 10px rgba(0, 255, 136, 0.6);
+  animation: businessPulseDot 2s ease-in-out infinite;
+}
+
+@keyframes businessPulseDot {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 0 10px rgba(0, 255, 136, 0.6);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(0.95);
+    box-shadow: 0 0 6px rgba(0, 255, 136, 0.4);
+  }
+}
+
+.business-verified-badge {
+  width: 20px;
+  height: 20px;
+  background: linear-gradient(135deg, #00d4ff, #0099ff);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  color: #000;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.business-card-subtitle {
+  font-size: 0.9rem;
+  color: #888;
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Girls count badge */
+.business-girls-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: rgba(255, 0, 128, 0.15);
+  padding: 0.2rem 0.6rem;
+  border-radius: 100px;
+  font-size: 0.85rem;
+  color: #ff4da6;
+  font-weight: 600;
+}
+
+/* Meta Info */
+.business-card-meta {
+  margin-bottom: 1.2rem;
+}
+
+.business-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  color: #ccc;
+  margin-bottom: 0.5rem;
+}
+
+.business-meta-row:last-child {
+  margin-bottom: 0;
+}
+
+.business-meta-icon {
+  opacity: 0.6;
+  font-size: 1rem;
+}
+
+.business-rating-star {
+  color: #ffd700;
+  font-size: 1rem;
+}
+
+.business-rating-value {
+  font-weight: 600;
+  color: #fff;
+}
+
+.business-rating-count {
+  color: #666;
+}
+
+/* Opening hours section */
+.business-opening-hours {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1.2rem;
+}
+
+.business-opening-hours-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.8rem;
+}
+
+.business-opening-hours-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.business-status-open {
+  font-size: 0.8rem;
+  color: #00ff88;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.business-status-closed {
+  font-size: 0.8rem;
+  color: #ff6666;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.business-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.business-hours-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.business-hours-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+}
+
+.business-hours-day {
+  color: #888;
+}
+
+.business-hours-day.today {
+  color: #fff;
+  font-weight: 600;
+}
+
+.business-hours-time {
+  color: #ccc;
+  font-weight: 500;
+}
+
+.business-hours-time.today {
+  color: #00ff88;
+  font-weight: 600;
+}
+
+/* Toggle hours details */
+.business-hours-toggle {
+  background: none;
+  border: none;
+  color: #ff0080;
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  margin-top: 0.5rem;
+}
+
+.business-hours-details {
+  display: none;
+  margin-top: 0.8rem;
+}
+
+.business-hours-details.show {
+  display: block;
+}
+
+/* Quick info stats */
+.business-quick-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.8rem;
+  margin-bottom: 1.2rem;
+}
+
+.business-stat-box {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 0.8rem;
+  text-align: center;
+}
+
+.business-stat-value {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #ff0080;
+  margin-bottom: 0.2rem;
+}
+
+.business-stat-label {
+  font-size: 0.75rem;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Divider */
+.business-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  margin: 1.2rem 0;
+  flex-shrink: 0;
+}
+
+/* Phone CTA */
+.business-phone-cta {
+  width: 100%;
+  background: linear-gradient(135deg, #ff0080, #ff4da6);
+  border: none;
+  color: #fff;
+  padding: 1rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  letter-spacing: 0.3px;
+  margin-top: auto;
+}
+
+.business-phone-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(255, 0, 128, 0.4);
+}
+
+.business-phone-cta:active {
+  transform: translateY(0);
+}
+
+/* ========================================
+   RESPONSIVE BREAKPOINTS
+   ======================================== */
+
+@media (max-width: 1400px) {
+  .business-cards-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 1100px) {
+  .business-cards-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .business-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .business-card-content {
+    padding: 1rem;
+  }
+
+  .business-opening-hours {
+    padding: 0.8rem;
+  }
+
+  .business-quick-stats {
+    gap: 0.6rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .business-cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ========================================
+   FONT SMOOTHING
+   ======================================== */
+
+.business-card {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

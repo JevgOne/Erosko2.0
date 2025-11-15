@@ -1,25 +1,48 @@
 'use client';
 
-import { Suspense } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import SearchWithMap from '@/components/SearchWithMap';
-import BusinessGrid from '@/components/BusinessGrid';
+import BusinessCardGrid from '@/components/BusinessCardGrid';
 import Breadcrumb from '@/components/Breadcrumb';
-import { profiles } from '@/components/TopProfiles';
 import { Building2 } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
+import { BusinessCard } from '@/types/business-card';
+import { businessesToBusinessCards } from '@/lib/adapters/business-card-adapter';
 
 function ErotickePodnikyContent() {
   const searchParams = useSearchParams();
+  const [businesses, setBusinesses] = useState<BusinessCard[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Filter profiles by business types (clubs, agencies, etc.)
-  const businessProfiles = profiles.filter(profile =>
-    profile.profileType === 'SWINGERS_CLUB' ||
-    profile.profileType === 'NIGHT_CLUB' ||
-    profile.profileType === 'STRIP_CLUB' ||
-    profile.profileType === 'ESCORT_AGENCY'
-  );
+  useEffect(() => {
+    const fetchBusinesses = async () => {
+      try {
+        setLoading(true);
+        const city = searchParams.get('city');
+        const type = searchParams.get('type');
+
+        const params = new URLSearchParams();
+        if (city) params.set('city', city);
+        if (type) params.set('type', type);
+
+        const response = await fetch(`/api/businesses?${params.toString()}`);
+        const data = await response.json();
+
+        if (data.businesses) {
+          const businessCards = businessesToBusinessCards(data.businesses);
+          setBusinesses(businessCards);
+        }
+      } catch (error) {
+        console.error('Error fetching businesses:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBusinesses();
+  }, [searchParams]);
 
   return (
     <>
@@ -49,8 +72,13 @@ function ErotickePodnikyContent() {
         </div>
       </section>
 
-      {/* @ts-ignore */}
-      <BusinessGrid profiles={businessProfiles} />
+      {loading ? (
+        <div className="container mx-auto px-4 py-12 text-center">
+          <p className="text-gray-400">Načítání podniků...</p>
+        </div>
+      ) : (
+        <BusinessCardGrid businesses={businesses} />
+      )}
     </>
   );
 }

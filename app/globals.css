@@ -4,6 +4,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Business Cards Styles */
+@import './business-cards.css';
+
 @layer base {
   body {
     @apply bg-dark-950 text-white antialiased;

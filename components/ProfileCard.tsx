@@ -83,8 +83,8 @@ export default function ProfileCard({ card, onFavoriteToggle }: ProfileCardProps
               {card.isOnline && <span className="online-dot" />}
 
               {card.category === 'EROTICKÝ PODNIK'
-                ? card.name
-                : card.age ? `${card.name}, ${card.age}` : card.name
+                ? card.name.split(' ')[0]
+                : card.age ? `${card.name.split(' ')[0]}, ${card.age}` : card.name.split(' ')[0]
               }
 
               {card.isVerified && (

@@ -1,32 +1,47 @@
 'use client';
 
-import { Suspense } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import SearchWithMap from '@/components/SearchWithMap';
-import ProfileGrid from '@/components/ProfileGrid';
+import ProfileCardGrid from '@/components/ProfileCardGrid';
 import Breadcrumb from '@/components/Breadcrumb';
-import { profiles } from '@/components/TopProfiles';
 import { Sparkles } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
-import type { Profile } from '@prisma/client';
+import { ProfileCard } from '@/types/profile-card';
+import { profilesToCards } from '@/lib/profile-card-adapter';
 
 function MasazeContent() {
   const searchParams = useSearchParams();
-  const cityFilter = searchParams.get('city');
-  const serviceFilter = searchParams.get('service');
+  const [profiles, setProfiles] = useState<ProfileCard[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  let masazeProfiles = profiles.filter(profile => profile.category === 'Erotická masérka');
+  useEffect(() => {
+    const fetchProfiles = async () => {
+      try {
+        setLoading(true);
+        const city = searchParams.get('city');
 
-  if (cityFilter) {
-    masazeProfiles = masazeProfiles.filter(profile =>
-      profile.location.toUpperCase().includes(cityFilter.toUpperCase())
-    );
-  }
+        const params = new URLSearchParams();
+        params.set('category', 'EROTICKE_MASERKY');
+        if (city) params.set('city', city);
 
-  if (serviceFilter) {
-    // TODO: Filter by service when profile data includes services array
-  }
+        const response = await fetch(`/api/profiles?${params.toString()}`);
+        const data = await response.json();
+
+        if (data.profiles) {
+          const cards = profilesToCards(data.profiles);
+          setProfiles(cards);
+        }
+      } catch (error) {
+        console.error('Error fetching profiles:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfiles();
+  }, [searchParams]);
 
   return (
     <>
@@ -42,7 +57,7 @@ function MasazeContent() {
           <div className="text-center max-w-3xl mx-auto mb-12">
             <div className="inline-flex items-center space-x-2 glass px-4 py-2 rounded-full mb-6">
               <Sparkles className="w-4 h-4 text-primary-400" />
-              <span className="text-sm font-medium">{masazeProfiles.length} aktivních profilů</span>
+              <span className="text-sm font-medium">{profiles.length} aktivních profilů</span>
             </div>
             <h1 className="text-5xl md:text-6xl font-bold mb-6">
               <span className="gradient-text">Erotické masáže</span>
@@ -56,8 +71,13 @@ function MasazeContent() {
         </div>
       </section>
 
-      {/* @ts-ignore */}
-      <ProfileGrid profiles={masazeProfiles} />
+      {loading ? (
+        <div className="container mx-auto px-4 py-12 text-center">
+          <p className="text-gray-400">Načítání profilů...</p>
+        </div>
+      ) : (
+        <ProfileCardGrid cards={profiles} />
+      )}
     </>
   );
 }

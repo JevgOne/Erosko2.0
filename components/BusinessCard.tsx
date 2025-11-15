@@ -13,8 +13,8 @@ export default function BusinessCard({ business, onFavoriteToggle }: BusinessCar
   const [isFavorite, setIsFavorite] = useState(business.isFavorite || false);
 
   // Get current day in Czech format
-  const getCurrentDay = (): keyof typeof business.openingHours => {
-    const days: (keyof typeof business.openingHours)[] = [
+  const getCurrentDay = () => {
+    const days = [
       'sunday',
       'monday',
       'tuesday',
@@ -22,7 +22,7 @@ export default function BusinessCard({ business, onFavoriteToggle }: BusinessCar
       'thursday',
       'friday',
       'saturday',
-    ];
+    ] as const;
     return days[new Date().getDay()];
   };
 
@@ -72,7 +72,7 @@ export default function BusinessCard({ business, onFavoriteToggle }: BusinessCar
     return labels[type] || type;
   };
 
-  const dayLabels: Record<keyof typeof business.openingHours, string> = {
+  const dayLabels: Record<string, string> = {
     monday: 'Po',
     tuesday: 'Út',
     wednesday: 'St',
@@ -194,14 +194,14 @@ export default function BusinessCard({ business, onFavoriteToggle }: BusinessCar
               </div>
 
               {/* Expandable week view */}
-              {showAllHours && (
+              {showAllHours && business.openingHours && (
                 <div className="business-hours-details show">
                   {Object.entries(business.openingHours)
                     .filter(([day]) => day !== currentDay)
                     .map(([day, hours]) => (
                       <div key={day} className="business-hours-row">
                         <span className="business-hours-day">
-                          {dayLabels[day as keyof typeof business.openingHours]}
+                          {dayLabels[day]}
                         </span>
                         <span className="business-hours-time">{hours}</span>
                       </div>

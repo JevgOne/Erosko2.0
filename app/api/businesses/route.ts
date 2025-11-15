@@ -17,7 +17,9 @@ export async function GET(request: Request) {
     };
 
     if (city) {
-      where.city = city;
+      // Normalize city name to match database format (capitalize first letter)
+      const normalizedCity = city.charAt(0).toUpperCase() + city.slice(1).toLowerCase();
+      where.city = normalizedCity;
     }
 
     if (type) {

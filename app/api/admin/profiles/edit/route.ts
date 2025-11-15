@@ -30,8 +30,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Chybí profileId nebo data' }, { status: 400 });
     }
 
-    // Extract photo changes and services from data
-    const { photoChanges, services, ...profileData } = data;
+    // Extract photo changes from data
+    const { photoChanges, ...profileData } = data;
 
     // Update profile
     await prisma.profile.update({
@@ -41,24 +41,6 @@ export async function POST(request: Request) {
         updatedAt: new Date(),
       },
     });
-
-    // Handle service changes (delete all and recreate)
-    if (services !== undefined) {
-      // Delete existing services
-      await prisma.profileService.deleteMany({
-        where: { profileId },
-      });
-
-      // Add new services
-      if (services.length > 0) {
-        await prisma.profileService.createMany({
-          data: services.map((serviceId: string) => ({
-            profileId,
-            serviceId,
-          })),
-        });
-      }
-    }
 
     // Handle photo changes
     if (photoChanges) {

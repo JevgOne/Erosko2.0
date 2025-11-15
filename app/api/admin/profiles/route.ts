@@ -62,11 +62,6 @@ export async function GET() {
           },
           take: 1,
         },
-        services: {
-          select: {
-            serviceId: true,
-          },
-        },
       },
       orderBy: {
         createdAt: 'desc',

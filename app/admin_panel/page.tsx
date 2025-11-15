@@ -8,7 +8,7 @@ import { useSession } from 'next-auth/react';
 import Header from '@/components/Header';
 import {
   LayoutDashboard, Users, Building2, UserCircle, MessageSquare,
-  CreditCard, Image as ImageIcon, CheckCircle, XCircle, Eye,
+  CreditCard, Image as ImageIcon, CheckCircle, XCircle, Eye, Edit,
   TrendingUp, AlertCircle, Shield, Search, Plus
 } from 'lucide-react';
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
@@ -100,6 +100,27 @@ export default function AdminPanel() {
   const [newProfilePhotos, setNewProfilePhotos] = useState<File[]>([]);
   const [newProfilePhotosPreviews, setNewProfilePhotosPreviews] = useState<string[]>([]);
   const [allServices, setAllServices] = useState<any[]>([]); // All services from database
+
+  // Edit profile modal states
+  const [showEditProfileModal, setShowEditProfileModal] = useState(false);
+  const [editingProfile, setEditingProfile] = useState<any>(null);
+  const [editProfileFormData, setEditProfileFormData] = useState({
+    name: '',
+    age: '',
+    phone: '',
+    email: '',
+    city: '',
+    address: '',
+    location: '',
+    category: 'HOLKY_NA_SEX',
+    description: '',
+    businessId: '',
+    services: [] as string[],
+    isOnline: false,
+  });
+  const [editProfilePhotos, setEditProfilePhotos] = useState<File[]>([]);
+  const [editProfilePhotosPreviews, setEditProfilePhotosPreviews] = useState<string[]>([]);
+  const [editPhotosToDelete, setEditPhotosToDelete] = useState<string[]>([]);
 
   useEffect(() => {
     if (status === 'loading') return;
@@ -493,6 +514,94 @@ export default function AdminPanel() {
     } catch (error) {
       console.error('Error creating profile:', error);
       alert('Chyba při vytváření profilu');
+    }
+  };
+
+  // Edit profile handlers
+  const handleEditProfileOpen = (profile: any) => {
+    setEditingProfile(profile);
+
+    // Extract service IDs from profile.services array
+    const serviceIds = (profile.services || []).map((ps: any) => ps.serviceId);
+
+    setEditProfileFormData({
+      name: profile.name || '',
+      age: profile.age?.toString() || '',
+      phone: profile.phone || '',
+      email: profile.email || '',
+      city: profile.city || '',
+      address: profile.address || '',
+      location: profile.location || '',
+      category: profile.category || 'HOLKY_NA_SEX',
+      description: profile.description || '',
+      businessId: profile.businessId || '',
+      services: serviceIds,
+      isOnline: profile.isOnline || false,
+    });
+    setEditProfilePhotos([]);
+    setEditProfilePhotosPreviews([]);
+    setEditPhotosToDelete([]);
+    setShowEditProfileModal(true);
+  };
+
+  const handleEditProfileSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingProfile) return;
+
+    try {
+      // Convert photos to base64
+      const photoPromises = editProfilePhotos.map((file) => {
+        return new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+      });
+      const base64Photos = await Promise.all(photoPromises);
+
+      // Prepare data
+      const data: any = {
+        name: editProfileFormData.name,
+        age: parseInt(editProfileFormData.age),
+        phone: editProfileFormData.phone,
+        email: editProfileFormData.email || null,
+        city: editProfileFormData.city,
+        address: editProfileFormData.address || null,
+        location: editProfileFormData.location || editProfileFormData.city,
+        category: editProfileFormData.category,
+        description: editProfileFormData.description || null,
+        businessId: editProfileFormData.businessId || null,
+        services: editProfileFormData.services,
+        isOnline: editProfileFormData.isOnline,
+      };
+
+      if (editPhotosToDelete.length > 0 || base64Photos.length > 0) {
+        data.photoChanges = {
+          photosToDelete: editPhotosToDelete.length > 0 ? editPhotosToDelete : undefined,
+          newPhotos: base64Photos.length > 0 ? base64Photos : undefined,
+        };
+      }
+
+      // Send to API
+      const response = await fetch('/api/admin/profiles/edit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ profileId: editingProfile.id, data }),
+      });
+
+      if (response.ok) {
+        alert('Profil úspěšně upraven!');
+        setShowEditProfileModal(false);
+        setEditingProfile(null);
+        fetchAdminData(); // Reload
+      } else {
+        const result = await response.json();
+        alert(result.error || 'Chyba při úpravě profilu');
+      }
+    } catch (error) {
+      console.error('Error editing profile:', error);
+      alert('Chyba při úpravě profilu');
     }
   };
 
@@ -1390,6 +1499,15 @@ export default function AdminPanel() {
                                 Zrušit ověření
                               </button>
                             )}
+
+                            {/* Edit Button */}
+                            <button
+                              onClick={() => handleEditProfileOpen(profile)}
+                              className="flex items-center gap-2 px-4 py-2 bg-purple-500/20 text-purple-400 rounded-lg hover:bg-purple-500/30 transition-colors text-sm"
+                            >
+                              <Edit className="w-4 h-4" />
+                              Upravit
+                            </button>
 
                             {/* Delete Button */}
                             <button
@@ -2401,6 +2519,373 @@ export default function AdminPanel() {
                   className="flex-1 px-6 py-3 bg-gradient-to-r from-primary-500 to-pink-500 rounded-lg font-semibold hover:shadow-lg hover:shadow-primary-500/50 transition-all"
                 >
                   Vytvořit profil
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Profile Modal */}
+      {showEditProfileModal && editingProfile && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
+          <div className="glass rounded-3xl p-8 max-w-4xl w-full my-8 max-h-[90vh] overflow-y-auto">
+            <h2 className="text-2xl font-bold mb-6">Upravit profil: {editingProfile.name}</h2>
+            <form onSubmit={handleEditProfileSave} className="space-y-6">
+              {/* Basic Info */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2">Jméno *</label>
+                  <input
+                    type="text"
+                    required
+                    value={editProfileFormData.name}
+                    onChange={(e) => setEditProfileFormData({...editProfileFormData, name: e.target.value})}
+                    className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg focus:border-primary-400 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Věk *</label>
+                  <input
+                    type="number"
+                    required
+                    min="18"
+                    max="99"
+                    value={editProfileFormData.age}
+                    onChange={(e) => setEditProfileFormData({...editProfileFormData, age: e.target.value})}
+                    className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg focus:border-primary-400 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Telefon *</label>
+                  <input
+                    type="tel"
+                    required
+                    value={editProfileFormData.phone}
+                    onChange={(e) => setEditProfileFormData({...editProfileFormData, phone: e.target.value})}
+                    className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg focus:border-primary-400 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Email</label>
+                  <input
+                    type="email"
+                    value={editProfileFormData.email}
+                    onChange={(e) => setEditProfileFormData({...editProfileFormData, email: e.target.value})}
+                    className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg focus:border-primary-400 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Město *</label>
+                  <input
+                    type="text"
+                    required
+                    value={editProfileFormData.city}
+                    onChange={(e) => setEditProfileFormData({...editProfileFormData, city: e.target.value})}
+                    className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg focus:border-primary-400 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Adresa</label>
+                  <input
+                    type="text"
+                    value={editProfileFormData.address}
+                    onChange={(e) => setEditProfileFormData({...editProfileFormData, address: e.target.value})}
+                    className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg focus:border-primary-400 focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              {/* Category */}
+              <div>
+                <label className="block text-sm font-medium mb-2">Kategorie *</label>
+                <select
+                  value={editProfileFormData.category}
+                  onChange={(e) => setEditProfileFormData({...editProfileFormData, category: e.target.value, services: []})}
+                  className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg focus:border-primary-400 focus:outline-none"
+                >
+                  <option value="HOLKY_NA_SEX">Holky na sex</option>
+                  <option value="EROTICKE_MASERKY">Erotické maserky</option>
+                  <option value="DOMINA">Domina</option>
+                  <option value="DIGITALNI_SLUZBY">Digitální služby</option>
+                </select>
+              </div>
+
+              {/* Business Assignment */}
+              <div>
+                <label className="block text-sm font-medium mb-2">Přiřadit k podniku (volitelné)</label>
+                <select
+                  value={editProfileFormData.businessId}
+                  onChange={(e) => setEditProfileFormData({...editProfileFormData, businessId: e.target.value})}
+                  className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg focus:border-primary-400 focus:outline-none"
+                >
+                  <option value="">-- SOLO profil (bez podniku) --</option>
+                  {businesses.map((business: any) => (
+                    <option key={business.id} value={business.id}>
+                      {business.name} ({business.city})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Online Status */}
+              <div>
+                <label className="flex items-center space-x-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={editProfileFormData.isOnline}
+                    onChange={(e) => setEditProfileFormData({...editProfileFormData, isOnline: e.target.checked})}
+                    className="w-4 h-4"
+                  />
+                  <span className="text-sm font-medium">Online (zelená tečka)</span>
+                </label>
+              </div>
+
+              {/* Description */}
+              <div>
+                <label className="block text-sm font-medium mb-2">Popis</label>
+                <textarea
+                  value={editProfileFormData.description}
+                  onChange={(e) => setEditProfileFormData({...editProfileFormData, description: e.target.value})}
+                  rows={4}
+                  className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg focus:border-primary-400 focus:outline-none resize-none"
+                />
+              </div>
+
+              {/* Services based on category */}
+              <div className="space-y-4">
+                {editProfileFormData.category === 'EROTICKE_MASERKY' && (
+                  <>
+                    <div>
+                      <label className="block text-sm font-medium mb-3">Typy masáží</label>
+                      <div className="grid grid-cols-2 gap-3">
+                        {allServices.filter(s => s.category === 'DRUHY_MASAZI').map((service) => (
+                          <label key={service.id} className="flex items-center space-x-2 p-2 hover:bg-white/5 rounded cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={editProfileFormData.services.includes(service.id)}
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  setEditProfileFormData({
+                                    ...editProfileFormData,
+                                    services: [...editProfileFormData.services, service.id]
+                                  });
+                                } else {
+                                  setEditProfileFormData({
+                                    ...editProfileFormData,
+                                    services: editProfileFormData.services.filter(id => id !== service.id)
+                                  });
+                                }
+                              }}
+                              className="w-4 h-4"
+                            />
+                            <span className="text-sm">{service.name}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-3">Extra služby</label>
+                      <div className="grid grid-cols-2 gap-3">
+                        {allServices.filter(s => s.category === 'EXTRA_SLUZBY').map((service) => (
+                          <label key={service.id} className="flex items-center space-x-2 p-2 hover:bg-white/5 rounded cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={editProfileFormData.services.includes(service.id)}
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  setEditProfileFormData({
+                                    ...editProfileFormData,
+                                    services: [...editProfileFormData.services, service.id]
+                                  });
+                                } else {
+                                  setEditProfileFormData({
+                                    ...editProfileFormData,
+                                    services: editProfileFormData.services.filter(id => id !== service.id)
+                                  });
+                                }
+                              }}
+                              className="w-4 h-4"
+                            />
+                            <span className="text-sm">{service.name}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {editProfileFormData.category === 'HOLKY_NA_SEX' && (
+                  <div>
+                    <label className="block text-sm font-medium mb-3">Praktiky</label>
+                    <div className="grid grid-cols-2 gap-3">
+                      {allServices.filter(s => s.category === 'PRAKTIKY').map((service) => (
+                        <label key={service.id} className="flex items-center space-x-2 p-2 hover:bg-white/5 rounded cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={editProfileFormData.services.includes(service.id)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setEditProfileFormData({
+                                  ...editProfileFormData,
+                                  services: [...editProfileFormData.services, service.id]
+                                });
+                              } else {
+                                setEditProfileFormData({
+                                  ...editProfileFormData,
+                                  services: editProfileFormData.services.filter(id => id !== service.id)
+                                });
+                              }
+                            }}
+                            className="w-4 h-4"
+                          />
+                          <span className="text-sm">{service.name}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {editProfileFormData.category === 'DOMINA' && (
+                  <div>
+                    <label className="block text-sm font-medium mb-3">BDSM Praktiky</label>
+                    <div className="grid grid-cols-2 gap-3">
+                      {allServices.filter(s => s.category === 'BDSM_PRAKTIKY').map((service) => (
+                        <label key={service.id} className="flex items-center space-x-2 p-2 hover:bg-white/5 rounded cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={editProfileFormData.services.includes(service.id)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setEditProfileFormData({
+                                  ...editProfileFormData,
+                                  services: [...editProfileFormData.services, service.id]
+                                });
+                              } else {
+                                setEditProfileFormData({
+                                  ...editProfileFormData,
+                                  services: editProfileFormData.services.filter(id => id !== service.id)
+                                });
+                              }
+                            }}
+                            className="w-4 h-4"
+                          />
+                          <span className="text-sm">{service.name}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Existing Photos */}
+              {editingProfile.photos && editingProfile.photos.length > 0 && (
+                <div>
+                  <label className="block text-sm font-medium mb-3">Současné fotky (klikněte pro smazání)</label>
+                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
+                    {editingProfile.photos.map((photo: any) => {
+                      const isMarkedForDeletion = editPhotosToDelete.includes(photo.id);
+                      return (
+                        <div
+                          key={photo.id}
+                          className={`relative group aspect-square rounded-lg overflow-hidden cursor-pointer border-2 ${
+                            isMarkedForDeletion ? 'border-red-500/70 opacity-50' : 'border-white/10'
+                          }`}
+                          onClick={() => {
+                            if (isMarkedForDeletion) {
+                              setEditPhotosToDelete(prev => prev.filter(id => id !== photo.id));
+                            } else {
+                              setEditPhotosToDelete(prev => [...prev, photo.id]);
+                            }
+                          }}
+                        >
+                          <img src={photo.url} alt="" className="w-full h-full object-cover" />
+                          <div className={`absolute inset-0 flex items-center justify-center transition-colors ${
+                            isMarkedForDeletion ? 'bg-red-500/40' : 'bg-red-500/0 group-hover:bg-red-500/20'
+                          }`}>
+                            <XCircle className={`w-8 h-8 text-white transition-opacity ${
+                              isMarkedForDeletion ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                            }`} />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Add New Photos */}
+              <div>
+                <label className="block text-sm font-medium mb-2">Přidat nové fotky</label>
+                <input
+                  type="file"
+                  multiple
+                  accept="image/jpeg,image/jpg,image/png,image/webp"
+                  onChange={(e) => {
+                    const files = Array.from(e.target.files || []);
+                    const hasHEIC = files.some(f => f.name.toLowerCase().endsWith('.heic'));
+                    if (hasHEIC) {
+                      alert('HEIC formát není podporován. Použijte prosím JPG, PNG nebo WEBP.');
+                      e.target.value = '';
+                      return;
+                    }
+                    setEditProfilePhotos(prev => [...prev, ...files]);
+                    files.forEach(file => {
+                      const reader = new FileReader();
+                      reader.onloadend = () => {
+                        setEditProfilePhotosPreviews(prev => [...prev, reader.result as string]);
+                      };
+                      reader.readAsDataURL(file);
+                    });
+                  }}
+                  className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg focus:border-primary-400 focus:outline-none"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Podporované formáty: JPG, PNG, WEBP (HEIC není podporován)
+                </p>
+              </div>
+
+              {/* New Photos Preview */}
+              {editProfilePhotosPreviews.length > 0 && (
+                <div>
+                  <p className="text-sm text-gray-400 mb-3">Nové fotky (klikněte pro odstranění)</p>
+                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
+                    {editProfilePhotosPreviews.map((preview, index) => (
+                      <div
+                        key={index}
+                        className="relative group aspect-square rounded-lg overflow-hidden cursor-pointer border-2 border-green-500/50"
+                        onClick={() => {
+                          setEditProfilePhotos(prev => prev.filter((_, i) => i !== index));
+                          setEditProfilePhotosPreviews(prev => prev.filter((_, i) => i !== index));
+                        }}
+                      >
+                        <img src={preview} alt={`Nová ${index + 1}`} className="w-full h-full object-cover" />
+                        <div className="absolute inset-0 flex items-center justify-center bg-red-500/0 group-hover:bg-red-500/20 transition-colors">
+                          <XCircle className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="flex gap-4 pt-6 border-t border-white/10">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowEditProfileModal(false);
+                    setEditingProfile(null);
+                  }}
+                  className="flex-1 px-6 py-3 bg-white/5 rounded-lg font-semibold hover:bg-white/10 transition-colors"
+                >
+                  Zrušit
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 px-6 py-3 bg-gradient-to-r from-primary-500 to-pink-500 rounded-lg font-semibold hover:shadow-lg hover:shadow-primary-500/50 transition-all"
+                >
+                  Uložit změny
                 </button>
               </div>
             </form>

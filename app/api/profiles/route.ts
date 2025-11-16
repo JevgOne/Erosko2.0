@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import prisma from '@/lib/prisma';
 import { ProfileType, Category } from '@prisma/client';
+import { generateProfileSEO } from '@/lib/seo-automation';
 
 export async function POST(request: Request) {
   try {
@@ -130,6 +131,46 @@ export async function POST(request: Request) {
         });
       }
     }
+
+    // Auto-generate SEO (async, don't block response)
+    // This runs in background after profile creation
+    generateProfileSEO(
+      {
+        id: profile.id,
+        name: profile.name,
+        age: profile.age,
+        city: profile.city,
+        category: profile.category,
+        description: profile.description,
+        services: [], // Services will be fetched if needed
+      },
+      [] // Photos can be added later, SEO will regenerate
+    )
+      .then(async (seoResult) => {
+        if (seoResult.success) {
+          // Update profile with SEO data
+          await prisma.profile.update({
+            where: { id: profile.id },
+            data: {
+              seoTitle: seoResult.seoTitle,
+              seoDescriptionA: seoResult.seoDescriptionA,
+              seoDescriptionB: seoResult.seoDescriptionB,
+              seoDescriptionC: seoResult.seoDescriptionC,
+              seoKeywords: seoResult.seoKeywords,
+              seoQualityScore: seoResult.seoQualityScore,
+              ogImageUrl: seoResult.ogImageUrl,
+              seoLastGenerated: new Date(),
+              seoActiveVariant: 'A', // Start with variant A
+            },
+          });
+          console.log(`✅ SEO generated for profile ${profile.id}`);
+        } else {
+          console.error(`❌ SEO generation failed for profile ${profile.id}:`, seoResult.error);
+        }
+      })
+      .catch((error) => {
+        console.error(`❌ SEO automation error for profile ${profile.id}:`, error);
+      });
 
     return NextResponse.json(
       {

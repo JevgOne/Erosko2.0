@@ -115,6 +115,15 @@ model Business {
   reviewCount Int         @default(0)
   viewCount   Int         @default(0)
 
+  // SEO Fields (AI-generated)
+  seoTitle          String?
+  seoDescription    String?
+  seoKeywords       String?
+  seoQualityScore   Int?
+  ogImageUrl        String?
+  seoManualOverride Boolean  @default(false)
+  seoLastGenerated  DateTime?
+
   // Timestamps
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
@@ -191,6 +200,25 @@ model Profile {
   reviewCount Int        @default(0)
   viewCount   Int        @default(0)
 
+  // SEO Fields (AI-generated)
+  seoTitle          String?
+  seoDescription    String?
+  seoDescriptionA   String?  // Variant A (emotional)
+  seoDescriptionB   String?  // Variant B (factual)
+  seoDescriptionC   String?  // Variant C (benefits)
+  seoKeywords       String?
+  seoQualityScore   Int?
+  ogImageUrl        String?
+
+  // SEO Master Override
+  seoManualOverride Boolean  @default(false)
+  seoLastGenerated  DateTime?
+  seoLastReviewed   DateTime?
+
+  // A/B Testing
+  seoActiveVariant  String   @default("A")
+  seoVariantStats   Json?    // { A: {clicks: 77, impressions: 1240}, B: {...}, C: {...} }
+
   // Timestamps
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
@@ -213,11 +241,12 @@ model Profile {
 }
 
 model Photo {
-  id          String    @id @default(cuid())
-  url         String
-  alt         String?
-  order       Int       @default(0)
-  isMain      Boolean   @default(false)
+  id              String    @id @default(cuid())
+  url             String
+  alt             String?
+  altQualityScore Int?      // AI quality score 0-100
+  order           Int       @default(0)
+  isMain          Boolean   @default(false)
 
   // Relations
   profileId   String?

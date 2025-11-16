@@ -182,6 +182,9 @@ export default function LandingPagesTab() {
           <h2 className="text-2xl font-bold text-white mb-1">Landing Pages</h2>
           <p className="text-gray-400 text-sm">
             Spravuj SEO stránky pro kategorie, města a custom pages
+            {!loading && pages.length > 0 && (
+              <span className="ml-2 text-primary-400">• {pages.length} stránek zobrazeno</span>
+            )}
           </p>
         </div>
         <button

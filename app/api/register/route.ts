@@ -10,9 +10,17 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { phone, email, password, role, profile } = body;
 
+    // Validation
     if (!phone || !password) {
       return NextResponse.json(
         { error: 'Telefonní číslo a heslo jsou povinné' },
+        { status: 400 }
+      );
+    }
+
+    if (password.length < 6) {
+      return NextResponse.json(
+        { error: 'Heslo musí mít alespoň 6 znaků' },
         { status: 400 }
       );
     }

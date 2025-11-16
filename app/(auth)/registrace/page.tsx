@@ -530,13 +530,37 @@ export default function RegistracePage() {
                         id="phone"
                         value={phone}
                         onChange={(e) => {
-                          setPhone(e.target.value);
+                          let value = e.target.value;
+
+                          // Auto-add +420 prefix if user starts typing numbers
+                          if (value.length > 0 && !value.startsWith('+')) {
+                            // Remove any non-digit characters first
+                            const digits = value.replace(/\D/g, '');
+
+                            // If starts with 420, add +
+                            if (digits.startsWith('420')) {
+                              value = '+' + digits;
+                            }
+                            // If just starts with digits (not 420), add +420
+                            else if (digits.length > 0) {
+                              value = '+420 ' + digits;
+                            }
+                          }
+
+                          setPhone(value);
+
                           // Clear error when user starts typing
                           if (fieldErrors.phone) {
                             setFieldErrors(prev => {
                               const { phone, ...rest } = prev;
                               return rest;
                             });
+                          }
+                        }}
+                        onFocus={(e) => {
+                          // Add +420 prefix on focus if empty
+                          if (!phone || phone.trim().length === 0) {
+                            setPhone('+420 ');
                           }
                         }}
                         className={`w-full px-4 py-3 rounded-lg bg-dark-800 border ${

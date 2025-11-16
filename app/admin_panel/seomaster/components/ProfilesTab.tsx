@@ -73,6 +73,8 @@ export default function ProfilesTab() {
   const [regenerating, setRegenerating] = useState(false);
   const [editingProfile, setEditingProfile] = useState<Profile | null>(null);
 
+  console.log('ProfilesTab editingProfile state:', editingProfile);
+
   // Fetch dashboard data
   const fetchData = async () => {
     try {
@@ -525,7 +527,12 @@ export default function ProfilesTab() {
                         <Eye className="w-4 h-4" />
                       </a>
                       <button
-                        onClick={() => setEditingProfile(profile)}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          console.log('Edit button clicked for profile:', profile.name);
+                          setEditingProfile(profile);
+                        }}
                         className="p-2 hover:bg-white/10 rounded-lg transition-colors"
                         title="Edit SEO"
                       >

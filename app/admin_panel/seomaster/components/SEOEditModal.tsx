@@ -38,6 +38,8 @@ export default function SEOEditModal({ isOpen, onClose, profile, onSave }: SEOEd
   const [regenerating, setRegenerating] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
 
+  console.log('SEOEditModal render:', { isOpen, profileName: profile.name });
+
   const [formData, setFormData] = useState({
     seoTitle: profile.seoTitle || '',
     seoDescriptionA: profile.seoDescriptionA || '',

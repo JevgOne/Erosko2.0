@@ -161,7 +161,7 @@ export default function BusinessCard({ business, onFavoriteToggle }: BusinessCar
           <div className="business-opening-hours">
             <div className="business-opening-hours-header">
               <div className="business-opening-hours-title">
-                <span>🕐</span>
+                <span style={{ fontSize: '1.2rem' }}>🕐</span>
                 <span>Otevírací doba</span>
               </div>
               {business.is24_7 ? (
@@ -231,7 +231,7 @@ export default function BusinessCard({ business, onFavoriteToggle }: BusinessCar
           className="business-phone-cta"
           onClick={(e) => e.stopPropagation()}
         >
-          📞 {business.phone}
+          {business.phone}
         </a>
       </div>
     </div>

@@ -42,6 +42,13 @@ enum ServiceCategory {
   BDSM_PRAKTIKY   // BDSM praktiky
 }
 
+enum PageType {
+  CATEGORY      // Category pages (/holky-na-sex, /eroticke-masaze)
+  CITY          // City pages (/praha, /brno)
+  CATEGORY_CITY // Category + City (/holky-na-sex/praha)
+  CUSTOM        // Custom landing pages
+}
+
 // Models
 model User {
   id            String   @id @default(cuid())
@@ -365,4 +372,31 @@ model PendingChange {
   @@index([businessId])
   @@index([status])
   @@index([requestedById])
+}
+
+// Static Pages for Landing Pages & SEO
+model StaticPage {
+  id          String   @id @default(cuid())
+  path        String   @unique  // URL path (e.g., "/holky-na-sex", "/praha")
+  type        PageType @default(CUSTOM)
+  
+  // SEO Fields
+  seoTitle       String
+  seoDescription String
+  h1             String
+  content        String?  @default("")  // SEO text content
+  keywords       String?
+  ogImageUrl     String?
+  
+  // Metadata
+  published   Boolean  @default(true)
+  viewCount   Int      @default(0)
+  
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([path])
+  @@index([type])
+  @@index([published])
 }

@@ -204,7 +204,7 @@ export default function LandingPagesTab() {
               placeholder="Hledat stránky..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="input-dark pl-10 w-full"
+              className="w-full pl-11 pr-4 py-3 bg-dark-800 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none transition-all"
             />
           </div>
 
@@ -212,7 +212,7 @@ export default function LandingPagesTab() {
           <select
             value={typeFilter}
             onChange={(e) => setTypeFilter(e.target.value)}
-            className="input-dark"
+            className="w-full px-4 py-3 bg-dark-800 border border-white/10 rounded-lg text-white focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none transition-all"
           >
             <option value="all">Všechny typy</option>
             <option value="CATEGORY">📁 Kategorie</option>
@@ -234,7 +234,7 @@ export default function LandingPagesTab() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Path */}
               <div>
-                <label className="block text-sm text-gray-400 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   URL Path *
                 </label>
                 <input
@@ -244,14 +244,14 @@ export default function LandingPagesTab() {
                   onChange={(e) =>
                     setFormData({ ...formData, path: e.target.value })
                   }
-                  className="input-dark w-full"
+                  className="w-full px-4 py-3 bg-dark-800 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none transition-all"
                   required
                 />
               </div>
 
               {/* Type */}
               <div>
-                <label className="block text-sm text-gray-400 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   Typ Stránky *
                 </label>
                 <select
@@ -262,7 +262,7 @@ export default function LandingPagesTab() {
                       type: e.target.value as keyof typeof pageTypeLabels,
                     })
                   }
-                  className="input-dark w-full"
+                  className="w-full px-4 py-3 bg-dark-800 border border-white/10 rounded-lg text-white focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none transition-all"
                   required
                 >
                   <option value="CATEGORY">📁 Category</option>
@@ -275,7 +275,7 @@ export default function LandingPagesTab() {
 
             {/* SEO Title */}
             <div>
-              <label className="block text-sm text-gray-400 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 SEO Title (max 60 znaků) *
               </label>
               <input
@@ -286,17 +286,17 @@ export default function LandingPagesTab() {
                   setFormData({ ...formData, seoTitle: e.target.value })
                 }
                 maxLength={60}
-                className="input-dark w-full"
+                className="w-full px-4 py-3 bg-dark-800 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none transition-all"
                 required
               />
-              <div className="text-xs text-gray-500 mt-1">
+              <div className="text-xs text-gray-400 mt-1">
                 {formData.seoTitle.length}/60
               </div>
             </div>
 
             {/* H1 */}
             <div>
-              <label className="block text-sm text-gray-400 mb-2">H1 *</label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">H1 *</label>
               <input
                 type="text"
                 placeholder="Holky na sex Praha"
@@ -304,14 +304,14 @@ export default function LandingPagesTab() {
                 onChange={(e) =>
                   setFormData({ ...formData, h1: e.target.value })
                 }
-                className="input-dark w-full"
+                className="w-full px-4 py-3 bg-dark-800 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none transition-all"
                 required
               />
             </div>
 
             {/* SEO Description */}
             <div>
-              <label className="block text-sm text-gray-400 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 META Description (150-160 znaků) *
               </label>
               <textarea
@@ -322,17 +322,17 @@ export default function LandingPagesTab() {
                 }
                 maxLength={160}
                 rows={3}
-                className="input-dark w-full"
+                className="w-full px-4 py-3 bg-dark-800 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none transition-all resize-none"
                 required
               />
-              <div className="text-xs text-gray-500 mt-1">
+              <div className="text-xs text-gray-400 mt-1">
                 {formData.seoDescription.length}/160
               </div>
             </div>
 
             {/* Keywords */}
             <div>
-              <label className="block text-sm text-gray-400 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 Keywords (oddělené čárkou)
               </label>
               <input
@@ -342,13 +342,13 @@ export default function LandingPagesTab() {
                 onChange={(e) =>
                   setFormData({ ...formData, keywords: e.target.value })
                 }
-                className="input-dark w-full"
+                className="w-full px-4 py-3 bg-dark-800 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none transition-all"
               />
             </div>
 
             {/* Content */}
             <div>
-              <label className="block text-sm text-gray-400 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 SEO Content (HTML podporováno)
               </label>
               <textarea
@@ -357,8 +357,8 @@ export default function LandingPagesTab() {
                 onChange={(e) =>
                   setFormData({ ...formData, content: e.target.value })
                 }
-                rows={6}
-                className="input-dark w-full font-mono text-sm"
+                rows={8}
+                className="w-full px-4 py-3 bg-dark-800 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none transition-all resize-none font-mono text-sm"
               />
             </div>
 

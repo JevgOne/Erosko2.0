@@ -215,6 +215,7 @@ export async function POST(request: Request) {
           },
         };
       }
+      }
 
       // Return user only if no profile/business
       return {

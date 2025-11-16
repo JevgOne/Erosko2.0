@@ -92,35 +92,50 @@ Generate SEO-optimized metadata for this ${data.type.toLowerCase()} on erosko.cz
 
    ✅ **SPRÁVNĚ:** Jméno → Služba → Město → EROSKO.CZ
 
-2. **META Descriptions** (3 variants, KAŽDÁ PŘESNĚ 150-160 chars!)
+2. **META Descriptions** (3 COMPLETELY DIFFERENT variants, KAŽDÁ PŘESNĚ 150-160 chars!)
 
-   ⚠️ **KRITICKÉ**: Každá description MUSÍ mít minimálně 150 znaků, ideálně 155-160!
-   Pokud máš méně než 150 znaků, PŘIDEJ více detailů!
+   🚨 **ABSOLUTNĚ KRITICKÉ** 🚨:
+   - Každá variant MUSÍ být ÚPLNĚ JINÁ! Ne jenom přeházená slova!
+   - Každá description MUSÍ mít minimálně 150 znaků, ideálně 155-160!
+   - Pokud máš méně než 150 znaků, PŘIDEJ více detailů!
+   - NIKDY NEOPAKUJ stejné fráze ve všech variantách!
 
    **Variant A (Emotional/Engaging) - 150-160 chars:**
+   🎯 FOCUS: První osoba, emoji, emoce, osobní přístup
    - Use 1-2 relevant emoji (❤️, 💋, ✨, 🌹)
-   - Create emotional connection
-   - Highlight unique selling point (např. "zkušená", "elegantní", "hravá")
-   - Zmiň město + věk
-   - End with CTA (Call-To-Action) - "Kontaktuj mě", "Rezervuj si schůzku", "Prohlédni profil"
+   - Write in FIRST PERSON ("Jsem...", "Nabízím...", "Moje...")
+   - Create emotional connection with reader
+   - Highlight personality (např. "zkušená", "elegantní", "hravá", "smyslná")
+   - Zmiň město + věk FIRST
+   - End with personal CTA - "Kontaktuj mě", "Těším se na tebe", "Ozvi se mi"
    ${data.verified ? '- Include "✓ Ověřený profil"' : ''}
    - **EXAMPLE (159 chars):** "❤️ Jsem Lucie, 25letá společnice v Praze. Nabízím elegantní doprovod pro náročné gentlemany. Diskrétnost zaručena. ✓ Ověřený profil. Kontaktuj mě ještě dnes!"
 
+   ❌ **ZAKÁZÁNO v Variant A**: "profesionální", "služby", technické popisy
+
    **Variant B (Factual/Professional) - 150-160 chars:**
-   - List specific services/offerings
-   - Include age, location, availability (např. "Denní i večerní schůzky")
-   - Professional tone
+   🎯 FOCUS: Třetí osoba, fakty, služby, detaily
+   - Write in THIRD PERSON ("[Jméno] nabízí...", "[Jméno], 25 let...")
+   - List SPECIFIC services/offerings
+   - Include praktické info: age, location, availability ("Denní i večerní schůzky")
+   - Professional, business-like tone
    - Mention "Bez zprostředkovatele" or "Reálné fotky" or "Přímý kontakt"
-   - Přidej detail o prostředí (privát, salon, hotel)
+   - Přidej detail o prostředí (privát, salon, hotel, byt)
    - **EXAMPLE (158 chars):** "Lucie, 25 let, společnice v Praze. Nabízím profesionální doprovod, společenské akce, večeře. Soukromý privát v centru. Bez zprostředkovatele. Reálné fotky."
 
+   ❌ **ZAKÁZÁNO v Variant B**: emoji, první osoba, emocionální jazyk
+
    **Variant C (Benefits-Focused) - 150-160 chars:**
-   - Focus on advantages: "Diskrétnost", "Příjemná atmosféra", "Luxusní prostředí"
-   - Include "Přímý kontakt" nebo "Okamžitá dostupnost"
-   - Mention "Profesionální přístup" nebo "Individuální přístup"
-   - Add trust signals (ověřené, reference, dlouhá praxe)
-   - Zmiň benefits klienta (relaxace, zážitek, pohoda)
+   🎯 FOCUS: Benefity pro klienta, výhody, value proposition
+   - Focus on WHAT CLIENT GETS: "Diskrétnost", "Příjemná atmosféra", "Luxusní zážitek"
+   - Include unique value: "Přímý kontakt" nebo "Okamžitá dostupnost" nebo "Flexibilní termíny"
+   - Mention approach: "Profesionální přístup" nebo "Individuální přístup" nebo "Osobní péče"
+   - Add trust signals: "ověřené fotky", "reference", "dlouhá praxe", "spokojení klienti"
+   - Zmiň benefits klienta: "relaxace", "nezapomenutelný zážitek", "naprosté soukromí"
+   - End with benefit-driven CTA: "Užij si...", "Vychutnej si...", "Dopřej si..."
    - **EXAMPLE (157 chars):** "Společnice Lucie v Praze zajistí diskrétní a profesionální doprovod. Luxusní prostředí, individuální přístup, přímý kontakt. Vychutnej si nezapomenutelný zážitek."
+
+   ❌ **ZAKÁZÁNO v Variant C**: první osoba, emoji, opakování slov z A nebo B
 
 3. **Keywords** (12-15 keywords)
    Mix these types:
@@ -190,7 +205,11 @@ Generate SEO-optimized metadata for this ${data.type.toLowerCase()} on erosko.cz
 ✓ Specific service terms used
 ✓ Natural, engaging language
 ✓ Keywords are relevant + diverse
-✓ All 3 descriptions DIFFERENT (not just minor variations!)
+✓ **🚨 NEJDŮLEŽITĚJŠÍ**: All 3 descriptions COMPLETELY DIFFERENT!
+   - Variant A: První osoba + emoji + emoce
+   - Variant B: Třetí osoba + fakty + služby
+   - Variant C: Benefity klienta + value proposition
+   - ŽÁDNÉ opakování stejných frází mezi variantami!
 
 **POVINNÉ POŘADÍ V TITLE:**
 1. Jméno profilu (+ věk pokud je) - např. "Lucie 25", "Sexy Club"

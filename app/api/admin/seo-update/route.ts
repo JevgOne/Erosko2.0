@@ -109,6 +109,19 @@ export async function PATCH(request: Request) {
       );
     }
 
+    // Get profile slug for cache invalidation
+    const profile = await prisma.profile.findUnique({
+      where: { id: profileId },
+      select: { slug: true },
+    });
+
+    if (!profile) {
+      return NextResponse.json(
+        { success: false, error: 'Profile not found' },
+        { status: 404 }
+      );
+    }
+
     const updateData: any = {};
 
     switch (action) {
@@ -133,6 +146,10 @@ export async function PATCH(request: Request) {
       where: { id: profileId },
       data: updateData,
     });
+
+    // Revalidate the profile page so changes appear immediately
+    revalidatePath(`/${profile.slug}`);
+    revalidatePath(`/profil/${profile.slug}`);
 
     return NextResponse.json({
       success: true,

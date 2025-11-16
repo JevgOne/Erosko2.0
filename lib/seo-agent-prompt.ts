@@ -131,15 +131,45 @@ Generate SEO-optimized metadata for this ${data.type.toLowerCase()} on erosko.cz
 **OUTPUT FORMAT (valid JSON only):**
 {
   "title": "...",
+  "h1": "...",
   "descriptions": [
     "Variant A - Emotional...",
     "Variant B - Factual...",
     "Variant C - Benefits..."
   ],
   "keywords": "keyword1, keyword2, keyword3, ...",
+  "og_title": "...",
+  "og_description": "...",
   "quality_score": 85,
   "reasoning": "Brief explanation of SEO strategy used"
 }
+
+**NOVÉ POLE - H1:**
+- H1 musí být ODLIŠNÝ od title (jiná formulace)
+- Měl by obsahovat hlavní klíčové slovo + město
+- Přirozenější, lidštější formulace
+- Max 70 znaků
+- Příklady:
+  • Title: "Lucie 25 - Společnice Praha | EROSKO.CZ"
+    H1: "Společnice Lucie v Praze - diskrétní a profesionální doprovod"
+  • Title: "Sexy Club - Erotický salon Praha 5 | EROSKO.CZ"
+    H1: "Erotický salon Sexy Club v Praze 5 - vyberte si z našich dívek"
+
+**NOVÉ POLE - OG TITLE:**
+- Kratší a údernější než meta title (bez "| EROSKO.CZ")
+- Zaměřený na sociální sítě (Facebook, Twitter)
+- Max 55 znaků
+- Příklady:
+  • "Lucie 25 - Společnice Praha"
+  • "Sexy Club - Erotický salon Praha 5"
+
+**NOVÉ POLE - OG DESCRIPTION:**
+- Emočnější než meta description
+- Max 150 znaků
+- Obsahuje výzvu k akci
+- Příklady:
+  • "Poznej Lucii - profesionální společnici v Praze. Diskrétnost zaručena. Prohlédni profil a kontaktuj."
+  • "Navštiv náš salon v Praze 5. Výběr z 10+ krásných dívek. Rezervuj si termín ještě dnes!"
 
 **QUALITY CHECKLIST:**
 ✓ Title struktura: Jméno → Služba → Město → EROSKO.CZ

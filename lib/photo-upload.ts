@@ -9,10 +9,20 @@ import path from 'path';
  */
 export async function saveBase64Photo(base64String: string, folder: string): Promise<string> {
   try {
+    // Kontrola, zda je base64String validní
+    if (!base64String || typeof base64String !== 'string') {
+      throw new Error('Invalid base64 string: empty or not a string');
+    }
+
+    // Kontrola velikosti (max 10MB base64 string)
+    if (base64String.length > 15 * 1024 * 1024) {
+      throw new Error('Base64 string too large (max 10MB)');
+    }
+
     // Extrahovat mime type a base64 data
     const matches = base64String.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
     if (!matches || matches.length !== 3) {
-      throw new Error('Invalid base64 string');
+      throw new Error('Invalid base64 string format');
     }
 
     const mimeType = matches[1];

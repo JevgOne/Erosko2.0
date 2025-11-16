@@ -18,6 +18,17 @@ export async function POST(request: Request) {
       );
     }
 
+    // Validate email format if provided
+    if (email && email.trim().length > 0) {
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailPattern.test(email)) {
+        return NextResponse.json(
+          { error: 'Neplatná emailová adresa' },
+          { status: 400 }
+        );
+      }
+    }
+
     if (password.length < 6) {
       return NextResponse.json(
         { error: 'Heslo musí mít alespoň 6 znaků' },
@@ -28,7 +39,7 @@ export async function POST(request: Request) {
     // Normalize phone number
     const normalizedPhone = normalizePhoneNumber(phone);
 
-    // Check if user already exists
+    // Check if user with this phone already exists
     const existingUser = await prisma.user.findUnique({
       where: { phone: normalizedPhone },
     });
@@ -40,21 +51,37 @@ export async function POST(request: Request) {
       );
     }
 
+    // Check if email is already in use (if provided)
+    if (email && email.trim().length > 0) {
+      const existingEmailUser = await prisma.user.findUnique({
+        where: { email: email.trim() },
+      });
+
+      if (existingEmailUser) {
+        return NextResponse.json(
+          { error: 'Email je již používán jiným uživatelem' },
+          { status: 400 }
+        );
+      }
+    }
+
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create user with profile if provider
-    const user = await prisma.user.create({
-      data: {
-        phone: normalizedPhone,
-        email: email || null,
-        passwordHash: hashedPassword,
-        role: role || UserRole.USER,
-      },
-    });
+    // Use transaction to ensure atomicity
+    const result = await prisma.$transaction(async (tx) => {
+      // Create user
+      const user = await tx.user.create({
+        data: {
+          phone: normalizedPhone,
+          email: email?.trim() || null,
+          passwordHash: hashedPassword,
+          role: role || UserRole.USER,
+        },
+      });
 
-    // If provider, create profile or business
-    if (role === UserRole.PROVIDER && profile) {
+      // If provider, create profile or business
+      if (role === UserRole.PROVIDER && profile) {
       const profileType = profile.profileType as ProfileType;
 
       // Check if this is a business or individual profile
@@ -66,7 +93,7 @@ export async function POST(request: Request) {
         const phoneSlug = profile.phone.replace(/[\s\+\-\(\)]/g, '');
         const slug = `${profile.name.toLowerCase().replace(/\s+/g, '-')}-${profile.city.toLowerCase().replace(/\s+/g, '-')}-${phoneSlug}`;
 
-        const newBusiness = await prisma.business.create({
+        const newBusiness = await tx.business.create({
           data: {
             name: profile.name,
             slug,
@@ -87,7 +114,7 @@ export async function POST(request: Request) {
         if (profile.photos && profile.photos.length > 0) {
           for (let i = 0; i < profile.photos.length; i++) {
             const photoUrl = await saveBase64Photo(profile.photos[i], 'businesses');
-            await prisma.photo.create({
+            await tx.photo.create({
               data: {
                 url: photoUrl,
                 businessId: newBusiness.id,
@@ -98,29 +125,26 @@ export async function POST(request: Request) {
           }
         }
 
-        return NextResponse.json(
-          {
-            user: {
-              id: user.id,
-              phone: user.phone,
-              email: user.email,
-              role: user.role,
-              business: {
-                id: newBusiness.id,
-                name: newBusiness.name,
-                slug: newBusiness.slug,
-              },
+        return {
+          user: {
+            id: user.id,
+            phone: user.phone,
+            email: user.email,
+            role: user.role,
+            business: {
+              id: newBusiness.id,
+              name: newBusiness.name,
+              slug: newBusiness.slug,
             },
           },
-          { status: 201 }
-        );
+        };
       } else {
         // Create Profile for SOLO types
         // Use phone number (without spaces and +) instead of timestamp
         const phoneSlug = profile.phone.replace(/[\s\+\-\(\)]/g, '');
         const slug = `${profile.name.toLowerCase().replace(/\s+/g, '-')}-${profile.city.toLowerCase().replace(/\s+/g, '-')}-${phoneSlug}`;
 
-        const newProfile = await prisma.profile.create({
+        const newProfile = await tx.profile.create({
           data: {
             name: profile.name,
             slug,
@@ -142,18 +166,18 @@ export async function POST(request: Request) {
         if (profile.services && profile.services.length > 0) {
           for (const serviceName of profile.services) {
             // Find or create service
-            let service = await prisma.service.findUnique({
+            let service = await tx.service.findUnique({
               where: { name: serviceName },
             });
 
             if (!service) {
-              service = await prisma.service.create({
+              service = await tx.service.create({
                 data: { name: serviceName },
               });
             }
 
             // Link service to profile
-            await prisma.profileService.create({
+            await tx.profileService.create({
               data: {
                 profileId: newProfile.id,
                 serviceId: service.id,
@@ -166,7 +190,7 @@ export async function POST(request: Request) {
         if (profile.photos && profile.photos.length > 0) {
           for (let i = 0; i < profile.photos.length; i++) {
             const photoUrl = await saveBase64Photo(profile.photos[i], 'profiles');
-            await prisma.photo.create({
+            await tx.photo.create({
               data: {
                 url: photoUrl,
                 profileId: newProfile.id,
@@ -177,36 +201,35 @@ export async function POST(request: Request) {
           }
         }
 
-        return NextResponse.json(
-          {
-            user: {
-              id: user.id,
-              phone: user.phone,
-              email: user.email,
-              role: user.role,
-              profile: {
-                id: newProfile.id,
-                name: newProfile.name,
-                slug: newProfile.slug,
-              },
+        return {
+          user: {
+            id: user.id,
+            phone: user.phone,
+            email: user.email,
+            role: user.role,
+            profile: {
+              id: newProfile.id,
+              name: newProfile.name,
+              slug: newProfile.slug,
             },
           },
-          { status: 201 }
-        );
+        };
       }
-    }
+      }
 
-    return NextResponse.json(
-      {
+      // Return user only if no profile/business
+      return {
         user: {
           id: user.id,
           phone: user.phone,
           email: user.email,
           role: user.role,
         },
-      },
-      { status: 201 }
-    );
+      };
+    });
+
+    // Return result from transaction
+    return NextResponse.json(result, { status: 201 });
   } catch (error) {
     console.error('Registration error:', error);
     return NextResponse.json(

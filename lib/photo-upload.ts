@@ -19,14 +19,18 @@ export async function saveBase64Photo(base64String: string, folder: string): Pro
       throw new Error('Base64 string too large (max 10MB)');
     }
 
-    // Extrahovat mime type a base64 data
-    const matches = base64String.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
-    if (!matches || matches.length !== 3) {
-      throw new Error('Invalid base64 string format');
+    // Extrahovat mime type a base64 data (bez regex kvůli stack overflow)
+    if (!base64String.startsWith('data:')) {
+      throw new Error('Invalid base64 string format - must start with data:');
     }
 
-    const mimeType = matches[1];
-    const base64Data = matches[2];
+    const base64Index = base64String.indexOf(';base64,');
+    if (base64Index === -1) {
+      throw new Error('Invalid base64 string format - missing ;base64,');
+    }
+
+    const mimeType = base64String.substring(5, base64Index); // 5 = length of 'data:'
+    const base64Data = base64String.substring(base64Index + 8); // 8 = length of ';base64,'
 
     // Určit příponu souboru
     const extension = mimeType.split('/')[1] || 'jpg';

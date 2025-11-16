@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { auth } from '@/auth';
 import prisma from '@/lib/prisma';
 
@@ -64,6 +65,10 @@ export async function POST(request: Request) {
       where: { id: profileId },
       data: updateData,
     });
+
+    // Revalidate the profile page so SEO changes appear immediately (like Rank Math)
+    revalidatePath(`/${profile.slug}`);
+    revalidatePath(`/profil/${profile.slug}`);
 
     return NextResponse.json({
       success: true,

@@ -28,7 +28,7 @@ export async function POST(request: Request) {
     // Normalize phone number
     const normalizedPhone = normalizePhoneNumber(phone);
 
-    // Check if user already exists
+    // Check if user already exists by phone
     const existingUser = await prisma.user.findUnique({
       where: { phone: normalizedPhone },
     });
@@ -40,17 +40,38 @@ export async function POST(request: Request) {
       );
     }
 
+    // Check if email exists (only if email is provided)
+    if (email) {
+      const existingEmail = await prisma.user.findUnique({
+        where: { email: email },
+      });
+
+      if (existingEmail) {
+        return NextResponse.json(
+          { error: 'Uživatel s tímto emailem již existuje' },
+          { status: 400 }
+        );
+      }
+    }
+
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create user with profile if provider
+    // Generate unique email if not provided to avoid UNIQUE constraint issues
+    const userData: any = {
+      phone: normalizedPhone,
+      passwordHash: hashedPassword,
+      role: role || UserRole.USER,
+    };
+
+    // Only add email if provided (SQLite treats NULL as unique value)
+    if (email && email.trim()) {
+      userData.email = email.trim();
+    }
+
     const user = await prisma.user.create({
-      data: {
-        phone: normalizedPhone,
-        email: email || null,
-        passwordHash: hashedPassword,
-        role: role || UserRole.USER,
-      },
+      data: userData,
     });
 
     // If provider, create profile or business

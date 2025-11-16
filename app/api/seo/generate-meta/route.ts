@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { NextResponse } from 'next/server';
+import { getProfileSEOPrompt, type ProfileData } from '@/lib/seo-agent-prompt';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
@@ -7,53 +8,31 @@ export async function POST(req: Request) {
   try {
     const { type, data } = await req.json();
     // type: "profile" | "business"
-    // data: { name, age?, city, category, services?, description? }
+    // data: { name, age?, city, category, services?, description?, verified? }
 
-    const prompt = `
-You are an expert SEO copywriter for adult services in Czech Republic (erosko.cz).
+    const profileData: ProfileData = {
+      name: data.name,
+      age: data.age,
+      city: data.city,
+      category: data.category,
+      type: type === 'profile' ? 'Profile' : 'Business',
+      services: data.services,
+      description: data.description,
+      verified: data.verified,
+    };
 
-Generate SEO-optimized metadata for this ${type}:
-${JSON.stringify(data, null, 2)}
-
-Requirements:
-1. META title: Max 60 chars, include name + main keyword + city + " | EROSKO.CZ"
-2. META descriptions: Generate 3 variants (150-160 chars each):
-   - Variant A (emotional): Use emoji, emotional language, "Ověřený profil" if applicable
-   - Variant B (factual): Professional, factual description with services
-   - Variant C (benefits): Focus on advantages, "Bez zprostředkovatele", "Přímý kontakt"
-3. Keywords: 12-15 keywords mixing:
-   - Name + city combinations
-   - Main service + city
-   - Long-tail keywords (e.g., "diskrétní holky na sex praha")
-   - Category-specific terms
-4. MUST be in Czech language
-5. Use location-based keywords for local SEO
-6. Quality score: Rate 0-100 based on keyword density, length optimization, uniqueness
-
-Category keywords mapping:
-- HOLKY_NA_SEX: "holky na sex", "společnice", "call girls", "sex holky"
-- EROTICKE_MASERKY: "erotické masáže", "tantra masáž", "body to body", "erotická masérka"
-- DOMINA: "domina", "BDSM", "femdom", "mistress", "SM privát"
-- DIGITALNI_SLUZBY: "webcam", "videochat", "phone sex", "online"
-
-Output as JSON:
-{
-  "title": "...",
-  "descriptions": ["Variant A", "Variant B", "Variant C"],
-  "keywords": "keyword1, keyword2, keyword3, ...",
-  "quality_score": 85
-}
-`;
+    const prompt = getProfileSEOPrompt(profileData);
 
     const model = genAI.getGenerativeModel({
       model: "gemini-2.5-flash",
       generationConfig: {
-        temperature: 0.7,
+        temperature: 0.8, // Increased for more creative, natural Czech language
+        topP: 0.95,
+        topK: 40,
       },
     });
 
-    const fullPrompt = `You are an expert SEO copywriter. Always respond with valid JSON only.\n\n${prompt}`;
-    const geminiResult = await model.generateContent(fullPrompt);
+    const geminiResult = await model.generateContent(prompt);
     const response = await geminiResult.response;
     let text = response.text();
 

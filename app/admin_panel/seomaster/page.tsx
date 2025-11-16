@@ -1,11 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { Sparkles, Users, FileText } from 'lucide-react';
+import { Sparkles, Users, FileText, Globe } from 'lucide-react';
 import ProfilesTab from './components/ProfilesTab';
 import LandingPagesTab from './components/LandingPagesTab';
+import AllPagesTab from './components/AllPagesTab';
 
-type Tab = 'profiles' | 'landing-pages';
+type Tab = 'profiles' | 'landing-pages' | 'all-pages';
 
 export default function SEOMasterPage() {
   const [activeTab, setActiveTab] = useState<Tab>('profiles');
@@ -47,12 +48,24 @@ export default function SEOMasterPage() {
           <FileText className="w-5 h-5" />
           Landing Pages
         </button>
+        <button
+          onClick={() => setActiveTab('all-pages')}
+          className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all ${
+            activeTab === 'all-pages'
+              ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/50'
+              : 'text-gray-400 hover:text-white hover:bg-white/5'
+          }`}
+        >
+          <Globe className="w-5 h-5" />
+          Všechny Stránky
+        </button>
       </div>
 
       {/* Tab Content */}
       <div>
         {activeTab === 'profiles' && <ProfilesTab />}
         {activeTab === 'landing-pages' && <LandingPagesTab />}
+        {activeTab === 'all-pages' && <AllPagesTab />}
       </div>
     </div>
   );

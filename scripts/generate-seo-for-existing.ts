@@ -8,46 +8,58 @@ const client = createClient({
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
-const categoryKeywords: Record<string, string[]> = {
-  HOLKY_NA_SEX: ['holky na sex', 'společnice', 'call girls'],
-  EROTICKE_MASERKY: ['erotické masáže', 'tantra masáž', 'masérka'],
-  DOMINA: ['domina', 'BDSM', 'femdom'],
-  DIGITALNI_SLUZBY: ['webcam', 'online služby', 'videochat'],
+// Import professional SEO prompt
+const getProfileSEOPrompt = (data: any): string => {
+  const profileType = data.type || 'Profile';
+
+  return `
+You are an ELITE SEO SPECIALIST with 15+ years of experience in Czech online marketing.
+
+**CRITICAL RULES:**
+- NEVER use generic "erotické služby" for businesses
+- For EROTICKE_PODNIKY businesses → use "erotický podnik", "salon", "klub", "privát"
+- For HOLKY_NA_SEX profiles → use "společnice", "escort", "holky na sex"
+- ALWAYS include city in title AND description
+- Perfect Czech grammar (no machine translation)
+
+**Profile Data:**
+Type: ${profileType}
+Name: ${data.name}
+Age: ${data.age}
+City: ${data.city}
+Category: ${data.category}
+
+**Task:** Generate professional SEO metadata.
+
+**Output JSON:**
+{
+  "title": "...",
+  "descriptions": ["Variant A", "Variant B", "Variant C"],
+  "keywords": "keyword1, keyword2, ...",
+  "quality_score": 85
+}
+
+Requirements:
+- Title max 60 chars: "${data.name} ${data.age} let | [SPECIFIC SERVICE] ${data.city} | EROSKO.CZ"
+- Descriptions 150-160 chars each (A=emotional, B=factual, C=benefits)
+- 12-15 keywords
+- Perfect Czech language
+- Quality score 0-100
+
+Generate now:
+`;
 };
 
 async function generateSEOForProfile(profile: any) {
   console.log(`\n🔄 Generating SEO for: ${profile.name} (${profile.city})`);
 
-  const keywords = categoryKeywords[profile.category as keyof typeof categoryKeywords] || [];
-
-  // Step 1: Generate META tags with Claude
-  const metaPrompt = `
-You are an expert SEO copywriter for adult services in Czech Republic (erosko.cz).
-
-Generate SEO-optimized metadata for this profile:
-- Name: ${profile.name}
-- Age: ${profile.age}
-- City: ${profile.city}
-- Category: ${profile.category} (keywords: ${keywords.join(', ')})
-
-Requirements:
-1. META title: Max 60 chars, include name + main keyword + city + " | EROSKO.CZ"
-2. META descriptions: Generate 3 variants (150-160 chars each):
-   - Variant A (emotional): Use emoji, emotional language, "Ověřený profil"
-   - Variant B (factual): Professional, factual description with services
-   - Variant C (benefits): Focus on "Bez zprostředkovatele", "Přímý kontakt"
-3. Keywords: 12-15 keywords
-4. MUST be in Czech language
-5. Quality score: Rate 0-100
-
-Output as JSON:
-{
-  "title": "...",
-  "descriptions": ["Variant A", "Variant B", "Variant C"],
-  "keywords": "keyword1, keyword2, keyword3, ...",
-  "quality_score": 85
-}
-`;
+  const metaPrompt = getProfileSEOPrompt({
+    name: profile.name,
+    age: profile.age,
+    city: profile.city,
+    category: profile.category,
+    type: profile.type || 'Profile',
+  });
 
   let seoTitle = null;
   let seoDescriptionA = null;
@@ -60,12 +72,13 @@ Output as JSON:
     const model = genAI.getGenerativeModel({
       model: "gemini-2.5-flash",
       generationConfig: {
-        temperature: 0.7,
+        temperature: 0.8,
+        topP: 0.95,
+        topK: 40,
       },
     });
 
-    const fullPrompt = `You are an expert SEO copywriter. Always respond with valid JSON only.\n\n${metaPrompt}`;
-    const geminiResult = await model.generateContent(fullPrompt);
+    const geminiResult = await model.generateContent(metaPrompt);
     const response = await geminiResult.response;
     let resultText = response.text();
 

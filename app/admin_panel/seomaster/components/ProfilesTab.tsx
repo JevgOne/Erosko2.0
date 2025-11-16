@@ -16,6 +16,7 @@ import {
   Eye,
   Edit3,
 } from 'lucide-react';
+import SEOEditModal from './SEOEditModal';
 
 const categoryLabels = {
   HOLKY_NA_SEX: { label: '💋 Sex Holky', color: 'text-pink-400' },
@@ -47,6 +48,9 @@ interface Profile {
   viewCount: number;
   seoTitle: string | null;
   seoDescriptionA: string | null;
+  seoDescriptionB: string | null;
+  seoDescriptionC: string | null;
+  seoKeywords: string | null;
   seoQualityScore: number | null;
   seoActiveVariant: string;
   seoLastGenerated: string | null;
@@ -67,6 +71,7 @@ export default function ProfilesTab() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [regenerating, setRegenerating] = useState(false);
+  const [editingProfile, setEditingProfile] = useState<Profile | null>(null);
 
   // Fetch dashboard data
   const fetchData = async () => {
@@ -220,6 +225,18 @@ export default function ProfilesTab() {
 
   return (
     <div>
+      {/* SEO Edit Modal */}
+      {editingProfile && (
+        <SEOEditModal
+          isOpen={true}
+          onClose={() => setEditingProfile(null)}
+          profile={editingProfile}
+          onSave={() => {
+            fetchData();
+            setEditingProfile(null);
+          }}
+        />
+      )}
 
       {/* Stats Overview */}
       {stats && (
@@ -508,6 +525,7 @@ export default function ProfilesTab() {
                         <Eye className="w-4 h-4" />
                       </a>
                       <button
+                        onClick={() => setEditingProfile(profile)}
                         className="p-2 hover:bg-white/10 rounded-lg transition-colors"
                         title="Edit SEO"
                       >

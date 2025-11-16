@@ -43,7 +43,7 @@ export default function RegistracePage() {
   const [email, setEmail] = useState('');  // Volitelné pro notifikace
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [role, setRole] = useState<'USER' | 'PROVIDER'>('USER');
+  const [role, setRole] = useState<'USER' | 'PROVIDER'>('PROVIDER');
 
   // Údaje pro poskytovatele
   const [profileType, setProfileType] = useState('SOLO');

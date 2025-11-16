@@ -21,6 +21,14 @@ interface SEOEditModalProps {
     seoActiveVariant: string;
     seoManualOverride: boolean;
     seoQualityScore: number | null;
+    // Optional fields from ProfilesTab
+    verified?: boolean;
+    rating?: number;
+    viewCount?: number;
+    seoLastGenerated?: string | null;
+    seoLastReviewed?: string | null;
+    ogImageUrl?: string | null;
+    photos?: Array<{ id: string; alt: string | null; altQualityScore: number | null }>;
   };
   onSave: () => void;
 }

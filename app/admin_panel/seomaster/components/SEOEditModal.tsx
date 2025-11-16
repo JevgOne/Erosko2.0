@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { X, Save, RefreshCw, Eye } from 'lucide-react';
+import { X, Save, RefreshCw, Eye, AlertTriangle, CheckCircle, Info } from 'lucide-react';
 
 interface SEOEditModalProps {
   isOpen: boolean;
@@ -10,6 +10,9 @@ interface SEOEditModalProps {
     id: string;
     name: string;
     slug: string;
+    city: string;
+    age: number;
+    category: string;
     seoTitle: string | null;
     seoDescriptionA: string | null;
     seoDescriptionB: string | null;
@@ -17,6 +20,7 @@ interface SEOEditModalProps {
     seoKeywords: string | null;
     seoActiveVariant: string;
     seoManualOverride: boolean;
+    seoQualityScore: number | null;
   };
   onSave: () => void;
 }
@@ -106,6 +110,75 @@ export default function SEOEditModal({ isOpen, onClose, profile, onSave }: SEOEd
   // Get active description
   const activeDescription = formData[`seoDescription${formData.seoActiveVariant}` as keyof typeof formData] as string;
 
+  // Quality Score Analysis
+  const getQualityAnalysis = () => {
+    const issues: Array<{ type: 'error' | 'warning' | 'success'; message: string }> = [];
+    const recommendations: string[] = [];
+
+    // Title checks
+    const titleLength = formData.seoTitle.length;
+    if (titleLength === 0) {
+      issues.push({ type: 'error', message: 'Title is missing!' });
+      recommendations.push('Add SEO title with structure: [JMÉNO] - [SLUŽBA] [MĚSTO] | EROSKO.CZ');
+    } else if (titleLength < 40) {
+      issues.push({ type: 'warning', message: `Title too short (${titleLength}/60 chars)` });
+      recommendations.push('Add more details to title (city, service type)');
+    } else if (titleLength > 60) {
+      issues.push({ type: 'error', message: `Title too long (${titleLength}/60 chars)` });
+      recommendations.push('Shorten title - Google will cut it off!');
+    } else {
+      issues.push({ type: 'success', message: `Title length perfect (${titleLength}/60 chars)` });
+    }
+
+    // Title structure check
+    if (formData.seoTitle && !formData.seoTitle.includes(profile.name)) {
+      issues.push({ type: 'warning', message: 'Title missing profile name' });
+      recommendations.push(`Add "${profile.name}" to title`);
+    }
+    if (formData.seoTitle && !formData.seoTitle.includes(profile.city)) {
+      issues.push({ type: 'warning', message: 'Title missing city' });
+      recommendations.push(`Add "${profile.city}" for local SEO`);
+    }
+    if (formData.seoTitle && !formData.seoTitle.includes('EROSKO')) {
+      issues.push({ type: 'warning', message: 'Title missing brand' });
+      recommendations.push('End title with "| EROSKO.CZ"');
+    }
+
+    // Description checks
+    const descA = formData.seoDescriptionA?.length || 0;
+    const descB = formData.seoDescriptionB?.length || 0;
+    const descC = formData.seoDescriptionC?.length || 0;
+
+    if (descA < 150) {
+      issues.push({ type: 'warning', message: `Description A too short (${descA}/150-160 chars)` });
+      recommendations.push('Variant A: Add emoji, emotional language, CTA');
+    }
+    if (descB < 150) {
+      issues.push({ type: 'warning', message: `Description B too short (${descB}/150-160 chars)` });
+      recommendations.push('Variant B: Add services, "Bez zprostředkovatele", "Reálné fotky"');
+    }
+    if (descC < 150) {
+      issues.push({ type: 'warning', message: `Description C too short (${descC}/150-160 chars)` });
+      recommendations.push('Variant C: Add benefits, "Diskrétnost", "Přímý kontakt"');
+    }
+
+    // Keywords check
+    const keywordsCount = formData.seoKeywords ? formData.seoKeywords.split(',').length : 0;
+    if (keywordsCount < 12) {
+      issues.push({ type: 'warning', message: `Not enough keywords (${keywordsCount}/12-15)` });
+      recommendations.push('Add more keywords: name+city, service+city, long-tail phrases');
+    } else if (keywordsCount > 15) {
+      issues.push({ type: 'warning', message: `Too many keywords (${keywordsCount}/12-15)` });
+      recommendations.push('Remove less relevant keywords');
+    } else {
+      issues.push({ type: 'success', message: `Keywords count good (${keywordsCount})` });
+    }
+
+    return { issues, recommendations };
+  };
+
+  const analysis = getQualityAnalysis();
+
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="glass rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
@@ -125,6 +198,57 @@ export default function SEOEditModal({ isOpen, onClose, profile, onSave }: SEOEd
 
         {/* Content */}
         <div className="p-6 space-y-6">
+
+          {/* Quality Score Section */}
+          {profile.seoQualityScore && (
+            <div className="glass rounded-lg p-4 border border-white/10">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold">Quality Score</h3>
+                <div className="flex items-center gap-3">
+                  <div className="text-3xl font-bold">{profile.seoQualityScore}/100</div>
+                  <div className={`w-16 h-16 rounded-full border-4 ${
+                    profile.seoQualityScore >= 90 ? 'border-green-500' :
+                    profile.seoQualityScore >= 75 ? 'border-blue-500' :
+                    profile.seoQualityScore >= 60 ? 'border-yellow-500' :
+                    'border-red-500'
+                  } flex items-center justify-center`}>
+                    <span className="text-sm font-bold">{profile.seoQualityScore}%</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Issues */}
+              <div className="space-y-2 mb-4">
+                {analysis.issues.map((issue, i) => (
+                  <div key={i} className={`flex items-start gap-2 text-sm p-2 rounded-lg ${
+                    issue.type === 'error' ? 'bg-red-500/10 text-red-400' :
+                    issue.type === 'warning' ? 'bg-yellow-500/10 text-yellow-400' :
+                    'bg-green-500/10 text-green-400'
+                  }`}>
+                    {issue.type === 'error' && <AlertTriangle className="w-4 h-4 mt-0.5 flex-shrink-0" />}
+                    {issue.type === 'warning' && <Info className="w-4 h-4 mt-0.5 flex-shrink-0" />}
+                    {issue.type === 'success' && <CheckCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />}
+                    <span>{issue.message}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Recommendations */}
+              {analysis.recommendations.length > 0 && (
+                <div className="border-t border-white/10 pt-4">
+                  <h4 className="text-sm font-semibold mb-2 text-primary-400">💡 Co zlepšit:</h4>
+                  <ul className="space-y-1">
+                    {analysis.recommendations.map((rec, i) => (
+                      <li key={i} className="text-sm text-gray-300 flex items-start gap-2">
+                        <span className="text-primary-400 flex-shrink-0">→</span>
+                        <span>{rec}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
           {/* SEO Title */}
           <div>
             <label className="block text-sm font-medium mb-2">

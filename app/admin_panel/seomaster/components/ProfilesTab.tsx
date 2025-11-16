@@ -60,6 +60,11 @@ interface Profile {
   photos: Array<{ id: string; alt: string | null; altQualityScore: number | null }>;
 }
 
+// Extended profile for modal (includes all fields needed for edit)
+interface ExtendedProfile extends Profile {
+  category: string; // for modal
+}
+
 export default function ProfilesTab() {
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<Stats | null>(null);

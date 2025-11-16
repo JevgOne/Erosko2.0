@@ -70,27 +70,27 @@ Generate SEO-optimized metadata for this ${data.type.toLowerCase()} on erosko.cz
 **DELIVERABLES:**
 
 1. **META Title** (max 60 chars)
-   **POVINNÁ STRUKTURA:** "[SLUŽBA] ${data.city} - ${data.name}${data.age ? ` ${data.age}` : ''} | EROSKO.CZ"
+   **POVINNÁ STRUKTURA:** "${data.name}${data.age ? ` ${data.age}` : ''} - [SLUŽBA] ${data.city} | EROSKO.CZ"
 
    **PRAVIDLA:**
-   - První VŽDY: KONKRÉTNÍ služba (NE generic!)
-   - Druhé VŽDY: Město
-   - Třetí VŽDY: Jméno profilu (+ věk pokud je)
+   - První VŽDY: Jméno profilu (+ věk pokud je)
+   - Druhé VŽDY: KONKRÉTNÍ služba (NE generic!)
+   - Třetí VŽDY: Město
    - Konec: | EROSKO.CZ
 
    **Příklady SPRÁVNĚ:**
-   - "Erotický salon Praha 5 - Sexy Lucie 25 | EROSKO.CZ" (podnik)
-   - "Společnice VIP Praha - Nikola 28 | EROSKO.CZ" (escort)
-   - "Erotické masáže Brno - Studio Tantra | EROSKO.CZ" (salon)
-   - "Privát s holkami Praha 7 - Sexy Club | EROSKO.CZ" (klub)
-   - "BDSM Domina Praha - Mistress Eva 32 | EROSKO.CZ" (domina)
+   - "Sexy Lucie 25 - Erotický salon Praha 5 | EROSKO.CZ" (podnik)
+   - "Nikola 28 - Společnice VIP Praha | EROSKO.CZ" (escort)
+   - "Studio Tantra - Erotické masáže Brno | EROSKO.CZ" (salon)
+   - "Sexy Club - Privát s holkami Praha 7 | EROSKO.CZ" (klub)
+   - "Mistress Eva 32 - BDSM Praha | EROSKO.CZ" (domina)
 
    ❌ **ŠPATNĚ:**
-   - "Sexy Club | Erotické služby Praha" (generic služba!)
-   - "Lucie 25 let | Praha | Escort" (špatné pořadí!)
-   - "Praha - Erotický salon Lucie" (město první = špatně!)
+   - "Erotické služby Praha - Sexy Club" (generic služba!)
+   - "Praha - Lucie 25 - Escort" (město první!)
+   - "Společnice - Praha - Lucie" (jméno poslední!)
 
-   ✅ **SPRÁVNĚ:** Služba → Město → Jméno → EROSKO.CZ
+   ✅ **SPRÁVNĚ:** Jméno → Služba → Město → EROSKO.CZ
 
 2. **META Descriptions** (3 variants, 150-160 chars each)
 
@@ -142,7 +142,7 @@ Generate SEO-optimized metadata for this ${data.type.toLowerCase()} on erosko.cz
 }
 
 **QUALITY CHECKLIST:**
-✓ Title struktura: Služba → Město → Jméno → EROSKO.CZ
+✓ Title struktura: Jméno → Služba → Město → EROSKO.CZ
 ✓ Title under 60 characters
 ✓ Each description 150-160 characters
 ✓ No generic "erotické služby" for businesses
@@ -153,9 +153,9 @@ Generate SEO-optimized metadata for this ${data.type.toLowerCase()} on erosko.cz
 ✓ Keywords are relevant + diverse
 
 **POVINNÉ POŘADÍ V TITLE:**
-1. Konkrétní služba (např. "Erotický salon", "Společnice", "BDSM")
-2. Město (např. "Praha", "Brno")
-3. Jméno profilu (+ věk)
+1. Jméno profilu (+ věk pokud je) - např. "Lucie 25", "Sexy Club"
+2. Konkrétní služba - např. "Společnice", "Erotický salon", "BDSM"
+3. Město - např. "Praha", "Brno"
 4. | EROSKO.CZ
 
 **GENERATE NOW:**`;
@@ -168,36 +168,36 @@ Main keywords: společnice, escort, holky na sex, call girl, VIP escort
 Service for TITLE: "Společnice [město]", "Escort [město]", "VIP escort [město]"
 Tone: Elegantní, profesionální, diskrétní
 TITLE examples:
-  - "Společnice Praha - Lucie 25 | EROSKO.CZ"
-  - "Escort VIP Brno - Nikola 28 | EROSKO.CZ"
-  - "Holky na sex Praha 5 - Sexy Markéta 24 | EROSKO.CZ"`,
+  - "Lucie 25 - Společnice Praha | EROSKO.CZ"
+  - "Nikola 28 - Escort VIP Brno | EROSKO.CZ"
+  - "Sexy Markéta 24 - Holky na sex Praha 5 | EROSKO.CZ"`,
 
     EROTICKE_MASERKY: `
 Main keywords: erotická masáž, tantra masáž, masérka, body to body, nuru
 Service for TITLE: "Erotická masáž [město]", "Tantra masáž [město]", "Erotické masáže [město]"
 Tone: Profesionální, uklidňující, smyslná
 TITLE examples:
-  - "Erotická masáž Praha - Studio Relax | EROSKO.CZ"
-  - "Tantra masáž Brno - Petra 29 | EROSKO.CZ"
-  - "Erotické masáže Praha 7 - Thai Massage | EROSKO.CZ"`,
+  - "Studio Relax - Erotická masáž Praha | EROSKO.CZ"
+  - "Petra 29 - Tantra masáž Brno | EROSKO.CZ"
+  - "Thai Massage - Erotické masáže Praha 7 | EROSKO.CZ"`,
 
     DOMINA: `
 Main keywords: domina, BDSM, femdom, mistress, dominance, SM
 Service for TITLE: "Domina [město]", "BDSM [město]", "Mistress [město]"
 Tone: Autoritativní, profesionální, respektující hranice
 TITLE examples:
-  - "BDSM Praha - Mistress Eva 32 | EROSKO.CZ"
-  - "Domina Brno - Lady Sarah | EROSKO.CZ"
-  - "BDSM studio Praha 1 - Dungeon Queen | EROSKO.CZ"`,
+  - "Mistress Eva 32 - BDSM Praha | EROSKO.CZ"
+  - "Lady Sarah - Domina Brno | EROSKO.CZ"
+  - "Dungeon Queen - BDSM studio Praha 1 | EROSKO.CZ"`,
 
     DIGITALNI_SLUZBY: `
 Main keywords: webcam, videochat, online, cam show, video call
 Service for TITLE: "Webcam [město]", "Videochat [město]", "Online show [město]"
 Tone: Moderní, přístupný, interaktivní
 TITLE examples:
-  - "Webcam Praha - Sexy Камела 23 | EROSKO.CZ"
-  - "Videochat Brno - Karolína 26 | EROSKO.CZ"
-  - "Online show Praha - Hot Natalie | EROSKO.CZ"`,
+  - "Sexy Камела 23 - Webcam Praha | EROSKO.CZ"
+  - "Karolína 26 - Videochat Brno | EROSKO.CZ"
+  - "Hot Natalie - Online show Praha | EROSKO.CZ"`,
 
     EROTICKE_PODNIKY: `
 Main keywords: ${type === 'Business' ? 'erotický podnik, erotický salon, klub, privát, studio, erotický bar' : 'erotické služby'}
@@ -210,14 +210,14 @@ ${type === 'Business' ? `
 - NEVER EVER use "Erotické služby" in TITLE!
 - ALWAYS use SPECIFIC type: "Erotický salon", "Privát", "Klub", "Studio"
 - Examples of CORRECT titles:
-  • "Erotický salon Praha 5 - Sexy Club | EROSKO.CZ"
-  • "Privát s holkami Brno - Club Paradise | EROSKO.CZ"
-  • "Erotický klub Praha 1 - VIP Lounge | EROSKO.CZ"
-  • "Studio Praha 7 - Tantra House | EROSKO.CZ"
+  • "Sexy Club - Erotický salon Praha 5 | EROSKO.CZ"
+  • "Club Paradise - Privát s holkami Brno | EROSKO.CZ"
+  • "VIP Lounge - Erotický klub Praha 1 | EROSKO.CZ"
+  • "Tantra House - Studio Praha 7 | EROSKO.CZ"
 - Examples of WRONG titles:
   ✗ "Erotické služby Praha - Sexy Club" (generic!)
-  ✗ "Sexy Club - Erotický podnik Praha" (jméno první!)
-  ✗ "Praha - Erotický salon Sexy Club" (město první!)
+  ✗ "Erotický salon Praha - Sexy Club" (služba první!)
+  ✗ "Praha - Sexy Club - Erotický salon" (město první!)
 ` : ''}`,
   };
 

@@ -82,7 +82,7 @@ export async function POST(request: Request) {
 
       // If provider, create profile or business
       if (role === UserRole.PROVIDER && profile) {
-        const profileType = profile.profileType as ProfileType;
+      const profileType = profile.profileType as ProfileType;
 
       // Check if this is a business or individual profile
       const isBusinessType = profileType !== ProfileType.SOLO;
@@ -215,18 +215,17 @@ export async function POST(request: Request) {
           },
         };
       }
-    }
 
-    // Return user only if no profile/business
-    return {
-      user: {
-        id: user.id,
-        phone: user.phone,
-        email: user.email,
-        role: user.role,
-      },
-    };
-  });
+      // Return user only if no profile/business
+      return {
+        user: {
+          id: user.id,
+          phone: user.phone,
+          email: user.email,
+          role: user.role,
+        },
+      };
+    });
 
     // Return result from transaction
     return NextResponse.json(result, { status: 201 });

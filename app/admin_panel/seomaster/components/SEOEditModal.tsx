@@ -59,8 +59,11 @@ export default function SEOEditModal({ isOpen, onClose, profile, onSave }: SEOEd
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           profileId: profile.id,
-          ...formData,
-          seoManualOverride: true, // Mark as manual edit
+          seoData: {
+            ...formData,
+            seoManualOverride: true, // Mark as manual edit
+          },
+          manualOverride: true,
         }),
       });
 

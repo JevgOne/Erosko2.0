@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import prisma from '@/lib/prisma';
 import { ProfileType } from '@prisma/client';
+import { generateBusinessSEO } from '@/lib/seo-automation';
 
 export async function POST(request: Request) {
   try {
@@ -47,6 +48,35 @@ export async function POST(request: Request) {
         isNew: true,
       },
     });
+
+    // Auto-generate SEO in background (non-blocking)
+    generateBusinessSEO({
+      id: business.id,
+      name: business.name,
+      city: business.city,
+      profileType: business.profileType,
+      description: business.description,
+    })
+      .then(async (seoResult) => {
+        if (seoResult.success) {
+          await prisma.business.update({
+            where: { id: business.id },
+            data: {
+              seoTitle: seoResult.seoTitle,
+              seoDescription: seoResult.seoDescriptionA, // Use variant A for businesses
+              seoKeywords: seoResult.seoKeywords,
+              seoQualityScore: seoResult.seoQualityScore,
+              ogImageUrl: seoResult.ogImageUrl,
+              seoLastGenerated: new Date(),
+            },
+          });
+          console.log(`✅ SEO generated for business: ${business.name}`);
+        }
+      })
+      .catch((error) => {
+        console.error('Background SEO generation failed:', error);
+        // Don't fail the request if SEO fails
+      });
 
     return NextResponse.json(
       {

@@ -1,9 +1,7 @@
-import OpenAI from 'openai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import { NextResponse } from 'next/server';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
 export async function POST(req: Request) {
   try {
@@ -47,23 +45,25 @@ Output as JSON:
 }
 `;
 
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        {
-          role: "system",
-          content: "You are an expert SEO copywriter. Always respond with valid JSON only."
-        },
-        {
-          role: "user",
-          content: prompt
-        }
-      ],
-      response_format: { type: "json_object" },
-      temperature: 0.7,
+    const model = genAI.getGenerativeModel({
+      model: "gemini-2.0-flash",
+      generationConfig: {
+        temperature: 0.7,
+      },
     });
 
-    const result = JSON.parse(completion.choices[0].message.content || '{}');
+    const fullPrompt = `You are an expert SEO copywriter. Always respond with valid JSON only.\n\n${prompt}`;
+    const geminiResult = await model.generateContent(fullPrompt);
+    const response = await geminiResult.response;
+    let text = response.text();
+
+    // Remove markdown code blocks if present
+    const jsonMatch = text.match(/```json\n([\s\S]*?)\n```/);
+    if (jsonMatch) {
+      text = jsonMatch[1];
+    }
+
+    const result = JSON.parse(text);
 
     // Validate result
     if (!result.title || !result.descriptions || !Array.isArray(result.descriptions) || result.descriptions.length !== 3) {

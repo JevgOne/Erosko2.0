@@ -1,9 +1,7 @@
-import Anthropic from '@anthropic-ai/sdk';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import { NextResponse } from 'next/server';
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
 export async function POST(req: Request) {
   try {
@@ -64,36 +62,25 @@ Output as JSON:
 }
 `;
 
-    const message = await anthropic.messages.create({
-      model: "claude-3-5-sonnet-20241022",
-      max_tokens: 2048,
-      messages: [
-        {
-          role: "user",
-          content: prompt
-        }
-      ],
-      temperature: 0.7,
+    const model = genAI.getGenerativeModel({
+      model: "gemini-2.0-flash",
+      generationConfig: {
+        temperature: 0.7,
+      },
     });
 
-    // Extract JSON from Claude's response
-    const textContent = message.content.find(c => c.type === 'text');
-    if (!textContent || textContent.type !== 'text') {
-      throw new Error('No text content in Claude response');
+    const fullPrompt = `You are an SEO expert. Always respond with valid JSON only.\n\n${prompt}`;
+    const geminiResult = await model.generateContent(fullPrompt);
+    const response = await geminiResult.response;
+    let text = response.text();
+
+    // Remove markdown code blocks if present
+    const jsonMatch = text.match(/```json\n([\s\S]*?)\n```/);
+    if (jsonMatch) {
+      text = jsonMatch[1];
     }
 
-    let result;
-    try {
-      result = JSON.parse(textContent.text);
-    } catch (e) {
-      // If Claude wrapped JSON in markdown, extract it
-      const jsonMatch = textContent.text.match(/```json\n([\s\S]*?)\n```/);
-      if (jsonMatch) {
-        result = JSON.parse(jsonMatch[1]);
-      } else {
-        throw new Error('Could not parse Claude response as JSON');
-      }
-    }
+    const result = JSON.parse(text);
 
     // Validate result
     if (!result.photos || !Array.isArray(result.photos)) {

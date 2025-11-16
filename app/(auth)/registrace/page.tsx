@@ -348,16 +348,26 @@ export default function RegistracePage() {
         }
       }
 
-      // Převést fotky na base64 pro posílání v JSON
+      // Převést fotky na base64 pro posílání v JSON (skip for now to avoid errors)
       const photoBase64Array: string[] = [];
+      // TEMPORARILY DISABLED: Photos can be added later in admin panel
+      // This prevents registration failures due to photo upload issues
+      /*
       for (const photo of photos) {
-        const base64 = await new Promise<string>((resolve) => {
-          const reader = new FileReader();
-          reader.onloadend = () => resolve(reader.result as string);
-          reader.readAsDataURL(photo);
-        });
-        photoBase64Array.push(base64);
+        try {
+          const base64 = await new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result as string);
+            reader.onerror = () => reject(new Error('Failed to read file'));
+            reader.readAsDataURL(photo);
+          });
+          photoBase64Array.push(base64);
+        } catch (photoError) {
+          console.error('Error converting photo:', photoError);
+          // Continue without this photo
+        }
       }
+      */
 
       const response = await fetch('/api/register', {
         method: 'POST',
@@ -1138,21 +1148,28 @@ export default function RegistracePage() {
                           </div>
                         </div>
 
-                        {/* Fotky */}
-                        <div>
+                        {/* Notice about photos */}
+                        <div className="p-4 rounded-xl bg-blue-500/10 border border-blue-500/20">
+                          <p className="text-sm text-blue-300">
+                            📸 Fotky přidáte po dokončení registrace v administračním rozhraní. Nejprve dokončete základní registraci.
+                          </p>
+                        </div>
+
+                        {/* Fotky - HIDDEN FOR NOW */}
+                        <div className="hidden">
                           <label className="block text-sm font-medium mb-2">
-                            Fotky (maximálně 10)
+                            Fotky (přidáte později)
                           </label>
                           <div className="space-y-4">
-                            {/* Upload button */}
-                            <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-white/20 rounded-xl cursor-pointer hover:border-primary-500 transition-colors bg-dark-800/30">
+                            {/* Upload button - DISABLED */}
+                            <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-white/20 rounded-xl cursor-not-allowed opacity-50 bg-dark-800/30">
                               <div className="flex flex-col items-center justify-center pt-5 pb-6">
                                 <Upload className="w-8 h-8 mb-2 text-gray-400" />
                                 <p className="text-sm text-gray-400">
-                                  Klikni pro nahrání fotek
+                                  Fotky přidáte po registraci
                                 </p>
                                 <p className="text-xs text-gray-500 mt-1">
-                                  PNG, JPG, WEBP (max. 5MB každá)
+                                  V administračním panelu
                                 </p>
                               </div>
                               <input
@@ -1161,6 +1178,7 @@ export default function RegistracePage() {
                                 multiple
                                 onChange={handlePhotoChange}
                                 className="hidden"
+                                disabled
                               />
                             </label>
 
@@ -1190,7 +1208,7 @@ export default function RegistracePage() {
 
                         <div className="p-4 rounded-xl bg-primary-500/10 border border-primary-500/20">
                           <p className="text-sm text-gray-300">
-                            ℹ️ Profily a služby jednotlivých dívek přidáte až v admin panelu po dokončení registrace.
+                            ℹ️ Profily a služby jednotlivých dívek i fotky přidáte až v admin panelu po dokončení registrace.
                           </p>
                         </div>
                       </>
@@ -1290,10 +1308,17 @@ export default function RegistracePage() {
                           </div>
                         </div>
 
-                        {/* Fotky */}
-                        <div>
+                        {/* Notice about photos */}
+                        <div className="p-4 rounded-xl bg-blue-500/10 border border-blue-500/20">
+                          <p className="text-sm text-blue-300">
+                            📸 Fotky přidáte po dokončení registrace v administračním rozhraní. Nejprve dokončete základní registraci.
+                          </p>
+                        </div>
+
+                        {/* Fotky - HIDDEN FOR NOW */}
+                        <div className="hidden">
                           <label className="block text-sm font-medium mb-2">
-                            Fotky (maximálně 10)
+                            Fotky (přidáte později)
                           </label>
                           <div className="space-y-4">
                             {/* Upload button */}

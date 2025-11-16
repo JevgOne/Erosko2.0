@@ -11,22 +11,22 @@ datasource db {
 
 // Enums
 enum ProfileType {
-  SOLO           // Independent escort
-  PRIVAT         // Private location (Erotický privát)
-  MASSAGE_SALON  // Massage salon (Erotické masáže)
-  ESCORT_AGENCY  // Escort agency (Escort Agentura)
+  SOLO // Independent escort
+  PRIVAT // Private location (Erotický privát)
+  MASSAGE_SALON // Massage salon (Erotické masáže)
+  ESCORT_AGENCY // Escort agency (Escort Agentura)
   DIGITAL_AGENCY // Online services (Digitální Agentura)
-  SWINGERS_CLUB  // Swingers club (Swingers klub)
-  NIGHT_CLUB     // Night club (Night Club)
-  STRIP_CLUB     // Strip club (Strip Club)
+  SWINGERS_CLUB // Swingers club (Swingers klub)
+  NIGHT_CLUB // Night club (Night Club)
+  STRIP_CLUB // Strip club (Strip Club)
 }
 
 enum Category {
-  HOLKY_NA_SEX      // Girls for sex
-  EROTICKE_MASERKY  // Erotic masseuses
-  DOMINA            // BDSM/Domina
-  DIGITALNI_SLUZBY  // Digital services (webcam, phone sex, etc.)
-  EROTICKE_PODNIKY  // Erotic businesses (clubs, etc.)
+  HOLKY_NA_SEX // Girls for sex
+  EROTICKE_MASERKY // Erotic masseuses
+  DOMINA // BDSM/Domina
+  DIGITALNI_SLUZBY // Digital services (webcam, phone sex, etc.)
+  EROTICKE_PODNIKY // Erotic businesses (clubs, etc.)
 }
 
 enum UserRole {
@@ -36,24 +36,24 @@ enum UserRole {
 }
 
 enum ServiceCategory {
-  PRAKTIKY        // Praktiky pro holky na sex
-  DRUHY_MASAZI    // Druhy masáží pro masérky
-  EXTRA_SLUZBY    // Extra služby pro masérky
-  BDSM_PRAKTIKY   // BDSM praktiky
+  PRAKTIKY // Praktiky pro holky na sex
+  DRUHY_MASAZI // Druhy masáží pro masérky
+  EXTRA_SLUZBY // Extra služby pro masérky
+  BDSM_PRAKTIKY // BDSM praktiky
 }
 
 enum PageType {
-  CATEGORY      // Category pages (/holky-na-sex, /eroticke-masaze)
-  CITY          // City pages (/praha, /brno)
+  CATEGORY // Category pages (/holky-na-sex, /eroticke-masaze)
+  CITY // City pages (/praha, /brno)
   CATEGORY_CITY // Category + City (/holky-na-sex/praha)
-  CUSTOM        // Custom landing pages
+  CUSTOM // Custom landing pages
 }
 
 // Models
 model User {
   id            String   @id @default(cuid())
-  phone         String   @unique  // Primary login method
-  email         String?  @unique  // Optional for notifications, unique for email login
+  phone         String   @unique // Primary login method
+  email         String?  @unique // Optional for notifications, unique for email login
   passwordHash  String
   phoneVerified Boolean  @default(false)
   role          UserRole @default(USER)
@@ -61,30 +61,30 @@ model User {
   updatedAt     DateTime @updatedAt
 
   // Relations
-  profiles           Profile[]
-  businesses         Business[]
-  reviews            Review[]
-  favorites          Favorite[]
-  requestedChanges   PendingChange[] @relation("RequestedChanges")
-  reviewedChanges    PendingChange[] @relation("ReviewedChanges")
-  verificationCodes  VerificationCode[]
+  profiles          Profile[]
+  businesses        Business[]
+  reviews           Review[]
+  favorites         Favorite[]
+  requestedChanges  PendingChange[]    @relation("RequestedChanges")
+  reviewedChanges   PendingChange[]    @relation("ReviewedChanges")
+  verificationCodes VerificationCode[]
 
   @@index([phone])
 }
 
 // SMS Verification codes for password reset and phone verification
 model VerificationCode {
-  id          String   @id @default(cuid())
-  phone       String
-  code        String   // 6-digit code
-  type        VerificationCodeType
-  expiresAt   DateTime
-  verified    Boolean  @default(false)
-  createdAt   DateTime @default(now())
+  id        String               @id @default(cuid())
+  phone     String
+  code      String // 6-digit code
+  type      VerificationCodeType
+  expiresAt DateTime
+  verified  Boolean              @default(false)
+  createdAt DateTime             @default(now())
 
   // Relations
-  userId      String?
-  user        User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([phone])
   @@index([code])
@@ -108,19 +108,19 @@ model Business {
   profileType ProfileType
 
   // Business-specific fields
-  equipment   Json?       // Array of equipment/amenities
-  openingHours Json?      // Opening hours by day: { monday: "9:00-22:00", ... }
+  equipment    Json? // Array of equipment/amenities
+  openingHours Json? // Opening hours by day: { monday: "9:00-22:00", ... }
 
   // Metadata
-  approved    Boolean     @default(false)  // Admin approved for public display
-  verified    Boolean     @default(false)  // Admin verified with badge
-  isNew       Boolean     @default(true)
-  isPopular   Boolean     @default(false)
+  approved  Boolean @default(false) // Admin approved for public display
+  verified  Boolean @default(false) // Admin verified with badge
+  isNew     Boolean @default(true)
+  isPopular Boolean @default(false)
 
   // Stats
-  rating      Float       @default(0)
-  reviewCount Int         @default(0)
-  viewCount   Int         @default(0)
+  rating      Float @default(0)
+  reviewCount Int   @default(0)
+  viewCount   Int   @default(0)
 
   // SEO Fields (AI-generated)
   seoTitle          String?
@@ -128,16 +128,25 @@ model Business {
   seoKeywords       String?
   seoQualityScore   Int?
   ogImageUrl        String?
-  seoManualOverride Boolean  @default(false)
+  seoManualOverride Boolean   @default(false)
   seoLastGenerated  DateTime?
 
+  // Advanced SEO Fields
+  focusKeyword      String?
+  secondaryKeywords String?   @default("")
+  seoScore          Int?      @default(0)
+  schemaMarkup      String? // JSON stringified
+  lastAnalyzed      DateTime?
+  contentScore      Int?      @default(0)
+  readabilityScore  Int?      @default(0)
+
   // Timestamps
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relations
-  ownerId     String
-  owner       User        @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId        String
+  owner          User            @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   profiles       Profile[]
   photos         Photo[]
   reviews        Review[]
@@ -149,92 +158,101 @@ model Business {
 }
 
 model Profile {
-  id          String      @id @default(cuid())
+  id          String  @id @default(cuid())
   name        String
-  slug        String      @unique
+  slug        String  @unique
   age         Int
   description String?
   phone       String
   email       String?
 
   // Location
-  city        String
-  address     String?
-  location    String      // Display location
+  city     String
+  address  String?
+  location String // Display location
 
   // Profile type
   profileType ProfileType
   category    Category
 
   // Physical attributes
-  height      Int?        // cm
-  weight      Int?        // kg
-  bust        String?     // 1, 2, 3, 4
-  hairColor   String?     // blonde, brunette, black, red, other
-  hairLength  String?     // short, medium, long
-  breastType  String?     // natural, silicone
-  bodyType    String?     // slim, athletic, curvy, plus-size
-  ageCategory String?     // 18-25, 26-35, 36-45, 46+
-  pubicHair   String?     // shaved, trimmed, natural
+  height      Int? // cm
+  weight      Int? // kg
+  bust        String? // 1, 2, 3, 4
+  hairColor   String? // blonde, brunette, black, red, other
+  hairLength  String? // short, medium, long
+  breastType  String? // natural, silicone
+  bodyType    String? // slim, athletic, curvy, plus-size
+  ageCategory String? // 18-25, 26-35, 36-45, 46+
+  pubicHair   String? // shaved, trimmed, natural
 
   // Additional attributes
-  role        String?     // active, passive, switch, dominant, submissive
-  nationality String?     // czech, slovak, polish, ukrainian, russian, etc.
-  languages   String?     // JSON array of languages
-  orientation String?     // hetero, bi, lesbian, gay
-  tattoos     String?     // none, small, medium, large
-  piercing    String?     // none, ears, multiple
+  role        String? // active, passive, switch, dominant, submissive
+  nationality String? // czech, slovak, polish, ukrainian, russian, etc.
+  languages   String? // JSON array of languages
+  orientation String? // hetero, bi, lesbian, gay
+  tattoos     String? // none, small, medium, large
+  piercing    String? // none, ears, multiple
 
   // Services
-  offersEscort Boolean    @default(false)
-  travels     Boolean    @default(false)
+  offersEscort Boolean @default(false)
+  travels      Boolean @default(false)
 
   // Opening hours (for individual profiles)
-  openingHours Json?      // Opening hours by day: { monday: "9:00-22:00", ... }
+  openingHours Json? // Opening hours by day: { monday: "9:00-22:00", ... }
 
   // Private contacts (ADMIN ONLY - NOT displayed publicly)
-  privateContacts Json?   // { phone, whatsapp, email, telegram } - internal contacts
+  privateContacts Json? // { phone, whatsapp, email, telegram } - internal contacts
 
   // Metadata
-  approved    Boolean    @default(false)  // Admin approved for public display
-  verified    Boolean    @default(false)  // Admin verified with badge
-  isNew       Boolean    @default(true)
-  isPopular   Boolean    @default(false)
-  isOnline    Boolean    @default(false)
+  approved  Boolean @default(false) // Admin approved for public display
+  verified  Boolean @default(false) // Admin verified with badge
+  isNew     Boolean @default(true)
+  isPopular Boolean @default(false)
+  isOnline  Boolean @default(false)
 
   // Stats
-  rating      Float      @default(0)
-  reviewCount Int        @default(0)
-  viewCount   Int        @default(0)
+  rating      Float @default(0)
+  reviewCount Int   @default(0)
+  viewCount   Int   @default(0)
 
   // SEO Fields (AI-generated)
-  seoTitle          String?
-  seoDescription    String?
-  seoDescriptionA   String?  // Variant A (emotional)
-  seoDescriptionB   String?  // Variant B (factual)
-  seoDescriptionC   String?  // Variant C (benefits)
-  seoKeywords       String?
-  seoQualityScore   Int?
-  ogImageUrl        String?
+  seoTitle        String?
+  seoDescription  String?
+  seoDescriptionA String? // Variant A (emotional)
+  seoDescriptionB String? // Variant B (factual)
+  seoDescriptionC String? // Variant C (benefits)
+  seoKeywords     String?
+  seoQualityScore Int?
+  ogImageUrl      String?
 
   // SEO Master Override
-  seoManualOverride Boolean  @default(false)
+  seoManualOverride Boolean   @default(false)
   seoLastGenerated  DateTime?
   seoLastReviewed   DateTime?
 
   // A/B Testing
-  seoActiveVariant  String   @default("A")
-  seoVariantStats   Json?    // { A: {clicks: 77, impressions: 1240}, B: {...}, C: {...} }
+  seoActiveVariant String @default("A")
+  seoVariantStats  Json? // { A: {clicks: 77, impressions: 1240}, B: {...}, C: {...} }
+
+  // Advanced SEO Fields
+  focusKeyword      String?
+  secondaryKeywords String?   @default("")
+  seoScore          Int?      @default(0)
+  schemaMarkup      String? // JSON stringified
+  lastAnalyzed      DateTime?
+  contentScore      Int?      @default(0)
+  readabilityScore  Int?      @default(0)
 
   // Timestamps
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relations
-  ownerId     String
-  owner       User       @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  businessId  String?
-  business    Business?  @relation(fields: [businessId], references: [id], onDelete: SetNull)
+  ownerId        String
+  owner          User             @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  businessId     String?
+  business       Business?        @relation(fields: [businessId], references: [id], onDelete: SetNull)
   photos         Photo[]
   reviews        Review[]
   services       ProfileService[]
@@ -248,20 +266,20 @@ model Profile {
 }
 
 model Photo {
-  id              String    @id @default(cuid())
+  id              String  @id @default(cuid())
   url             String
   alt             String?
-  altQualityScore Int?      // AI quality score 0-100
-  order           Int       @default(0)
-  isMain          Boolean   @default(false)
+  altQualityScore Int? // AI quality score 0-100
+  order           Int     @default(0)
+  isMain          Boolean @default(false)
 
   // Relations
-  profileId   String?
-  profile     Profile?  @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  businessId  String?
-  business    Business? @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  profileId  String?
+  profile    Profile?  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  businessId String?
+  business   Business? @relation(fields: [businessId], references: [id], onDelete: Cascade)
 
-  createdAt   DateTime  @default(now())
+  createdAt DateTime @default(now())
 
   @@index([profileId])
   @@index([businessId])
@@ -271,21 +289,21 @@ model Service {
   id          String          @id @default(cuid())
   name        String          @unique
   description String?
-  icon        String?         // Icon name from lucide-react
+  icon        String? // Icon name from lucide-react
   category    ServiceCategory @default(PRAKTIKY)
 
   // Relations
-  profiles    ProfileService[]
+  profiles ProfileService[]
 }
 
 model ProfileService {
-  id        String   @id @default(cuid())
+  id String @id @default(cuid())
 
   // Relations
   profileId String
-  profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
   serviceId String
-  service   Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  service   Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
 
   @@unique([profileId, serviceId])
   @@index([profileId])
@@ -293,19 +311,19 @@ model ProfileService {
 }
 
 model Review {
-  id          String   @id @default(cuid())
-  rating      Int      // 1-5
-  comment     String?
+  id         String    @id @default(cuid())
+  rating     Int // 1-5
+  comment    String?
   // Relations
-  authorId    String
-  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  profileId   String?
-  profile     Profile? @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  businessId  String?
-  business    Business? @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  authorId   String
+  author     User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  profileId  String?
+  profile    Profile?  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  businessId String?
+  business   Business? @relation(fields: [businessId], references: [id], onDelete: Cascade)
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([profileId])
   @@index([businessId])
@@ -313,13 +331,13 @@ model Review {
 }
 
 model Favorite {
-  id        String   @id @default(cuid())
+  id String @id @default(cuid())
 
   // Relations
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   profileId String
-  profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
 
@@ -341,32 +359,32 @@ enum ChangeType {
 }
 
 model PendingChange {
-  id          String       @id @default(cuid())
-  type        ChangeType
-  status      ChangeStatus @default(PENDING)
+  id     String       @id @default(cuid())
+  type   ChangeType
+  status ChangeStatus @default(PENDING)
 
   // Reference to what's being changed
-  profileId   String?
-  profile     Profile?     @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  businessId  String?
-  business    Business?    @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  profileId  String?
+  profile    Profile?  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  businessId String?
+  business   Business? @relation(fields: [businessId], references: [id], onDelete: Cascade)
 
   // Change data
-  oldData     Json?        // Original data
-  newData     Json         // Requested changes
+  oldData Json? // Original data
+  newData Json // Requested changes
 
   // Who requested the change
   requestedById String
-  requestedBy   User       @relation("RequestedChanges", fields: [requestedById], references: [id], onDelete: Cascade)
+  requestedBy   User   @relation("RequestedChanges", fields: [requestedById], references: [id], onDelete: Cascade)
 
   // Who approved/rejected
-  reviewedById  String?
-  reviewedBy    User?      @relation("ReviewedChanges", fields: [reviewedById], references: [id])
-  reviewedAt    DateTime?
-  reviewNotes   String?
+  reviewedById String?
+  reviewedBy   User?     @relation("ReviewedChanges", fields: [reviewedById], references: [id])
+  reviewedAt   DateTime?
+  reviewNotes  String?
 
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([profileId])
   @@index([businessId])
@@ -376,27 +394,51 @@ model PendingChange {
 
 // Static Pages for Landing Pages & SEO
 model StaticPage {
-  id          String   @id @default(cuid())
-  path        String   @unique  // URL path (e.g., "/holky-na-sex", "/praha")
-  type        PageType @default(CUSTOM)
-  
+  id   String   @id @default(cuid())
+  path String   @unique // URL path (e.g., "/holky-na-sex", "/praha")
+  type PageType @default(CUSTOM)
+
   // SEO Fields
   seoTitle       String
   seoDescription String
   h1             String
-  content        String?  @default("")  // SEO text content
+  content        String? @default("") // SEO text content
   keywords       String?
   ogImageUrl     String?
-  
+
+  // Advanced SEO Fields
+  focusKeyword      String?
+  secondaryKeywords String?   @default("")
+  seoScore          Int?      @default(0)
+  schemaMarkup      String? // JSON stringified
+  lastAnalyzed      DateTime?
+  contentScore      Int?      @default(0)
+  readabilityScore  Int?      @default(0)
+
   // Metadata
-  published   Boolean  @default(true)
-  viewCount   Int      @default(0)
-  
+  published Boolean @default(true)
+  viewCount Int     @default(0)
+
   // Timestamps
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@index([path])
   @@index([type])
   @@index([published])
+}
+
+// Redirect Management
+model Redirect {
+  id        String   @id @default(cuid())
+  from      String   @unique
+  to        String
+  type      Int      @default(301) // 301, 302, 307
+  hits      Int      @default(0)
+  enabled   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([from])
+  @@index([enabled])
 }

@@ -83,18 +83,29 @@ export async function POST(request: Request) {
           },
         });
 
-        // Save photos if provided
-        if (profile.photos && profile.photos.length > 0) {
-          for (let i = 0; i < profile.photos.length; i++) {
-            const photoUrl = await saveBase64Photo(profile.photos[i], 'businesses');
-            await prisma.photo.create({
-              data: {
-                url: photoUrl,
-                businessId: newBusiness.id,
-                order: i,
-                isMain: i === 0, // První fotka je hlavní
-              },
-            });
+        // Save photos if provided (skip if error)
+        if (profile.photos && Array.isArray(profile.photos) && profile.photos.length > 0) {
+          try {
+            console.log(`Processing ${profile.photos.length} photos for business`);
+            for (let i = 0; i < profile.photos.length; i++) {
+              try {
+                const photoUrl = await saveBase64Photo(profile.photos[i], 'businesses');
+                await prisma.photo.create({
+                  data: {
+                    url: photoUrl,
+                    businessId: newBusiness.id,
+                    order: i,
+                    isMain: i === 0, // První fotka je hlavní
+                  },
+                });
+              } catch (photoError) {
+                console.error(`Error saving photo ${i + 1}:`, photoError);
+                // Continue with other photos even if one fails
+              }
+            }
+          } catch (error) {
+            console.error('Error processing photos:', error);
+            // Don't fail registration if photos fail - continue without photos
           }
         }
 
@@ -162,22 +173,32 @@ export async function POST(request: Request) {
           }
         }
 
-        // Save photos if provided
-        if (profile.photos && profile.photos.length > 0) {
-          console.log(`Saving ${profile.photos.length} photos for profile`);
-          for (let i = 0; i < profile.photos.length; i++) {
-            console.log(`Processing photo ${i + 1}/${profile.photos.length}, size: ${profile.photos[i]?.length || 0} bytes`);
-            const photoUrl = await saveBase64Photo(profile.photos[i], 'profiles');
-            await prisma.photo.create({
-              data: {
-                url: photoUrl,
-                profileId: newProfile.id,
-                order: i,
-                isMain: i === 0, // První fotka je hlavní
-              },
-            });
+        // Save photos if provided (skip if error)
+        if (profile.photos && Array.isArray(profile.photos) && profile.photos.length > 0) {
+          try {
+            console.log(`Processing ${profile.photos.length} photos for profile`);
+            for (let i = 0; i < profile.photos.length; i++) {
+              try {
+                console.log(`Processing photo ${i + 1}/${profile.photos.length}, size: ${profile.photos[i]?.length || 0} bytes`);
+                const photoUrl = await saveBase64Photo(profile.photos[i], 'profiles');
+                await prisma.photo.create({
+                  data: {
+                    url: photoUrl,
+                    profileId: newProfile.id,
+                    order: i,
+                    isMain: i === 0, // První fotka je hlavní
+                  },
+                });
+              } catch (photoError) {
+                console.error(`Error saving photo ${i + 1}:`, photoError);
+                // Continue with other photos even if one fails
+              }
+            }
+            console.log(`Successfully processed photos`);
+          } catch (error) {
+            console.error('Error processing photos:', error);
+            // Don't fail registration if photos fail - continue without photos
           }
-          console.log(`Successfully saved ${profile.photos.length} photos`);
         }
 
         return NextResponse.json(

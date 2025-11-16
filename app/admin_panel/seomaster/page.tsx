@@ -1,15 +1,26 @@
 'use client';
 
 import { useState } from 'react';
-import { Sparkles, Users, FileText, Globe } from 'lucide-react';
+import {
+  Sparkles,
+  Users,
+  FileText,
+  Globe,
+  BarChart3,
+  ArrowRight,
+  FileCode,
+} from 'lucide-react';
+import DashboardTab from './components/DashboardTab';
 import ProfilesTab from './components/ProfilesTab';
 import LandingPagesTab from './components/LandingPagesTab';
 import AllPagesTab from './components/AllPagesTab';
+import RedirectsTab from './components/RedirectsTab';
+import RobotsTxtTab from './components/RobotsTxtTab';
 
-type Tab = 'profiles' | 'landing-pages' | 'all-pages';
+type Tab = 'dashboard' | 'profiles' | 'landing-pages' | 'all-pages' | 'redirects' | 'robots';
 
 export default function SEOMasterPage() {
-  const [activeTab, setActiveTab] = useState<Tab>('profiles');
+  const [activeTab, setActiveTab] = useState<Tab>('dashboard');
 
   return (
     <div className="min-h-screen bg-dark-950 text-white p-6">
@@ -25,7 +36,18 @@ export default function SEOMasterPage() {
       </div>
 
       {/* Tab Navigation */}
-      <div className="glass rounded-xl p-2 mb-6 inline-flex gap-2">
+      <div className="glass rounded-xl p-2 mb-6 flex flex-wrap gap-2">
+        <button
+          onClick={() => setActiveTab('dashboard')}
+          className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all ${
+            activeTab === 'dashboard'
+              ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/50'
+              : 'text-gray-400 hover:text-white hover:bg-white/5'
+          }`}
+        >
+          <BarChart3 className="w-5 h-5" />
+          Dashboard
+        </button>
         <button
           onClick={() => setActiveTab('profiles')}
           className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all ${
@@ -59,13 +81,38 @@ export default function SEOMasterPage() {
           <Globe className="w-5 h-5" />
           Všechny Stránky
         </button>
+        <button
+          onClick={() => setActiveTab('redirects')}
+          className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all ${
+            activeTab === 'redirects'
+              ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/50'
+              : 'text-gray-400 hover:text-white hover:bg-white/5'
+          }`}
+        >
+          <ArrowRight className="w-5 h-5" />
+          Redirects
+        </button>
+        <button
+          onClick={() => setActiveTab('robots')}
+          className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all ${
+            activeTab === 'robots'
+              ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/50'
+              : 'text-gray-400 hover:text-white hover:bg-white/5'
+          }`}
+        >
+          <FileCode className="w-5 h-5" />
+          robots.txt
+        </button>
       </div>
 
       {/* Tab Content */}
       <div>
+        {activeTab === 'dashboard' && <DashboardTab />}
         {activeTab === 'profiles' && <ProfilesTab />}
         {activeTab === 'landing-pages' && <LandingPagesTab />}
         {activeTab === 'all-pages' && <AllPagesTab />}
+        {activeTab === 'redirects' && <RedirectsTab />}
+        {activeTab === 'robots' && <RobotsTxtTab />}
       </div>
     </div>
   );

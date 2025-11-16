@@ -5,7 +5,6 @@ import { useParams } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ProfileSchema from '@/components/ProfileSchema';
-import { profiles } from '@/components/TopProfiles';
 import { Star, MapPin, CheckCircle, Phone, Heart, MessageCircle, Clock, Shield, Award, Video, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 
@@ -19,46 +18,70 @@ const profileTypes = {
   swingers_club: { color: 'bg-red-500', label: 'Swingers Klub' },
   night_club: { color: 'bg-orange-500', label: 'Night Club' },
   strip_club: { color: 'bg-yellow-500', label: 'Strip Club' },
+  MASSAGE_SALON: { color: 'bg-teal-500', label: 'Masážní salon' },
+  PRIVAT: { color: 'bg-indigo-500', label: 'Privát' },
+  ESCORT_AGENCY: { color: 'bg-pink-500', label: 'Escort Agentura' },
+  DIGITAL_AGENCY: { color: 'bg-blue-500', label: 'Digitální Agentura' },
+  SWINGERS_CLUB: { color: 'bg-red-500', label: 'Swingers Klub' },
+  NIGHT_CLUB: { color: 'bg-orange-500', label: 'Night Club' },
+  STRIP_CLUB: { color: 'bg-yellow-500', label: 'Strip Club' },
 };
 
 export default function ProfileDetailPage() {
   const params = useParams();
   const slug = params.slug as string;
   const [activeTab, setActiveTab] = useState('o-me');
+  const [profile, setProfile] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
   const [services, setServices] = useState<Array<{label: string, url: string}>>([]);
-  const [servicesLoading, setServicesLoading] = useState(true);
 
-  // Find the profile by slug
-  const profile = profiles.find(p => p.slug === slug);
-
-  // Fetch services from API
+  // Fetch profile from API
   useEffect(() => {
-    const fetchServices = async () => {
+    const fetchProfile = async () => {
       try {
-        const response = await fetch(`/api/profiles/${slug}/services`);
-        if (response.ok) {
-          const data = await response.json();
-          const servicesData = data.services || [];
+        setLoading(true);
+        const response = await fetch(`/api/profiles/${slug}`);
 
-          // Convert services to display format
-          const formattedServices = servicesData.map((serviceName: string) => ({
-            label: serviceName,
-            url: `/holky-na-sex?service=${encodeURIComponent(serviceName.toLowerCase().replace(/\s+/g, '-'))}`
+        if (!response.ok) {
+          setProfile(null);
+          return;
+        }
+
+        const data = await response.json();
+        setProfile(data);
+
+        // Process services
+        if (data.services && data.services.length > 0) {
+          const formattedServices = data.services.map((item: any) => ({
+            label: item.service.name,
+            url: `/holky-na-sex?service=${encodeURIComponent(item.service.name.toLowerCase().replace(/\s+/g, '-'))}`
           }));
-
           setServices(formattedServices);
         }
       } catch (error) {
-        console.error('Error fetching services:', error);
+        console.error('Error fetching profile:', error);
+        setProfile(null);
       } finally {
-        setServicesLoading(false);
+        setLoading(false);
       }
     };
 
     if (slug) {
-      fetchServices();
+      fetchProfile();
     }
   }, [slug]);
+
+  if (loading) {
+    return (
+      <main className="min-h-screen">
+        <Header />
+        <div className="container mx-auto px-4 py-32 text-center">
+          <p className="text-gray-400">Načítání profilu...</p>
+        </div>
+        <Footer />
+      </main>
+    );
+  }
 
   if (!profile) {
     return (
@@ -76,21 +99,56 @@ export default function ProfileDetailPage() {
     );
   }
 
-  const pricing = [
-    { duration: '30 minut', price: '1500 Kč' },
-    { duration: '1 hodina', price: '2500 Kč' },
-    { duration: '2 hodiny', price: '4500 Kč' },
-  ];
+  // Parse languages if it's a JSON string
+  let parsedLanguages = [];
+  try {
+    parsedLanguages = typeof profile.languages === 'string'
+      ? JSON.parse(profile.languages)
+      : profile.languages || [];
+  } catch (e) {
+    parsedLanguages = [];
+  }
 
-  const availability = [
-    { day: 'Pondělí - Pátek', hours: '10:00 - 22:00' },
-    { day: 'Sobota - Neděle', hours: '12:00 - 20:00' },
-  ];
+  // Map category to display name
+  const getCategoryDisplay = (category: string) => {
+    const categoryMap: Record<string, string> = {
+      'HOLKY_NA_SEX': 'Holky na sex',
+      'EROTICKE_MASERKY': 'Erotické masérky',
+      'DOMINA': 'Domina',
+      'DIGITALNI_SLUZBY': 'Online modelka',
+    };
+    return categoryMap[category] || category;
+  };
+
+  // Map category to URL
+  const getCategoryUrl = (category: string) => {
+    const urlMap: Record<string, string> = {
+      'HOLKY_NA_SEX': 'holky-na-sex',
+      'EROTICKE_MASERKY': 'eroticke-masaze',
+      'DOMINA': 'bdsm',
+      'DIGITALNI_SLUZBY': 'online-sex',
+    };
+    return urlMap[category] || 'holky-na-sex';
+  };
+
+  const categoryDisplay = getCategoryDisplay(profile.category);
+  const categoryUrl = getCategoryUrl(profile.category);
+
+  // Get main photo or use placeholder
+  const mainPhoto = profile.photos && profile.photos.length > 0
+    ? profile.photos[0].url
+    : 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800&h=1000&fit=crop';
 
   return (
     <main className="min-h-screen bg-dark-950">
       {/* SEO: Schema.org strukturovaná data */}
-      <ProfileSchema profile={profile} />
+      <ProfileSchema profile={{
+        ...profile,
+        category: categoryDisplay,
+        rating: 4.5,
+        reviews: 0,
+        location: profile.city,
+      }} />
 
       <Header />
 
@@ -107,6 +165,11 @@ export default function ProfileDetailPage() {
             <div className="relative">
               <div className="relative h-[600px] rounded-3xl overflow-hidden glass group">
                 {/* Main Image */}
+                <img
+                  src={mainPhoto}
+                  alt={profile.name}
+                  className="w-full h-full object-cover"
+                />
                 <div className="absolute inset-0 bg-gradient-to-br from-primary-500/20 to-purple-500/20"></div>
 
                 {/* Badges on image */}
@@ -114,17 +177,6 @@ export default function ProfileDetailPage() {
                   {profile.isNew && (
                     <span className="bg-blue-500 px-3 py-1.5 rounded-full text-xs font-semibold inline-flex items-center justify-center">
                       Nový profil
-                    </span>
-                  )}
-                  {(profile as any).isPopular && (
-                    <span className="bg-orange-500 px-3 py-1.5 rounded-full text-xs font-semibold inline-flex items-center justify-center gap-1">
-                      <span>🔥</span> Populární
-                    </span>
-                  )}
-                  {(profile as any).isOnline && (
-                    <span className="bg-green-500 px-3 py-1.5 rounded-full text-xs font-semibold inline-flex items-center justify-center gap-2">
-                      <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
-                      Online
                     </span>
                   )}
                 </div>
@@ -139,30 +191,27 @@ export default function ProfileDetailPage() {
               </div>
 
               {/* Thumbnail Gallery */}
-              <div className="grid grid-cols-4 gap-2 mt-4">
-                {[1, 2, 3, 4].map((i) => (
-                  <div key={i} className="relative h-24 rounded-xl overflow-hidden glass cursor-pointer hover:ring-2 hover:ring-primary-500 transition-all">
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary-500/20 to-purple-500/20"></div>
-                  </div>
-                ))}
-              </div>
+              {profile.photos && profile.photos.length > 1 && (
+                <div className="grid grid-cols-4 gap-2 mt-4">
+                  {profile.photos.slice(1, 5).map((photo: any, i: number) => (
+                    <div key={i} className="relative h-24 rounded-xl overflow-hidden glass cursor-pointer hover:ring-2 hover:ring-primary-500 transition-all">
+                      <img
+                        src={photo.url}
+                        alt={`${profile.name} ${i + 2}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Right: Profile Info */}
             <div className="space-y-6">
               {/* Profile Type Badge */}
               <div>
-                <span className={`${profileTypes[profile.profileType as keyof typeof profileTypes].color} px-4 py-2 rounded-full text-sm font-bold inline-flex items-center justify-center`}>
-                  {profile.profileType === 'solo'
-                    ? profileTypes.solo.label
-                    : profile.profileType === 'salon'
-                    ? `Salon ${(profile as any).businessName}`
-                    : profile.profileType === 'privat'
-                    ? `Privát ${(profile as any).businessName}`
-                    : profile.profileType === 'escort_agency'
-                    ? (profile as any).businessName
-                    : (profile as any).businessName
-                  }
+                <span className={`${(profileTypes as any)[profile.profileType]?.color || 'bg-purple-500'} px-4 py-2 rounded-full text-sm font-bold inline-flex items-center justify-center`}>
+                  {(profileTypes as any)[profile.profileType]?.label || profile.profileType}
                 </span>
               </div>
 
@@ -170,15 +219,15 @@ export default function ProfileDetailPage() {
               <div>
                 <h1 className="text-5xl font-bold mb-2 flex items-center gap-3">
                   {profile.name}, {profile.age}
-                  {profile.isVerified && (
+                  {profile.verified && (
                     <CheckCircle className="w-8 h-8 text-green-500" />
                   )}
                 </h1>
                 <Link
-                  href={`/${profile.category === 'Holky na sex' ? 'holky-na-sex' : profile.category === 'Erotické masérky' ? 'eroticke-masaze' : profile.category === 'Online modelka' ? 'online-sex' : profile.category === 'Domina' ? 'bdsm' : 'escort'}`}
+                  href={`/${categoryUrl}`}
                   className="text-xl text-primary-400 hover:text-primary-300 transition-colors inline-block"
                 >
-                  {profile.category}
+                  {categoryDisplay}
                 </Link>
               </div>
 
@@ -186,10 +235,10 @@ export default function ProfileDetailPage() {
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2 bg-yellow-500/20 backdrop-blur-sm px-4 py-2 rounded-xl">
                   <Star className="w-6 h-6 text-yellow-400" fill="currentColor" />
-                  <span className="text-2xl font-bold">{profile.rating}</span>
-                  <span className="text-gray-400">({profile.reviews} hodnocení)</span>
+                  <span className="text-2xl font-bold">4.5</span>
+                  <span className="text-gray-400">(0 hodnocení)</span>
                 </div>
-                {profile.isVerified && (
+                {profile.verified && (
                   <div className="flex items-center gap-2 bg-green-500/20 backdrop-blur-sm px-4 py-2 rounded-xl">
                     <Shield className="w-5 h-5 text-green-400" />
                     <span className="text-sm font-semibold text-green-400">Ověřený profil</span>
@@ -198,14 +247,14 @@ export default function ProfileDetailPage() {
               </div>
 
               {/* Service Badges */}
-              {((profile as any).offersEscort || (profile as any).travels) && (
+              {(profile.offersEscort || profile.travels) && (
                 <div className="flex flex-wrap gap-2">
-                  {(profile as any).offersEscort && (
+                  {profile.offersEscort && (
                     <span className="inline-flex items-center text-sm px-4 py-2 bg-purple-500/20 text-purple-400 rounded-full font-semibold border border-purple-500/30">
                       Nabízím escort
                     </span>
                   )}
-                  {(profile as any).travels && (
+                  {profile.travels && (
                     <span className="inline-flex items-center text-sm px-4 py-2 bg-blue-500/20 text-blue-400 rounded-full font-semibold border border-blue-500/30">
                       Cestuji
                     </span>
@@ -217,11 +266,11 @@ export default function ProfileDetailPage() {
               <div className="glass rounded-2xl p-6 space-y-4">
                 <div className="flex items-center gap-3 text-lg">
                   <MapPin className="w-6 h-6 text-primary-400" />
-                  <span>{profile.location}</span>
+                  <span>{profile.location || profile.city}</span>
                 </div>
                 <div className="flex items-center gap-3 text-lg">
                   <Phone className="w-6 h-6 text-primary-400" />
-                  <span className="font-semibold">{(profile as any).phone || '+420 123 456 789'}</span>
+                  <span className="font-semibold">{profile.phone}</span>
                 </div>
               </div>
 
@@ -230,14 +279,14 @@ export default function ProfileDetailPage() {
                 {/* Primary Actions */}
                 <div className="grid grid-cols-2 gap-3">
                   <a
-                    href={`tel:${(profile as any).phone || '+420123456789'}`}
+                    href={`tel:${profile.phone}`}
                     className="flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-primary-500 to-pink-500 rounded-xl font-semibold text-lg hover:shadow-2xl hover:shadow-primary-500/50 transition-all"
                   >
                     <Phone className="w-5 h-5" />
                     Zavolat
                   </a>
                   <a
-                    href={`sms:${(profile as any).phone || '+420123456789'}`}
+                    href={`sms:${profile.phone}`}
                     className="flex items-center justify-center gap-2 px-6 py-4 glass rounded-xl font-semibold text-lg hover:bg-white/10 transition-all"
                   >
                     <MessageCircle className="w-5 h-5" />
@@ -248,7 +297,7 @@ export default function ProfileDetailPage() {
                 {/* Messaging Apps */}
                 <div className="grid grid-cols-2 gap-3">
                   <a
-                    href={`https://wa.me/${((profile as any).phone || '+420123456789').replace(/\s/g, '')}`}
+                    href={`https://wa.me/${profile.phone.replace(/\s/g, '')}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center justify-center gap-2 px-4 py-3 bg-green-500/10 border border-green-500/30 rounded-xl font-semibold hover:bg-green-500/20 transition-all"
@@ -259,7 +308,7 @@ export default function ProfileDetailPage() {
                     <span className="text-sm">WhatsApp</span>
                   </a>
                   <a
-                    href={`https://t.me/${((profile as any).phone || '+420123456789').replace(/\s/g, '')}`}
+                    href={`https://t.me/${profile.phone.replace(/\s/g, '')}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center justify-center gap-2 px-4 py-3 bg-cyan-500/10 border border-cyan-500/30 rounded-xl font-semibold hover:bg-cyan-500/20 transition-all"
@@ -333,11 +382,7 @@ export default function ProfileDetailPage() {
               <div className="glass rounded-2xl p-8">
                 <h3 className="text-3xl font-bold mb-4">O mně</h3>
                 <p className="text-gray-300 text-lg leading-relaxed">
-                  Ahoj, jsem {profile.name} a ráda bych vás přivítala na nezapomenutelnou relaxační chvíli.
-                  Nabízím profesionální erotické masáže v příjemném a diskrétním prostředí.
-                  Mým cílem je, abyste se u mě cítili uvolněně a odcházeli s úsměvem na tváři.
-                  Jsem komunikativní, milá a vždy dbám na maximální hygienu a diskrétnost.
-                  Těším se na naši společnou chvíli relaxace!
+                  {profile.description || `Ahoj, jsem ${profile.name} a ráda bych vás přivítala na nezapomenutelnou relaxační chvíli. Nabízím profesionální erotické služby v příjemném a diskrétním prostředí.`}
                 </p>
               </div>
             )}
@@ -356,354 +401,133 @@ export default function ProfileDetailPage() {
                     <div className="text-white font-semibold text-lg">{profile.age} let</div>
                   </div>
 
-                  {/* Age Category */}
-                  {(profile as any).ageCategory && (
-                    <div className="bg-dark-800/50 rounded-xl p-4 border border-white/10">
-                      <div className="text-gray-400 text-sm mb-1">Kategorie</div>
-                      <div className="text-white font-semibold text-lg">
-                        {(profile as any).ageCategory === '18-25' ? '18-25 let' :
-                         (profile as any).ageCategory === '26-35' ? '26-35 let' :
-                         (profile as any).ageCategory === '36-45' ? '36-45 let' :
-                         (profile as any).ageCategory === '46+' ? '46+ let' :
-                         (profile as any).ageCategory === 'student' ? 'Studentka' :
-                         (profile as any).ageCategory === 'young' ? 'Mladá' :
-                         (profile as any).ageCategory === 'milf' ? 'MILF' :
-                         (profile as any).ageCategory === 'mature' ? 'Zralá' : (profile as any).ageCategory}
-                      </div>
-                    </div>
-                  )}
-
                   {/* Weight */}
-                  {(profile as any).weight && (
+                  {profile.weight && (
                     <div className="bg-dark-800/50 rounded-xl p-4 border border-white/10">
                       <div className="text-gray-400 text-sm mb-1">Váha</div>
-                      <div className="text-white font-semibold text-lg">{(profile as any).weight} kg</div>
+                      <div className="text-white font-semibold text-lg">{profile.weight} kg</div>
                     </div>
                   )}
 
                   {/* Height */}
-                  {(profile as any).height && (
+                  {profile.height && (
                     <div className="bg-dark-800/50 rounded-xl p-4 border border-white/10">
                       <div className="text-gray-400 text-sm mb-1">Výška</div>
-                      <div className="text-white font-semibold text-lg">{(profile as any).height} cm</div>
+                      <div className="text-white font-semibold text-lg">{profile.height} cm</div>
                     </div>
                   )}
 
                   {/* Breast Size */}
-                  {(profile as any).bust && (
+                  {profile.bust && (
                     <div className="bg-dark-800/50 rounded-xl p-4 border border-white/10">
                       <div className="text-gray-400 text-sm mb-1">Velikost prsou</div>
-                      <div className="text-white font-semibold text-lg">{(profile as any).bust}</div>
+                      <div className="text-white font-semibold text-lg">{profile.bust}</div>
                     </div>
                   )}
 
                   {/* Breast Type */}
-                  {(profile as any).breastType && (
+                  {profile.breastType && (
                     <div className="bg-dark-800/50 rounded-xl p-4 border border-white/10">
                       <div className="text-gray-400 text-sm mb-1">Typ prsou</div>
                       <div className="text-white font-semibold text-lg">
-                        {(profile as any).breastType === 'natural' ? 'Přirozená' :
-                         (profile as any).breastType === 'silicone' ? 'Silikonová' : (profile as any).breastType}
+                        {profile.breastType === 'natural' ? 'Přirozená' :
+                         profile.breastType === 'silicone' ? 'Silikonová' : profile.breastType}
                       </div>
                     </div>
                   )}
 
                   {/* Hair Color */}
-                  {(profile as any).hairColor && (
+                  {profile.hairColor && (
                     <div className="bg-dark-800/50 rounded-xl p-4 border border-white/10">
                       <div className="text-gray-400 text-sm mb-1">Barva vlasů</div>
-                      <div className="text-white font-semibold text-lg">{(profile as any).hairColor}</div>
-                    </div>
-                  )}
-
-                  {/* Hair Length */}
-                  {(profile as any).hairLength && (
-                    <div className="bg-dark-800/50 rounded-xl p-4 border border-white/10">
-                      <div className="text-gray-400 text-sm mb-1">Délka vlasů</div>
-                      <div className="text-white font-semibold text-lg">{(profile as any).hairLength}</div>
-                    </div>
-                  )}
-
-                  {/* Body Type */}
-                  {(profile as any).bodyType && (
-                    <div className="bg-dark-800/50 rounded-xl p-4 border border-white/10">
-                      <div className="text-gray-400 text-sm mb-1">Typ postavy</div>
-                      <div className="text-white font-semibold text-lg">
-                        {(profile as any).bodyType === 'slim' ? 'Štíhlá' :
-                         (profile as any).bodyType === 'fit' ? 'Fit' :
-                         (profile as any).bodyType === 'athletic' ? 'Atletická' :
-                         (profile as any).bodyType === 'curvy' ? 'Krev a mléko' : (profile as any).bodyType}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Pubic Hair */}
-                  {(profile as any).pubicHair && (
-                    <div className="bg-dark-800/50 rounded-xl p-4 border border-white/10">
-                      <div className="text-gray-400 text-sm mb-1">Úprava klínu</div>
-                      <div className="text-white font-semibold text-lg">{(profile as any).pubicHair}</div>
+                      <div className="text-white font-semibold text-lg">{profile.hairColor}</div>
                     </div>
                   )}
 
                   {/* Nationality */}
-                  {(profile as any).nationality && (
+                  {profile.nationality && (
                     <div className="bg-dark-800/50 rounded-xl p-4 border border-white/10">
                       <div className="text-gray-400 text-sm mb-1">Národnost</div>
-                      <div className="text-white font-semibold text-lg">
-                        {(profile as any).nationality === 'czech' ? 'Česká' :
-                         (profile as any).nationality === 'slovak' ? 'Slovenská' :
-                         (profile as any).nationality === 'russian' ? 'Ruská' :
-                         (profile as any).nationality === 'ukrainian' ? 'Ukrajinská' : (profile as any).nationality}
-                      </div>
+                      <div className="text-white font-semibold text-lg">{profile.nationality}</div>
                     </div>
                   )}
 
                   {/* Tattoos */}
-                  {(profile as any).tattoos && (
+                  {profile.tattoos && (
                     <div className="bg-dark-800/50 rounded-xl p-4 border border-white/10">
                       <div className="text-gray-400 text-sm mb-1">Tetování</div>
-                      <div className="text-white font-semibold text-lg">{(profile as any).tattoos}</div>
+                      <div className="text-white font-semibold text-lg">{profile.tattoos}</div>
                     </div>
                   )}
 
                   {/* Piercing */}
-                  {(profile as any).piercing && (
+                  {profile.piercing && (
                     <div className="bg-dark-800/50 rounded-xl p-4 border border-white/10">
                       <div className="text-gray-400 text-sm mb-1">Piercing</div>
-                      <div className="text-white font-semibold text-lg">{(profile as any).piercing}</div>
+                      <div className="text-white font-semibold text-lg">{profile.piercing}</div>
                     </div>
                   )}
 
                   {/* Orientation */}
-                  {(profile as any).orientation && (
+                  {profile.orientation && (
                     <div className="bg-dark-800/50 rounded-xl p-4 border border-white/10">
                       <div className="text-gray-400 text-sm mb-1">Orientace</div>
-                      <div className="text-white font-semibold text-lg">{(profile as any).orientation}</div>
+                      <div className="text-white font-semibold text-lg">{profile.orientation}</div>
                     </div>
                   )}
 
                   {/* Languages with Flags */}
-                  {(profile as any).languages && (
+                  {parsedLanguages.length > 0 && (
                     <div className="bg-dark-800/50 rounded-xl p-4 border border-white/10 col-span-2">
                       <div className="text-gray-400 text-sm mb-1">Jazyky</div>
                       <div className="text-white font-semibold text-lg flex flex-wrap items-center gap-2">
-                        {(() => {
-                          try {
-                            const langs = typeof (profile as any).languages === 'string'
-                              ? JSON.parse((profile as any).languages)
-                              : (profile as any).languages;
-
-                            const langMap: Record<string, { flag: string; name: string }> = {
-                              'CZ': { flag: '🇨🇿', name: 'Čeština' },
-                              'SK': { flag: '🇸🇰', name: 'Slovenština' },
-                              'EN': { flag: '🇬🇧', name: 'Angličtina' },
-                              'DE': { flag: '🇩🇪', name: 'Němčina' },
-                              'RU': { flag: '🇷🇺', name: 'Ruština' },
-                              'PL': { flag: '🇵🇱', name: 'Polština' },
-                              'FR': { flag: '🇫🇷', name: 'Francouzština' },
-                              'ES': { flag: '🇪🇸', name: 'Španělština' },
-                              'IT': { flag: '🇮🇹', name: 'Italština' },
-                            };
-
-                            return langs.map((lang: string, idx: number) => {
-                              const langData = langMap[lang.toUpperCase()] || { flag: '', name: lang };
-                              return (
-                                <span key={idx} className="inline-flex items-center gap-1">
-                                  {langData.flag && <span className="text-xl">{langData.flag}</span>}
-                                  <span>{langData.name}</span>
-                                  {idx < langs.length - 1 && <span className="text-gray-500">,</span>}
-                                </span>
-                              );
-                            });
-                          } catch (e) {
-                            return <span>{(profile as any).languages}</span>;
-                          }
-                        })()}
+                        {parsedLanguages.map((lang: string, idx: number) => {
+                          const langMap: Record<string, { flag: string; name: string }> = {
+                            'CZ': { flag: '🇨🇿', name: 'Čeština' },
+                            'SK': { flag: '🇸🇰', name: 'Slovenština' },
+                            'EN': { flag: '🇬🇧', name: 'Angličtina' },
+                            'DE': { flag: '🇩🇪', name: 'Němčina' },
+                            'RU': { flag: '🇷🇺', name: 'Ruština' },
+                            'PL': { flag: '🇵🇱', name: 'Polština' },
+                            'FR': { flag: '🇫🇷', name: 'Francouzština' },
+                            'ES': { flag: '🇪🇸', name: 'Španělština' },
+                            'IT': { flag: '🇮🇹', name: 'Italština' },
+                          };
+                          const langData = langMap[lang.toUpperCase()] || { flag: '', name: lang };
+                          return (
+                            <span key={idx} className="inline-flex items-center gap-1">
+                              {langData.flag && <span className="text-xl">{langData.flag}</span>}
+                              <span>{langData.name}</span>
+                              {idx < parsedLanguages.length - 1 && <span className="text-gray-500">,</span>}
+                            </span>
+                          );
+                        })}
                       </div>
                     </div>
                   )}
                 </div>
-
-                {/* Oblíbené role sekce */}
-                {(profile as any).roles && (profile as any).roles.length > 0 && (
-                  <div className="mt-8">
-                    <h4 className="text-xl font-bold mb-4 flex items-center gap-2">
-                      <Sparkles className="w-5 h-5 text-primary-400" />
-                      Oblíbené role
-                    </h4>
-                    <div className="flex flex-wrap gap-2">
-                      {(profile as any).roles.map((role: string, index: number) => {
-                        const roleLabels: Record<string, string> = {
-                          student: 'Studentka',
-                          teacher: 'Učitelka',
-                          nurse: 'Zdravotní sestra',
-                          secretary: 'Sekretářka',
-                          police: 'Policistka',
-                          boss: 'Šéfová',
-                          waitress: 'Servírka',
-                          domina: 'Domina',
-                          neighbor: 'Sousedka',
-                          fitness: 'Fitneska',
-                          catgirl: 'Kočička',
-                          cosplay: 'Cosplay',
-                        };
-                        return (
-                          <Link
-                            key={index}
-                            href={`/holky-na-sex?role=${role}`}
-                            className="px-4 py-2 bg-gradient-to-r from-primary-500/20 to-pink-500/20 border border-primary-500/30 rounded-full hover:from-primary-500/30 hover:to-pink-500/30 hover:border-primary-500/50 transition-all"
-                          >
-                            {roleLabels[role] || role}
-                          </Link>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-
-                {/* SEO Tags sekce */}
-                {(profile as any).tags && (profile as any).tags.length > 0 && (
-                  <div className="mt-8">
-                    <h4 className="text-xl font-bold mb-4 flex items-center gap-2">
-                      <Award className="w-5 h-5 text-primary-400" />
-                      Klíčová slova
-                    </h4>
-                    <div className="flex flex-wrap gap-2">
-                      {(profile as any).tags.map((tag: string, index: number) => (
-                        <span
-                          key={index}
-                          className="px-4 py-2 bg-dark-800/50 border border-white/10 rounded-full text-sm text-gray-300"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
               </div>
             )}
           </div>
 
-          {/* Escort Agency Badge */}
-          {profile.profileType === 'escort_agency' && (
-            <div className="glass rounded-2xl p-6 mt-6 border-2 border-pink-500/30">
-              <div className="flex items-center gap-3">
-                <div className="flex-shrink-0 w-12 h-12 rounded-full bg-gradient-to-br from-pink-500 to-purple-500 flex items-center justify-center">
-                  <Heart className="w-6 h-6 text-white" fill="white" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-pink-400">Holky na escort</h3>
-                  <p className="text-sm text-gray-400">Profesionální eskortní služby</p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Related Categories - Auto-generated based on profile attributes */}
+          {/* Related Categories */}
           <div className="glass rounded-2xl p-6 mt-6">
             <h3 className="text-lg font-semibold mb-4 text-gray-400">Oblíbené vyhledávání</h3>
             <div className="flex flex-wrap gap-2">
-              {/* Generate links dynamically based on profile attributes */}
-
-              {/* Hair Color */}
-              {(profile as any).hairColor && (
-                <Link
-                  href={`/holky-na-sex?hairColor=${(profile as any).hairColor}&city=${profile.location}`}
-                  className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg hover:border-primary-500/50 hover:bg-primary-500/10 transition-all text-xs"
-                >
-                  {(profile as any).hairColor === 'blonde' ? 'Blondýnky' :
-                   (profile as any).hairColor === 'brunette' ? 'Brunety' :
-                   (profile as any).hairColor === 'redhead' ? 'Zrzky' :
-                   (profile as any).hairColor === 'black' ? 'Černovlásky' : 'Holky'} {profile.location}
-                </Link>
-              )}
-
-              {/* Body Type */}
-              {(profile as any).bodyType && (
-                <Link
-                  href={`/holky-na-sex?bodyType=${(profile as any).bodyType}&city=${profile.location}`}
-                  className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg hover:border-primary-500/50 hover:bg-primary-500/10 transition-all text-xs"
-                >
-                  {(profile as any).bodyType === 'slim' ? 'Hubené' :
-                   (profile as any).bodyType === 'fit' ? 'Štíhlé' :
-                   (profile as any).bodyType === 'athletic' ? 'Atletické' :
-                   (profile as any).bodyType === 'curvy' ? 'Krev a mléko' : 'Holky'} {profile.location}
-                </Link>
-              )}
-
-              {/* Age Category */}
-              {(profile as any).ageCategory && (
-                <Link
-                  href={`/holky-na-sex?ageCategory=${(profile as any).ageCategory}&city=${profile.location}`}
-                  className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg hover:border-primary-500/50 hover:bg-primary-500/10 transition-all text-xs"
-                >
-                  {(profile as any).ageCategory === 'student' ? 'Studentky' :
-                   (profile as any).ageCategory === 'young' ? 'Mladé holky' :
-                   (profile as any).ageCategory === 'milf' ? 'MILF' :
-                   (profile as any).ageCategory === 'mature' ? 'Zralé' : 'Holky'} {profile.location}
-                </Link>
-              )}
-
-              {/* Breast Type */}
-              {(profile as any).breastType && (
-                <Link
-                  href={`/holky-na-sex?breastType=${(profile as any).breastType}&city=${profile.location}`}
-                  className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg hover:border-primary-500/50 hover:bg-primary-500/10 transition-all text-xs"
-                >
-                  {(profile as any).breastType === 'natural' ? 'Přírodní prsa' :
-                   (profile as any).breastType === 'silicone' ? 'Silikonová prsa' :
-                   (profile as any).breastType === 'large' ? 'Velká prsa' : 'Prsa'} {profile.location}
-                </Link>
-              )}
-
-              {/* Nationality */}
-              {(profile as any).nationality && (
-                <Link
-                  href={`/holky-na-sex?nationality=${(profile as any).nationality}&city=${profile.location}`}
-                  className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg hover:border-primary-500/50 hover:bg-primary-500/10 transition-all text-xs"
-                >
-                  {(profile as any).nationality === 'czech' ? 'České holky' :
-                   (profile as any).nationality === 'slovak' ? 'Slovenky' :
-                   (profile as any).nationality === 'russian' ? 'Rusky' :
-                   (profile as any).nationality === 'ukrainian' ? 'Ukrajinky' :
-                   (profile as any).nationality === 'polish' ? 'Polky' : 'Holky'} {profile.location}
-                </Link>
-              )}
-
-              {/* Escort Services */}
-              {(profile as any).offersEscort && (
-                <Link
-                  href={`/holky-na-sex?offersEscort=true&city=${profile.location}`}
-                  className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg hover:border-primary-500/50 hover:bg-primary-500/10 transition-all text-xs"
-                >
-                  Escort {profile.location}
-                </Link>
-              )}
-
-              {/* Travels */}
-              {(profile as any).travels && (
-                <Link
-                  href={`/holky-na-sex?travels=true&city=${profile.location}`}
-                  className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg hover:border-primary-500/50 hover:bg-primary-500/10 transition-all text-xs"
-                >
-                  Holky na cesty {profile.location}
-                </Link>
-              )}
-
-              {/* Category + City (always show) */}
+              {/* Category + City */}
               <Link
-                href={`/${profile.category === 'Holky na sex' ? 'holky-na-sex' : profile.category === 'Erotická masérka' ? 'eroticke-masaze' : 'online-sex'}?city=${profile.location}`}
+                href={`/${categoryUrl}?city=${profile.city}`}
                 className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg hover:border-primary-500/50 hover:bg-primary-500/10 transition-all text-xs"
               >
-                {profile.category} {profile.location}
+                {categoryDisplay} {profile.city}
               </Link>
 
-              {/* All profiles in city (always show) */}
+              {/* All profiles in city */}
               <Link
-                href={`/holky-na-sex?city=${profile.location}`}
+                href={`/holky-na-sex?city=${profile.city}`}
                 className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg hover:border-primary-500/50 hover:bg-primary-500/10 transition-all text-xs"
               >
-                Všechny holky {profile.location}
+                Všechny holky {profile.city}
               </Link>
             </div>
           </div>

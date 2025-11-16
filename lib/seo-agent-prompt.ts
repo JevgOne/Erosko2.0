@@ -92,26 +92,35 @@ Generate SEO-optimized metadata for this ${data.type.toLowerCase()} on erosko.cz
 
    ✅ **SPRÁVNĚ:** Jméno → Služba → Město → EROSKO.CZ
 
-2. **META Descriptions** (3 variants, 150-160 chars each)
+2. **META Descriptions** (3 variants, KAŽDÁ PŘESNĚ 150-160 chars!)
 
-   **Variant A (Emotional/Engaging):**
+   ⚠️ **KRITICKÉ**: Každá description MUSÍ mít minimálně 150 znaků, ideálně 155-160!
+   Pokud máš méně než 150 znaků, PŘIDEJ více detailů!
+
+   **Variant A (Emotional/Engaging) - 150-160 chars:**
    - Use 1-2 relevant emoji (❤️, 💋, ✨, 🌹)
    - Create emotional connection
-   - Highlight unique selling point
-   - End with CTA (Call-To-Action)
+   - Highlight unique selling point (např. "zkušená", "elegantní", "hravá")
+   - Zmiň město + věk
+   - End with CTA (Call-To-Action) - "Kontaktuj mě", "Rezervuj si schůzku", "Prohlédni profil"
    ${data.verified ? '- Include "✓ Ověřený profil"' : ''}
+   - **EXAMPLE (159 chars):** "❤️ Jsem Lucie, 25letá společnice v Praze. Nabízím elegantní doprovod pro náročné gentlemany. Diskrétnost zaručena. ✓ Ověřený profil. Kontaktuj mě ještě dnes!"
 
-   **Variant B (Factual/Professional):**
+   **Variant B (Factual/Professional) - 150-160 chars:**
    - List specific services/offerings
-   - Include age, location, availability
+   - Include age, location, availability (např. "Denní i večerní schůzky")
    - Professional tone
-   - Mention "Bez zprostředkovatele" or "Reálné fotky"
+   - Mention "Bez zprostředkovatele" or "Reálné fotky" or "Přímý kontakt"
+   - Přidej detail o prostředí (privát, salon, hotel)
+   - **EXAMPLE (158 chars):** "Lucie, 25 let, společnice v Praze. Nabízím profesionální doprovod, společenské akce, večeře. Soukromý privát v centru. Bez zprostředkovatele. Reálné fotky."
 
-   **Variant C (Benefits-Focused):**
-   - Focus on advantages: "Diskrétnost", "Příjemná atmosféra"
-   - Include "Přímý kontakt"
-   - Mention "Profesionální přístup"
-   - Add trust signals
+   **Variant C (Benefits-Focused) - 150-160 chars:**
+   - Focus on advantages: "Diskrétnost", "Příjemná atmosféra", "Luxusní prostředí"
+   - Include "Přímý kontakt" nebo "Okamžitá dostupnost"
+   - Mention "Profesionální přístup" nebo "Individuální přístup"
+   - Add trust signals (ověřené, reference, dlouhá praxe)
+   - Zmiň benefits klienta (relaxace, zážitek, pohoda)
+   - **EXAMPLE (157 chars):** "Společnice Lucie v Praze zajistí diskrétní a profesionální doprovod. Luxusní prostředí, individuální přístup, přímý kontakt. Vychutnej si nezapomenutelný zážitek."
 
 3. **Keywords** (12-15 keywords)
    Mix these types:
@@ -174,13 +183,14 @@ Generate SEO-optimized metadata for this ${data.type.toLowerCase()} on erosko.cz
 **QUALITY CHECKLIST:**
 ✓ Title struktura: Jméno → Služba → Město → EROSKO.CZ
 ✓ Title under 60 characters
-✓ Each description 150-160 characters
+✓ **KRITICKÉ**: Each description MINIMÁLNĚ 150 chars, ideálně 155-160!
 ✓ No generic "erotické služby" for businesses
 ✓ Perfect Czech grammar
 ✓ City mentioned in title + descriptions
 ✓ Specific service terms used
 ✓ Natural, engaging language
 ✓ Keywords are relevant + diverse
+✓ All 3 descriptions DIFFERENT (not just minor variations!)
 
 **POVINNÉ POŘADÍ V TITLE:**
 1. Jméno profilu (+ věk pokud je) - např. "Lucie 25", "Sexy Club"

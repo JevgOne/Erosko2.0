@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Upload, X } from 'lucide-react';
+import { Upload, X, Check, AlertCircle } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { UserRole } from '@prisma/client';
@@ -20,12 +20,23 @@ import {
   digitalServices,
   equipment,
 } from '@/lib/services-data';
+import {
+  validatePhoneNumber,
+  validateEmail,
+  validatePassword,
+  validateAge,
+  validateImageFile,
+  validateBusinessName,
+  validateProfileName,
+} from '@/lib/validation';
 
 export default function RegistracePage() {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [passwordStrength, setPasswordStrength] = useState<'weak' | 'medium' | 'strong'>('weak');
 
   // Základní údaje
   const [phone, setPhone] = useState('');  // Primární přihlášení
@@ -233,35 +244,39 @@ export default function RegistracePage() {
 
     const newFiles = Array.from(files);
 
-    // Kontrola formátů - odmítnout HEIC
-    const invalidFiles = newFiles.filter(file => {
-      const extension = file.name.split('.').pop()?.toLowerCase();
-      return extension === 'heic' || extension === 'heif';
-    });
-
-    if (invalidFiles.length > 0) {
-      setError('HEIC formát není podporován. Použijte prosím JPG, PNG nebo WEBP. Na iPhone: Nastavení → Fotoaparát → Formáty → "Nejvíce kompatibilní"');
-      e.target.value = ''; // Reset input
-      return;
-    }
-
+    // Validate total number
     const totalPhotos = photos.length + newFiles.length;
-
     if (totalPhotos > 10) {
       setError('Můžete nahrát maximálně 10 fotek');
+      e.target.value = '';
       return;
     }
 
-    setPhotos(prev => [...prev, ...newFiles]);
+    // Validate each file
+    const validFiles: File[] = [];
+    for (const file of newFiles) {
+      const validation = validateImageFile(file);
+      if (!validation.valid) {
+        setError(validation.message || 'Neplatný soubor');
+        e.target.value = '';
+        return;
+      }
+      validFiles.push(file);
+    }
 
-    // Vytvořit preview
-    newFiles.forEach(file => {
+    setPhotos(prev => [...prev, ...validFiles]);
+    setError(''); // Clear any previous errors
+
+    // Create previews
+    validFiles.forEach(file => {
       const reader = new FileReader();
       reader.onloadend = () => {
         setPhotoPreviews(prev => [...prev, reader.result as string]);
       };
       reader.readAsDataURL(file);
     });
+
+    e.target.value = ''; // Reset input
   };
 
   const handleRemovePhoto = (index: number) => {
@@ -430,10 +445,40 @@ export default function RegistracePage() {
             </div>
 
             <div className="glass rounded-3xl p-8">
+              {/* Progress Bar */}
+              <div className="mb-8">
+                <div className="flex items-center justify-between mb-2">
+                  <div className={`flex items-center gap-2 ${step >= 1 ? 'text-primary-400' : 'text-gray-500'}`}>
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                      step >= 1 ? 'bg-primary-500' : 'bg-gray-700'
+                    } transition-colors`}>
+                      {step > 1 ? <Check className="w-5 h-5" /> : '1'}
+                    </div>
+                    <span className="text-sm font-medium">Základní údaje</span>
+                  </div>
+                  <div className="flex-1 h-0.5 mx-4 bg-gray-700">
+                    <div
+                      className={`h-full bg-primary-500 transition-all duration-300 ${
+                        step >= 2 ? 'w-full' : 'w-0'
+                      }`}
+                    ></div>
+                  </div>
+                  <div className={`flex items-center gap-2 ${step >= 2 ? 'text-primary-400' : 'text-gray-500'}`}>
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                      step >= 2 ? 'bg-primary-500' : 'bg-gray-700'
+                    } transition-colors`}>
+                      2
+                    </div>
+                    <span className="text-sm font-medium">Profil</span>
+                  </div>
+                </div>
+              </div>
+
               <form onSubmit={handleSubmit} className="space-y-6">
                 {error && (
-                  <div className="bg-red-500/10 border border-red-500 text-red-500 px-4 py-3 rounded-lg">
-                    {error}
+                  <div className="bg-red-500/10 border border-red-500 text-red-500 px-4 py-3 rounded-lg flex items-center gap-2">
+                    <AlertCircle className="w-5 h-5 flex-shrink-0" />
+                    <span>{error}</span>
                   </div>
                 )}
 
@@ -484,14 +529,34 @@ export default function RegistracePage() {
                         type="tel"
                         id="phone"
                         value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        className="w-full px-4 py-3 rounded-lg bg-dark-800 border border-white/10 focus:border-primary-500 focus:outline-none transition-colors"
+                        onChange={(e) => {
+                          setPhone(e.target.value);
+                          // Clear error when user starts typing
+                          if (fieldErrors.phone) {
+                            setFieldErrors(prev => {
+                              const { phone, ...rest } = prev;
+                              return rest;
+                            });
+                          }
+                        }}
+                        className={`w-full px-4 py-3 rounded-lg bg-dark-800 border ${
+                          fieldErrors.phone
+                            ? 'border-red-500 focus:border-red-500'
+                            : 'border-white/10 focus:border-primary-500'
+                        } focus:outline-none transition-colors`}
                         placeholder="+420 123 456 789"
                         required
                       />
-                      <p className="text-xs text-gray-400 mt-1">
-                        Pro přihlášení do aplikace
-                      </p>
+                      {fieldErrors.phone ? (
+                        <p className="text-xs text-red-400 mt-1 flex items-center gap-1">
+                          <AlertCircle className="w-3 h-3" />
+                          {fieldErrors.phone}
+                        </p>
+                      ) : (
+                        <p className="text-xs text-gray-400 mt-1">
+                          Pro přihlášení do aplikace
+                        </p>
+                      )}
                     </div>
 
                     <div>
@@ -519,12 +584,66 @@ export default function RegistracePage() {
                         type="password"
                         id="password"
                         value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="w-full px-4 py-3 rounded-lg bg-dark-800 border border-white/10 focus:border-primary-500 focus:outline-none transition-colors"
+                        onChange={(e) => {
+                          setPassword(e.target.value);
+                          const validation = validatePassword(e.target.value);
+                          if (validation.valid && validation.strength) {
+                            setPasswordStrength(validation.strength);
+                          }
+                          if (!validation.valid) {
+                            setFieldErrors(prev => ({ ...prev, password: validation.message || '' }));
+                          } else {
+                            setFieldErrors(prev => {
+                              const { password, ...rest } = prev;
+                              return rest;
+                            });
+                          }
+                        }}
+                        className={`w-full px-4 py-3 rounded-lg bg-dark-800 border ${
+                          fieldErrors.password
+                            ? 'border-red-500 focus:border-red-500'
+                            : 'border-white/10 focus:border-primary-500'
+                        } focus:outline-none transition-colors`}
                         placeholder="Minimálně 6 znaků"
                         required
                         minLength={6}
                       />
+                      {password.length > 0 && !fieldErrors.password && (
+                        <div className="mt-2">
+                          <div className="flex gap-1">
+                            <div className={`h-1 flex-1 rounded-full transition-colors ${
+                              passwordStrength === 'weak' ? 'bg-red-500' :
+                              passwordStrength === 'medium' ? 'bg-yellow-500' :
+                              'bg-green-500'
+                            }`}></div>
+                            <div className={`h-1 flex-1 rounded-full transition-colors ${
+                              passwordStrength === 'medium' || passwordStrength === 'strong' ?
+                              passwordStrength === 'medium' ? 'bg-yellow-500' : 'bg-green-500' :
+                              'bg-gray-700'
+                            }`}></div>
+                            <div className={`h-1 flex-1 rounded-full transition-colors ${
+                              passwordStrength === 'strong' ? 'bg-green-500' : 'bg-gray-700'
+                            }`}></div>
+                          </div>
+                          <p className={`text-xs mt-1 ${
+                            passwordStrength === 'weak' ? 'text-red-400' :
+                            passwordStrength === 'medium' ? 'text-yellow-400' :
+                            'text-green-400'
+                          }`}>
+                            Síla hesla: {
+                              passwordStrength === 'weak' ? 'Slabé' :
+                              passwordStrength === 'medium' ? 'Střední' :
+                              'Silné'
+                            }
+                          </p>
+                        </div>
+                      )}
+                      {fieldErrors.password && (
+                        <p className="text-xs text-red-400 mt-1 flex items-center gap-1">
+                          <AlertCircle className="w-3 h-3" />
+                          {fieldErrors.password}
+                        </p>
+                      )}
                     </div>
 
                     <div>
@@ -535,17 +654,74 @@ export default function RegistracePage() {
                         type="password"
                         id="confirmPassword"
                         value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        className="w-full px-4 py-3 rounded-lg bg-dark-800 border border-white/10 focus:border-primary-500 focus:outline-none transition-colors"
+                        onChange={(e) => {
+                          setConfirmPassword(e.target.value);
+                          // Clear error when user starts typing
+                          if (fieldErrors.confirmPassword) {
+                            setFieldErrors(prev => {
+                              const { confirmPassword, ...rest } = prev;
+                              return rest;
+                            });
+                          }
+                        }}
+                        className={`w-full px-4 py-3 rounded-lg bg-dark-800 border ${
+                          fieldErrors.confirmPassword
+                            ? 'border-red-500 focus:border-red-500'
+                            : 'border-white/10 focus:border-primary-500'
+                        } focus:outline-none transition-colors`}
                         placeholder="Zadejte heslo znovu"
                         required
                         minLength={6}
                       />
+                      {confirmPassword && password && confirmPassword === password && (
+                        <p className="text-xs text-green-400 mt-1 flex items-center gap-1">
+                          <Check className="w-3 h-3" />
+                          Hesla se shodují
+                        </p>
+                      )}
+                      {fieldErrors.confirmPassword && (
+                        <p className="text-xs text-red-400 mt-1 flex items-center gap-1">
+                          <AlertCircle className="w-3 h-3" />
+                          {fieldErrors.confirmPassword}
+                        </p>
+                      )}
                     </div>
 
                     <button
                       type="button"
-                      onClick={() => setStep(2)}
+                      onClick={() => {
+                        // Validate step 1
+                        const errors: Record<string, string> = {};
+
+                        const phoneValidation = validatePhoneNumber(phone);
+                        if (!phoneValidation.valid) {
+                          errors.phone = phoneValidation.message || 'Neplatné telefonní číslo';
+                        }
+
+                        const emailValidation = validateEmail(email);
+                        if (!emailValidation.valid) {
+                          errors.email = emailValidation.message || 'Neplatný email';
+                        }
+
+                        const passwordValidation = validatePassword(password);
+                        if (!passwordValidation.valid) {
+                          errors.password = passwordValidation.message || 'Neplatné heslo';
+                        }
+
+                        if (password !== confirmPassword) {
+                          errors.confirmPassword = 'Hesla se neshodují';
+                        }
+
+                        if (Object.keys(errors).length > 0) {
+                          setFieldErrors(errors);
+                          setError('Opravte prosím chyby ve formuláři');
+                          return;
+                        }
+
+                        setFieldErrors({});
+                        setError('');
+                        setStep(2);
+                      }}
                       className="w-full gradient-primary py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
                     >
                       Pokračovat →

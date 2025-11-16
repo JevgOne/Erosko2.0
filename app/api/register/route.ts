@@ -164,7 +164,9 @@ export async function POST(request: Request) {
 
         // Save photos if provided
         if (profile.photos && profile.photos.length > 0) {
+          console.log(`Saving ${profile.photos.length} photos for profile`);
           for (let i = 0; i < profile.photos.length; i++) {
+            console.log(`Processing photo ${i + 1}/${profile.photos.length}, size: ${profile.photos[i]?.length || 0} bytes`);
             const photoUrl = await saveBase64Photo(profile.photos[i], 'profiles');
             await prisma.photo.create({
               data: {
@@ -175,6 +177,7 @@ export async function POST(request: Request) {
               },
             });
           }
+          console.log(`Successfully saved ${profile.photos.length} photos`);
         }
 
         return NextResponse.json(

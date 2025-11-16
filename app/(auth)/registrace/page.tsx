@@ -476,9 +476,23 @@ export default function RegistracePage() {
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 {error && (
-                  <div className="bg-red-500/10 border border-red-500 text-red-500 px-4 py-3 rounded-lg flex items-center gap-2">
-                    <AlertCircle className="w-5 h-5 flex-shrink-0" />
-                    <span>{error}</span>
+                  <div className="bg-red-500/10 border border-red-500 text-red-500 px-4 py-3 rounded-lg">
+                    <div className="flex items-center gap-2 mb-2">
+                      <AlertCircle className="w-5 h-5 flex-shrink-0" />
+                      <span>{error}</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setStep(1);
+                        setError('');
+                        setPhotos([]);
+                        setPhotoPreviews([]);
+                      }}
+                      className="text-sm underline hover:no-underline"
+                    >
+                      ← Vrátit se na začátek
+                    </button>
                   </div>
                 )}
 

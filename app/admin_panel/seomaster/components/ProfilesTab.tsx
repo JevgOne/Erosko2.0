@@ -42,7 +42,7 @@ interface Profile {
   slug: string;
   age: number;
   city: string;
-  category: keyof typeof categoryLabels;
+  category: string; // Changed from keyof typeof categoryLabels to string
   verified: boolean;
   rating: number;
   viewCount: number;
@@ -58,11 +58,6 @@ interface Profile {
   seoManualOverride: boolean;
   ogImageUrl: string | null;
   photos: Array<{ id: string; alt: string | null; altQualityScore: number | null }>;
-}
-
-// Extended profile for modal (includes all fields needed for edit)
-interface ExtendedProfile extends Profile {
-  category: string; // for modal
 }
 
 export default function ProfilesTab() {
@@ -477,8 +472,8 @@ export default function ProfilesTab() {
                       <div className="font-medium">{profile.name}, {profile.age}</div>
                       <div className="text-sm text-gray-400">{profile.city}</div>
                       <div className="mt-1">
-                        <span className={`text-xs ${categoryLabels[profile.category].color}`}>
-                          {categoryLabels[profile.category].label}
+                        <span className={`text-xs ${categoryLabels[profile.category as keyof typeof categoryLabels]?.color || 'text-gray-400'}`}>
+                          {categoryLabels[profile.category as keyof typeof categoryLabels]?.label || profile.category}
                         </span>
                       </div>
                     </div>

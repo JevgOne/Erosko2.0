@@ -82,7 +82,7 @@ export async function POST(request: Request) {
 
       // If provider, create profile or business
       if (role === UserRole.PROVIDER && profile) {
-      const profileType = profile.profileType as ProfileType;
+        const profileType = profile.profileType as ProfileType;
 
       // Check if this is a business or individual profile
       const isBusinessType = profileType !== ProfileType.SOLO;

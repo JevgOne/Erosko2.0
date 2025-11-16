@@ -1,15 +1,42 @@
-# Erosko.cz - Robots Configuration
+# robots.txt for erosko.cz
+# https://www.robotstxt.org/
+
 User-agent: *
+
+# Allow public pages
 Allow: /
+Allow: /holky-na-sex
+Allow: /eroticke-masaze
+Allow: /eroticke-podniky
+Allow: /bdsm-domina
+Allow: /online-sluzby
+Allow: /praha
+Allow: /brno
+Allow: /ostrava
+Allow: /plzen
 
-# Block admin panel from all crawlers
-Disallow: /admin
-Disallow: /admin_panel
-Disallow: /api/admin/
-
-# Block auth pages
+# Disallow authentication pages
 Disallow: /prihlaseni
 Disallow: /registrace
+Disallow: /zapomenute-heslo
 
-# Sitemap (if you add one later)
-# Sitemap: https://erosko.cz/sitemap.xml
+# Disallow admin and dashboard pages
+Disallow: /admin_panel
+Disallow: /partner/dashboard
+Disallow: /inzerent_dashboard
+
+# Disallow user action pages
+Disallow: /pridat-inzerat
+Disallow: /pridat-podnik
+
+# Disallow demo and test pages
+Disallow: /karty-demo
+
+# Disallow API routes
+Disallow: /api/
+
+# Crawl-delay (optional - prevents overload)
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://erosko.cz/sitemap.xml

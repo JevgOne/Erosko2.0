@@ -100,6 +100,8 @@ export default function AdminPanel() {
   const [newProfilePhotos, setNewProfilePhotos] = useState<File[]>([]);
   const [newProfilePhotosPreviews, setNewProfilePhotosPreviews] = useState<string[]>([]);
   const [allServices, setAllServices] = useState<any[]>([]); // All services from database
+  const [allSearchTags, setAllSearchTags] = useState<any[]>([]); // All search tags from database
+  const [selectedSearchTags, setSelectedSearchTags] = useState<string[]>([]); // Selected search tag IDs
 
   useEffect(() => {
     if (status === 'loading') return;
@@ -124,13 +126,14 @@ export default function AdminPanel() {
     setLoading(true);
     try {
       console.log('[Admin Panel] Fetching admin data...');
-      const [statsRes, usersRes, businessesRes, profilesRes, changesRes, servicesRes] = await Promise.all([
+      const [statsRes, usersRes, businessesRes, profilesRes, changesRes, servicesRes, searchTagsRes] = await Promise.all([
         fetch('/api/admin/stats'),
         fetch('/api/admin/users'),
         fetch('/api/admin/businesses'),
         fetch('/api/admin/profiles'),
         fetch('/api/admin/pending-changes'),
         fetch('/api/services'),
+        fetch('/api/search-tags'),
       ]);
 
       console.log('[Admin Panel] API responses:', {
@@ -187,6 +190,14 @@ export default function AdminPanel() {
         setAllServices(data.services || []);
       } else {
         console.error('[Admin Panel] Services API failed:', servicesRes.status, await servicesRes.text());
+      }
+
+      if (searchTagsRes.ok) {
+        const data = await searchTagsRes.json();
+        console.log('[Admin Panel] Search tags loaded:', data.tags?.length || 0);
+        setAllSearchTags(data.tags || []);
+      } else {
+        console.error('[Admin Panel] Search tags API failed:', searchTagsRes.status, await searchTagsRes.text());
       }
     } catch (error) {
       console.error('[Admin Panel] Error fetching admin data:', error);
@@ -474,6 +485,7 @@ export default function AdminPanel() {
       const data = {
         ...newProfileFormData,
         photos: base64Photos,
+        searchTags: selectedSearchTags, // Add search tags
       };
 
       const response = await fetch('/api/admin/profiles/create', {
@@ -2314,6 +2326,53 @@ export default function AdminPanel() {
                   </div>
                 )}
               </div>
+
+              {/* Search Tags - Oblíbené vyhledávání */}
+              {allSearchTags.length > 0 && (
+                <div>
+                  <label className="block text-sm font-medium mb-3">Oblíbené vyhledávání (volitelné)</label>
+                  <p className="text-xs text-gray-400 mb-3">
+                    Vyberte tagy pro lepší viditelnost ve vyhledávání
+                  </p>
+                  <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
+                    {/* Group tags by category */}
+                    {['service', 'special'].map(cat => {
+                      const categoryTags = allSearchTags.filter(t => t.category === cat);
+                      if (categoryTags.length === 0) return null;
+
+                      return (
+                        <div key={cat}>
+                          <h4 className="text-xs font-medium text-gray-400 mb-2 uppercase">
+                            {cat === 'service' ? 'Služby' : cat === 'special' ? 'Speciální' : cat}
+                          </h4>
+                          <div className="grid grid-cols-2 gap-2">
+                            {categoryTags.map(tag => (
+                              <label
+                                key={tag.id}
+                                className="flex items-center space-x-2 p-2 hover:bg-white/5 rounded cursor-pointer"
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={selectedSearchTags.includes(tag.id)}
+                                  onChange={(e) => {
+                                    if (e.target.checked) {
+                                      setSelectedSearchTags([...selectedSearchTags, tag.id]);
+                                    } else {
+                                      setSelectedSearchTags(selectedSearchTags.filter(id => id !== tag.id));
+                                    }
+                                  }}
+                                  className="w-4 h-4"
+                                />
+                                <span className="text-xs">{tag.label}</span>
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
 
               {/* Photos */}
               <div>

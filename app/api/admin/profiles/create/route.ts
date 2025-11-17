@@ -148,6 +148,23 @@ export async function POST(request: Request) {
       }
     }
 
+    // Connect search tags if provided
+    if (profileData.searchTags && Array.isArray(profileData.searchTags) && profileData.searchTags.length > 0) {
+      for (const tagId of profileData.searchTags) {
+        try {
+          await prisma.profileSearchTag.create({
+            data: {
+              profileId: profile.id,
+              tagId: tagId,
+            },
+          });
+        } catch (error) {
+          console.error(`Error linking search tag ${tagId}:`, error);
+          // Continue with other tags even if one fails
+        }
+      }
+    }
+
     return NextResponse.json({
       message: 'Profil úspěšně vytvořen',
       profile,

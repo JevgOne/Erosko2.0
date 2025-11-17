@@ -2,6 +2,7 @@
 
 import { Search, MapPin, Filter, X } from 'lucide-react';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { czechCities } from '@/lib/cities-data';
 
 const categories = [
@@ -63,6 +64,7 @@ interface SearchBarProps {
 }
 
 export default function SearchBar({ pageType = 'home' }: SearchBarProps) {
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedRegion, setSelectedRegion] = useState('');
   const [selectedCity, setSelectedCity] = useState('');
@@ -100,12 +102,65 @@ export default function SearchBar({ pageType = 'home' }: SearchBarProps) {
     }
   };
 
+  const handleSearch = () => {
+    const params = new URLSearchParams();
+
+    // Add city filter
+    if (selectedCity) params.set('city', selectedCity);
+    if (selectedRegion && !selectedCity) params.set('region', selectedRegion);
+
+    // Add practices/services
+    if (selectedPractices.length > 0) {
+      params.set('services', selectedPractices.join(','));
+    }
+
+    // Add detailed filters
+    if (hairColor) params.set('hairColor', hairColor);
+    if (eyeColor) params.set('eyeColor', eyeColor);
+    if (breastSize) params.set('breastSize', breastSize);
+    if (bodyType) params.set('bodyType', bodyType);
+    if (ethnicity) params.set('ethnicity', ethnicity);
+    if (tattoo) params.set('tattoo', tattoo);
+    if (piercing) params.set('piercing', piercing);
+
+    // Add age range (only if changed from default)
+    if (ageRange.min !== 18 || ageRange.max !== 50) {
+      params.set('ageMin', ageRange.min.toString());
+      params.set('ageMax', ageRange.max.toString());
+    }
+
+    // Add height range (only if changed from default)
+    if (heightRange.min !== 150 || heightRange.max !== 190) {
+      params.set('heightMin', heightRange.min.toString());
+      params.set('heightMax', heightRange.max.toString());
+    }
+
+    // Add weight range (only if changed from default)
+    if (weightRange.min !== 45 || weightRange.max !== 90) {
+      params.set('weightMin', weightRange.min.toString());
+      params.set('weightMax', weightRange.max.toString());
+    }
+
+    // Navigate to search results
+    router.push(`/search?${params.toString()}`);
+  };
+
   const clearFilters = () => {
     setSelectedCategories([]);
     setSelectedPractices([]);
     setSelectedRegion('');
     setSelectedCity('');
     setSearchQuery('');
+    setHairColor('');
+    setEyeColor('');
+    setBreastSize('');
+    setBodyType('');
+    setEthnicity('');
+    setTattoo('');
+    setPiercing('');
+    setAgeRange({ min: 18, max: 50 });
+    setHeightRange({ min: 150, max: 190 });
+    setWeightRange({ min: 45, max: 90 });
   };
 
   return (
@@ -173,7 +228,10 @@ export default function SearchBar({ pageType = 'home' }: SearchBarProps) {
             </button>
 
             {/* Search button */}
-            <button className="relative overflow-hidden bg-gradient-to-r from-primary-500 via-pink-500 to-purple-500 text-white px-8 py-4 rounded-2xl font-bold transition-all hover:shadow-2xl hover:shadow-primary-500/50">
+            <button
+              onClick={handleSearch}
+              className="relative overflow-hidden bg-gradient-to-r from-primary-500 via-pink-500 to-purple-500 text-white px-8 py-4 rounded-2xl font-bold transition-all hover:shadow-2xl hover:shadow-primary-500/50"
+            >
               <span className="relative z-10 flex items-center justify-center gap-2">
                 <Search className="w-5 h-5" />
                 Hledat

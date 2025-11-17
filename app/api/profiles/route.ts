@@ -196,6 +196,21 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const category = searchParams.get('category');
     const city = searchParams.get('city');
+    const region = searchParams.get('region');
+    const services = searchParams.get('services');
+    const hairColor = searchParams.get('hairColor');
+    const eyeColor = searchParams.get('eyeColor');
+    const breastSize = searchParams.get('breastSize');
+    const bodyType = searchParams.get('bodyType');
+    const ethnicity = searchParams.get('ethnicity');
+    const tattoo = searchParams.get('tattoo');
+    const piercing = searchParams.get('piercing');
+    const ageMin = searchParams.get('ageMin');
+    const ageMax = searchParams.get('ageMax');
+    const heightMin = searchParams.get('heightMin');
+    const heightMax = searchParams.get('heightMax');
+    const weightMin = searchParams.get('weightMin');
+    const weightMax = searchParams.get('weightMax');
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '18');
     const skip = (page - 1) * limit;
@@ -212,6 +227,96 @@ export async function GET(request: Request) {
       // Normalize city name to match database format (capitalize first letter)
       const normalizedCity = city.charAt(0).toUpperCase() + city.slice(1).toLowerCase();
       where.city = normalizedCity;
+    }
+
+    if (region && !city) {
+      // Region filtering - TODO: implement region-to-cities mapping
+      // For now, just use region as city prefix
+      where.city = {
+        contains: region.replace(' kraj', '').replace('Hlavní město ', ''),
+      };
+    }
+
+    // Physical attributes filters
+    if (hairColor) {
+      where.hairColor = {
+        contains: hairColor,
+        mode: 'insensitive',
+      };
+    }
+
+    if (eyeColor) {
+      where.eyeColor = {
+        contains: eyeColor,
+        mode: 'insensitive',
+      };
+    }
+
+    if (breastSize) {
+      where.bust = breastSize;
+    }
+
+    if (bodyType) {
+      where.bodyType = {
+        contains: bodyType,
+        mode: 'insensitive',
+      };
+    }
+
+    if (ethnicity) {
+      where.nationality = {
+        contains: ethnicity,
+        mode: 'insensitive',
+      };
+    }
+
+    if (tattoo) {
+      where.tattoos = {
+        contains: tattoo,
+        mode: 'insensitive',
+      };
+    }
+
+    if (piercing) {
+      where.piercing = {
+        contains: piercing,
+        mode: 'insensitive',
+      };
+    }
+
+    // Age range filter
+    if (ageMin || ageMax) {
+      where.age = {};
+      if (ageMin) where.age.gte = parseInt(ageMin);
+      if (ageMax) where.age.lte = parseInt(ageMax);
+    }
+
+    // Height range filter
+    if (heightMin || heightMax) {
+      where.height = {};
+      if (heightMin) where.height.gte = parseInt(heightMin);
+      if (heightMax) where.height.lte = parseInt(heightMax);
+    }
+
+    // Weight range filter
+    if (weightMin || weightMax) {
+      where.weight = {};
+      if (weightMin) where.weight.gte = parseInt(weightMin);
+      if (weightMax) where.weight.lte = parseInt(weightMax);
+    }
+
+    // Services filter - search profiles that have ANY of the requested services
+    if (services) {
+      const serviceNames = services.split(',').map((s) => s.trim());
+      where.services = {
+        some: {
+          service: {
+            name: {
+              in: serviceNames,
+            },
+          },
+        },
+      };
     }
 
     const [profiles, total] = await Promise.all([

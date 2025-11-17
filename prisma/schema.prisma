@@ -442,3 +442,38 @@ model Redirect {
   @@index([from])
   @@index([enabled])
 }
+
+// Content Management System - Editable Blocks
+model ContentBlock {
+  id          String          @id @default(cuid())
+  identifier  String          @unique // e.g., "hero_title", "hero_subtitle", "trust_stats"
+  type        ContentBlockType
+  title       String? // For admin panel display
+
+  // Content fields
+  content     String? // Text or HTML content
+  data        String? // JSON stringified for complex data (arrays, objects)
+
+  // Metadata
+  page        String          @default("homepage") // "homepage", "about", "contact", etc.
+  section     String?         // "hero", "features", "testimonials", etc.
+  published   Boolean         @default(true)
+  order       Int             @default(0) // For ordering blocks within a section
+
+  // Timestamps
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  @@index([identifier])
+  @@index([page])
+  @@index([section])
+  @@index([published])
+}
+
+enum ContentBlockType {
+  TEXT // Simple text
+  RICH_TEXT // HTML content
+  JSON // Complex data structures
+  IMAGE // Image URL
+  VIDEO // Video URL or embed code
+}

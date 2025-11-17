@@ -76,7 +76,7 @@ const mockBusiness = {
   },
 
   facilities: {
-    amenities: ['Vířivka', 'Sauna', 'Masážní stůl', 'Sprcha', 'WiFi', 'Klimatizace', 'Bar', 'Parkování'],
+    amenities: ['jacuzzi', 'sauna', 'shower', 'drinks', 'wifi', 'ac', 'parking', 'discreet'],
     rooms: 5,
     private: true,
     discreet: true,

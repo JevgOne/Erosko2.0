@@ -59,12 +59,12 @@ export async function ContentBlockSection({
           data-block-id={block.identifier}
         >
           {block.type === 'RICH_TEXT' || block.type === 'TEXT' ? (
-            <div dangerouslySetInnerHTML={{ __html: block.content }} />
+            <div dangerouslySetInnerHTML={{ __html: block.content || '' }} />
           ) : block.type === 'IMAGE' ? (
-            <img src={block.content} alt={block.title} className="w-full h-auto" />
+            <img src={block.content || ''} alt={block.title || ''} className="w-full h-auto" />
           ) : block.type === 'VIDEO' ? (
             <iframe
-              src={block.content}
+              src={block.content || ''}
               title={block.title}
               className="w-full aspect-video"
               allowFullScreen

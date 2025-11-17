@@ -87,16 +87,26 @@ export default function ProfilesTab() {
         ...(statusFilter !== 'all' && { status: statusFilter }),
       });
 
+      console.log('Fetching SEO dashboard data...');
       const response = await fetch(`/api/admin/seo-dashboard?${params}`);
+      console.log('Response status:', response.status);
+
       const data = await response.json();
+      console.log('Response data:', data);
 
       if (data.success) {
+        console.log('Stats:', data.data.stats);
+        console.log('Profiles count:', data.data.profiles?.length);
         setStats(data.data.stats);
         setProfiles(data.data.profiles);
         setTotalPages(data.data.pagination.totalPages);
+      } else {
+        console.error('API returned success: false', data.error);
+        alert('Chyba při načítání dat: ' + (data.error || 'Neznámá chyba'));
       }
     } catch (error) {
       console.error('Failed to fetch SEO data:', error);
+      alert('Chyba při načítání dat: ' + error);
     } finally {
       setLoading(false);
     }

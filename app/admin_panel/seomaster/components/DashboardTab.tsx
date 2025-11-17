@@ -56,14 +56,23 @@ export default function DashboardTab() {
   const fetchDashboard = async () => {
     try {
       setRefreshing(true);
+      console.log('Fetching dashboard data...');
       const response = await fetch('/api/seo/dashboard');
+      console.log('Dashboard response status:', response.status);
+
       const data = await response.json();
+      console.log('Dashboard data:', data);
 
       if (data.success) {
+        console.log('Dashboard stats loaded successfully');
         setStats(data.data);
+      } else {
+        console.error('Dashboard API returned success: false', data.error);
+        alert('Chyba při načítání dashboard: ' + (data.error || 'Neznámá chyba'));
       }
     } catch (error) {
       console.error('Failed to fetch dashboard:', error);
+      alert('Chyba při načítání dashboard: ' + error);
     } finally {
       setLoading(false);
       setRefreshing(false);

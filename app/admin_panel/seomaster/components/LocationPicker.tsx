@@ -15,118 +15,162 @@ const AVAILABLE_LOCATIONS: Location[] = [
   {
     page: 'homepage',
     section: 'hero-top',
-    label: '🔝 Homepage - Nad vyhledáváním',
-    description: 'Zobrazí se úplně nahoře, nad search barem (ideální pro urgentní oznámení)',
+    label: '🚨 Homepage - ÚPLNĚ NAHOŘE (Alert Bar)',
+    description: '⚠️ Nad search barem - ideální pro URGENTNÍ oznámení, akce, důležité zprávy',
     visualPosition: `
-Header (navigace)
-    ↓
-🎯 [VÁŠ CONTENT TADY]
-    ↓
-Hero (search bar)
+┌─────────────────────────────┐
+│ Header (logo, navigace)     │
+├─────────────────────────────┤
+│ 🎯 [VÁŠ CONTENT]           │ ← TADY!
+│    Alert/Oznámení           │
+├─────────────────────────────┤
+│ Hero Sekce                  │
+│ (vyhledávání)               │
+└─────────────────────────────┘
     `
   },
   {
     page: 'homepage',
     section: 'after-hero',
-    label: '📍 Homepage - Pod vyhledáváním',
-    description: 'Mezi search barem a profily (ideální pro CTA nebo trust badges)',
+    label: '🎯 Homepage - POD VYHLEDÁVÁNÍM',
+    description: '📍 Hned pod search barem - super pro CTA "Přidat profil", trust badges, certifikáty',
     visualPosition: `
-Hero (search bar)
-    ↓
-🎯 [VÁŠ CONTENT TADY]
-    ↓
-Profile Cards (grid)
+┌─────────────────────────────┐
+│ Hero Sekce                  │
+│ (search bar, city buttons)  │
+├─────────────────────────────┤
+│ 🎯 [VÁŠ CONTENT]           │ ← TADY!
+│    CTA / Trust Badges       │
+├─────────────────────────────┤
+│ Profile Cards Grid          │
+│ (18 profilů)                │
+└─────────────────────────────┘
     `
   },
   {
     page: 'homepage',
     section: 'after-profiles',
-    label: '👥 Homepage - Pod profily',
-    description: 'Mezi profily a bannerem (ideální pro "Přidat profil" CTA)',
+    label: '👥 Homepage - PO PROFILECH',
+    description: '💼 Pod gridem profilů - dobré pro "Staň se členem", "Přidej profil" CTA',
     visualPosition: `
-Profile Cards (grid)
-    ↓
-🎯 [VÁŠ CONTENT TADY]
-    ↓
-Ad Banner
+┌─────────────────────────────┐
+│ Profile Cards Grid          │
+│ (18 profilů v gridu)        │
+├─────────────────────────────┤
+│ 🎯 [VÁŠ CONTENT]           │ ← TADY!
+│    CTA Banner               │
+├─────────────────────────────┤
+│ Ad Banner                   │
+│ "Propagujte svůj profil"    │
+└─────────────────────────────┘
     `
   },
   {
     page: 'homepage',
     section: 'main',
-    label: '⭐ Homepage - Hlavní sekce',
-    description: 'Mezi Categories a Trust Signals (ideální pro SEO text)',
+    label: '⭐ Homepage - HLAVNÍ SEKCE (SEO)',
+    description: '📝 Mezi Categories a Trust Signals - NEJLEPŠÍ místo pro SEO texty, popisky',
     visualPosition: `
-Categories (4 karty)
-    ↓
-🎯 [VÁŠ CONTENT TADY]
-    ↓
-Trust Signals
+┌─────────────────────────────┐
+│ Categories                  │
+│ (4 barevné karty)           │
+├─────────────────────────────┤
+│ 🎯 [VÁŠ CONTENT]           │ ← TADY!
+│    SEO Text / Popis         │
+├─────────────────────────────┤
+│ Trust Signals               │
+│ (500+ profilů, statistiky)  │
+└─────────────────────────────┘
     `
   },
   {
     page: 'homepage',
     section: 'footer',
-    label: '🦶 Homepage - Před patičkou',
-    description: 'Před footer sekcí (ideální pro newsletter nebo promo banner)',
+    label: '🦶 Homepage - PŘED PATIČKOU',
+    description: '📧 Nad footerem - perfekt pro newsletter signup, promo banner, partneři',
     visualPosition: `
-How It Works
-    ↓
-🎯 [VÁŠ CONTENT TADY]
-    ↓
-Footer (patička)
+┌─────────────────────────────┐
+│ How It Works                │
+│ (3 kroky jak to funguje)    │
+├─────────────────────────────┤
+│ 🎯 [VÁŠ CONTENT]           │ ← TADY!
+│    Newsletter / Partners    │
+├─────────────────────────────┤
+│ Footer (patička)            │
+│ (odkazy, copyright)         │
+└─────────────────────────────┘
     `
   },
   {
     page: 'holky-na-sex',
     section: 'main',
-    label: '❤️ Holky na sex - Hlavní',
-    description: 'Na stránce Holky na sex mezi obsahem',
+    label: '❤️ Stránka HOLKY NA SEX',
+    description: '🔞 Mezi filtry a výsledky - SEO text specifický pro escort služby',
     visualPosition: `
-Search & Filters
-    ↓
-🎯 [VÁŠ CONTENT TADY]
-    ↓
-Profile Results
+┌─────────────────────────────┐
+│ Search Bar & Filters        │
+│ (město, služby, filtry)     │
+├─────────────────────────────┤
+│ 🎯 [VÁŠ CONTENT]           │ ← TADY!
+│    SEO Text / Info          │
+├─────────────────────────────┤
+│ Escort Profiles Grid        │
+│ (výsledky vyhledávání)      │
+└─────────────────────────────┘
     `
   },
   {
     page: 'eroticke-masaze',
     section: 'main',
-    label: '💆 Erotické masáže - Hlavní',
-    description: 'Na stránce Erotické masáže mezi obsahem',
+    label: '💆 Stránka EROTICKÉ MASÁŽE',
+    description: '✨ Mezi filtry a výsledky - SEO text pro masáže, relaxaci',
     visualPosition: `
-Search & Filters
-    ↓
-🎯 [VÁŠ CONTENT TADY]
-    ↓
-Masseuse Results
+┌─────────────────────────────┐
+│ Search Bar & Filters        │
+│ (město, typy masáží)        │
+├─────────────────────────────┤
+│ 🎯 [VÁŠ CONTENT]           │ ← TADY!
+│    Info o masážích          │
+├─────────────────────────────┤
+│ Masseuse Profiles Grid      │
+│ (masérky v gridu)           │
+└─────────────────────────────┘
     `
   },
   {
     page: 'bdsm',
     section: 'main',
-    label: '🔥 BDSM - Hlavní',
-    description: 'Na stránce BDSM mezi obsahem',
+    label: '🔥 Stránka BDSM & DOMINA',
+    description: '⛓️ Mezi filtry a výsledky - Info o BDSM službách, bezpečnosti',
     visualPosition: `
-Search & Filters
-    ↓
-🎯 [VÁŠ CONTENT TADY]
-    ↓
-BDSM Results
+┌─────────────────────────────┐
+│ Search Bar & Filters        │
+│ (město, BDSM praktiky)      │
+├─────────────────────────────┤
+│ 🎯 [VÁŠ CONTENT]           │ ← TADY!
+│    BDSM Guide / Safety      │
+├─────────────────────────────┤
+│ Domina Profiles Grid        │
+│ (dominy, submisivní)        │
+└─────────────────────────────┘
     `
   },
   {
     page: 'online-sex',
     section: 'main',
-    label: '📹 Online Sex - Hlavní',
-    description: 'Na stránce Online Sex mezi obsahem',
+    label: '📹 Stránka ONLINE SEX',
+    description: '💻 Mezi kategoriemi a profily - Info o cam shows, OnlyFans, sexting',
     visualPosition: `
-Online Categories
-    ↓
-🎯 [VÁŠ CONTENT TADY]
-    ↓
-Online Profiles
+┌─────────────────────────────┐
+│ Online Categories Tabs      │
+│ (OnlyFans, Cam, Sexting)    │
+├─────────────────────────────┤
+│ 🎯 [VÁŠ CONTENT]           │ ← TADY!
+│    Online Safety Info       │
+├─────────────────────────────┤
+│ Online Profiles Grid        │
+│ (cam girls, creators)       │
+└─────────────────────────────┘
     `
   },
 ];
@@ -197,20 +241,29 @@ export default function LocationPicker({ value, onChange }: LocationPickerProps)
       </div>
 
       {/* Visual Preview */}
-      <div className="bg-dark-800 rounded-xl p-6 border-2 border-primary-500/30 shadow-lg">
-        <div className="flex items-center gap-2 mb-4">
-          <div className="w-2 h-2 bg-primary-500 rounded-full animate-pulse"></div>
-          <h3 className="text-sm font-bold text-primary-400 uppercase tracking-wider">Live Preview Pozice</h3>
+      <div className="bg-gradient-to-br from-dark-800 to-dark-900 rounded-xl p-6 border-2 border-primary-500/40 shadow-2xl">
+        <div className="flex items-center gap-3 mb-5">
+          <div className="relative">
+            <div className="w-3 h-3 bg-primary-500 rounded-full animate-pulse"></div>
+            <div className="absolute inset-0 w-3 h-3 bg-primary-500 rounded-full animate-ping"></div>
+          </div>
+          <h3 className="text-base font-bold text-white uppercase tracking-wider flex items-center gap-2">
+            📍 Live Preview - Kde se zobrazí
+          </h3>
         </div>
 
-        <div className="bg-black/50 rounded-lg p-5 font-mono text-sm border border-white/10">
-          <pre className="text-gray-200 whitespace-pre-wrap leading-relaxed">{selectedLocation.visualPosition}</pre>
+        <div className="bg-black/60 rounded-xl p-6 font-mono text-base border-2 border-white/20 shadow-inner">
+          <pre className="text-gray-100 whitespace-pre-wrap leading-loose font-semibold">{selectedLocation.visualPosition}</pre>
         </div>
 
-        <div className="mt-4 p-4 bg-blue-500/10 border border-blue-500/30 rounded-lg">
-          <p className="text-sm text-blue-200">
-            💡 <strong className="text-blue-100">Tip:</strong> {selectedLocation.description}
-          </p>
+        <div className="mt-5 p-5 bg-gradient-to-r from-blue-500/15 to-purple-500/15 border-2 border-blue-400/30 rounded-xl">
+          <div className="flex items-start gap-3">
+            <span className="text-2xl">💡</span>
+            <div>
+              <p className="text-sm font-bold text-blue-100 mb-1">Co sem dát:</p>
+              <p className="text-sm text-blue-200 leading-relaxed">{selectedLocation.description}</p>
+            </div>
+          </div>
         </div>
       </div>
 

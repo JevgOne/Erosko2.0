@@ -5,31 +5,21 @@
 /**
  * Validates Czech phone number
  * Accepts formats: +420123456789, 420123456789, 123456789, +420 123 456 789
+ * SIMPLIFIED for launch - accepts any non-empty number
  */
 export function validatePhoneNumber(phone: string): { valid: boolean; message?: string } {
   if (!phone || phone.trim().length === 0) {
     return { valid: false, message: 'Telefonní číslo je povinné' };
   }
 
-  // Remove spaces, dashes, and parentheses
+  // SIMPLIFIED: Just check if it has at least 6 digits
   const cleaned = phone.replace(/[\s\-\(\)]/g, '');
+  const hasDigits = /\d{6,}/.test(cleaned);
 
-  // Check if starts with +420 or just 420
-  const czechPattern = /^(\+420|420)?[1-9]\d{8}$/;
-
-  if (!czechPattern.test(cleaned)) {
+  if (!hasDigits) {
     return {
       valid: false,
-      message: 'Neplatné telefonní číslo. Použijte formát: +420 123 456 789',
-    };
-  }
-
-  // Check minimum length (9 digits without country code)
-  const digitsOnly = cleaned.replace(/^\+?420/, '');
-  if (digitsOnly.length !== 9) {
-    return {
-      valid: false,
-      message: 'Telefonní číslo musí mít 9 číslic',
+      message: 'Zadejte platné telefonní číslo (min. 6 číslic)',
     };
   }
 
@@ -38,10 +28,11 @@ export function validatePhoneNumber(phone: string): { valid: boolean; message?: 
 
 /**
  * Validates email address
+ * UPDATED: Email is now REQUIRED for login
  */
 export function validateEmail(email: string): { valid: boolean; message?: string } {
   if (!email || email.trim().length === 0) {
-    return { valid: true }; // Email is optional
+    return { valid: false, message: 'Email je povinný' }; // Email is REQUIRED
   }
 
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -58,34 +49,23 @@ export function validateEmail(email: string): { valid: boolean; message?: string
 
 /**
  * Validates password strength
+ * SIMPLIFIED for launch - just check minimum length
  */
 export function validatePassword(password: string): { valid: boolean; message?: string; strength?: 'weak' | 'medium' | 'strong' } {
   if (!password || password.length === 0) {
     return { valid: false, message: 'Heslo je povinné' };
   }
 
-  if (password.length < 6) {
+  if (password.length < 4) {
     return {
       valid: false,
-      message: 'Heslo musí mít alespoň 6 znaků',
+      message: 'Heslo musí mít alespoň 4 znaky',
       strength: 'weak',
     };
   }
 
-  // Calculate strength
-  let strength: 'weak' | 'medium' | 'strong' = 'weak';
-  let strengthScore = 0;
-
-  if (password.length >= 8) strengthScore++;
-  if (/[a-z]/.test(password)) strengthScore++;
-  if (/[A-Z]/.test(password)) strengthScore++;
-  if (/[0-9]/.test(password)) strengthScore++;
-  if (/[^a-zA-Z0-9]/.test(password)) strengthScore++;
-
-  if (strengthScore >= 4) strength = 'strong';
-  else if (strengthScore >= 2) strength = 'medium';
-
-  return { valid: true, strength };
+  // Always return medium strength for now
+  return { valid: true, strength: 'medium' };
 }
 
 /**

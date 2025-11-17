@@ -1,0 +1,348 @@
+EROSKO PHOTO AND SERVICE MANAGEMENT SYSTEM - FILE REFERENCE
+============================================================
+
+DATABASE & SCHEMA
+================
+
+/Users/zen/Erosko2.0/prisma/schema.prisma
+  - Complete database schema definition
+  - Photo model with order and isMain fields
+  - Service and ProfileService junction table
+  - PendingChange model for approval system
+
+FILE UPLOAD UTILITIES
+====================
+
+/Users/zen/Erosko2.0/lib/photo-upload.ts
+  - saveBase64Photo(base64String, folder) function
+  - Converts base64 to file on disk
+  - Generates unique filenames with timestamp
+  - Returns URL path for database storage
+  - Max 10MB per image, validates format
+
+API ENDPOINTS - ADMIN OPERATIONS
+================================
+
+/Users/zen/Erosko2.0/app/api/admin/profiles/create/route.ts
+  - POST endpoint for admin to create profile
+  - Accepts: name, age, city, category, phone, services[], photos[]
+  - Auto-creates user account if needed
+  - Auto-approves profile (approved: true)
+  - Calls saveBase64Photo() for each photo
+  - Creates ProfileService relationships
+
+/Users/zen/Erosko2.0/app/api/admin/profiles/edit/route.ts
+  - POST endpoint to update existing profile
+  - Accepts: profileId, data with profileData and photoChanges
+  - photoChanges: { photosToDelete: [], newPhotos: [] }
+  - Deletes files from disk using fs.unlinkSync()
+  - Saves new photos, updates Photo records
+  - Auto-calculates photo order, sets isMain for first
+
+/Users/zen/Erosko2.0/app/api/admin/profiles/delete/route.ts
+  - POST endpoint to delete profile
+  - Removes profile from database
+  - Photos cascade delete (db constraint)
+  - Files deleted automatically
+
+/Users/zen/Erosko2.0/app/api/admin/businesses/create/route.ts
+  - POST endpoint to create business
+  - Similar to profiles/create but for Business model
+  - Accepts: name, phone, city, profileType, photos[]
+  - Auto-creates owner account if needed
+  - Saves photos to public/uploads/businesses/
+
+/Users/zen/Erosko2.0/app/api/admin/businesses/edit/route.ts
+  - POST endpoint to update business
+  - Same photo management as profiles/edit
+  - Direct file deletion and creation
+
+/Users/zen/Erosko2.0/app/api/admin/businesses/delete/route.ts
+  - POST endpoint to delete business
+  - Cascade deletes all related photos
+
+/Users/zen/Erosko2.0/app/api/admin/pending-changes/route.ts
+  - GET endpoint: Fetch all pending changes (any status)
+  - POST endpoint: Approve or reject a pending change
+  - If approved: Apply newData (including photos) to profile/business
+  - If rejected: Discard changes, no file operations
+  - Photo handling: Delete from disk on approval, create new photos
+
+API ENDPOINTS - USER OPERATIONS
+===============================
+
+/Users/zen/Erosko2.0/app/api/profiles/route.ts
+  - GET endpoint: Fetch approved profiles with pagination
+  - POST endpoint: Create new profile (user)
+  - Includes: services array, but photos NOT supported
+  - Auto-generates slug from name-city-timestamp
+  - Creates ProfileService relationships
+  - Profile created with approved: false (needs admin review)
+
+/Users/zen/Erosko2.0/app/api/profiles/[slug]/route.ts
+  - GET endpoint: Fetch single profile by slug
+  - Includes: photos ordered by order field
+  - Includes: services with service details
+
+/Users/zen/Erosko2.0/app/api/profiles/[slug]/services/route.ts
+  - GET endpoint: Fetch services for profile by slug
+  - Returns: servicesJson field (legacy)
+
+/Users/zen/Erosko2.0/app/api/profiles/services/route.ts
+  - Legacy endpoint for fetching services
+
+/Users/zen/Erosko2.0/app/api/profiles/edit/route.ts
+  - POST endpoint: User requests profile changes
+  - Creates PendingChange record (status: PENDING)
+  - User must wait for admin approval
+  - Does NOT support photo or service changes
+
+/Users/zen/Erosko2.0/app/api/user/profiles/route.ts
+  - GET endpoint: Fetch all profiles and businesses owned by user
+  - Requires authentication
+  - Includes photos for each profile/business
+
+API ENDPOINTS - SERVICES
+========================
+
+/Users/zen/Erosko2.0/app/api/services/route.ts
+  - GET endpoint: Fetch all services
+  - Query param: category (optional) - filters by ServiceCategory
+  - Returns: { services: [...] }
+  - No authentication required
+
+UI COMPONENTS
+=============
+
+/Users/zen/Erosko2.0/app/inzerent_dashboard/page.tsx
+  - User dashboard component (2500+ lines)
+  - Profile management section:
+    - View owned profiles
+    - Add new profile (modal form)
+    - Edit profile (creates pending change)
+    - Upload photos (max 10, convert to base64)
+    - Select services (tabs by category)
+  - Business management section:
+    - View owned businesses
+    - Edit business (direct save, no approval)
+    - Manage photos (delete + add)
+  - State management for:
+    - formData: profile creation form
+    - businessPhotos, photosToDelete: business photo management
+    - availableServices: loaded from /api/services
+  - Photo handlers:
+    - handlePhotoUpload: Adds files to formData.photos
+    - removePhoto: Removes from formData.photos
+  - Service handlers:
+    - handleServiceToggle: Toggle service selection
+
+/Users/zen/Erosko2.0/app/admin_panel/page.tsx
+  - Admin dashboard component (2500+ lines)
+  - Dashboard section with statistics
+  - Users section: List, search, filter
+  - Businesses section:
+    - Create modal with photo upload
+    - Edit modal with photo management
+  - Profiles section:
+    - Create modal (auto-approves)
+    - Edit modal (photos + services)
+  - Pending changes section:
+    - Review user change requests
+    - Show old vs new data
+    - Approve/reject buttons
+  - State management for:
+    - Form data for multiple modals
+    - Photo previews and photo arrays
+    - Services loaded from /api/services
+  - Service selection UI:
+    - Checkboxes grouped by category
+    - Multiple selection allowed
+    - Indices to track selected services
+  - Photo management UI:
+    - Preview of existing photos
+    - Checkbox to mark for deletion
+    - File input for new photos
+    - Preview of new photos before save
+
+/Users/zen/Erosko2.0/components/ServiceFilters.tsx
+  - Service filter component
+  - Used in search/browse sections
+
+UTILITY FILES
+=============
+
+/Users/zen/Erosko2.0/lib/photo-upload.ts
+  - saveBase64Photo(base64String: string, folder: string): Promise<string>
+  - Main photo upload utility
+  - Validates base64 format and size
+  - Creates directory structure
+  - Generates unique filename
+  - Saves to public/uploads/{folder}/
+  - Returns URL: /uploads/{folder}/{filename}
+
+STORAGE LOCATIONS
+=================
+
+Physical filesystem:
+  /Users/zen/Erosko2.0/public/uploads/profiles/
+  /Users/zen/Erosko2.0/public/uploads/businesses/
+  
+Database URLs:
+  /uploads/profiles/1731840000000-abc123.jpg
+  /uploads/businesses/1731840000000-xyz789.png
+
+DOCUMENTATION FILES
+====================
+
+/Users/zen/Erosko2.0/PHOTO_SERVICE_MANAGEMENT_REPORT.md
+  - Comprehensive documentation (14 sections, 500+ lines)
+  - Complete API endpoint documentation
+  - Database schema details
+  - User and admin workflows
+  - Limitations and gaps
+  - Future recommendations
+
+/Users/zen/Erosko2.0/PHOTO_SERVICE_QUICK_REFERENCE.md
+  - Quick reference guide (400+ lines)
+  - API endpoint table
+  - Storage locations
+  - User/admin workflows
+  - Error scenarios and fixes
+  - Authorization rules
+  - Common request formats
+  - Debugging tips
+
+/Users/zen/Erosko2.0/IMPLEMENTATION_SUMMARY.md
+  - Implementation overview (450+ lines)
+  - Complete system overview
+  - Admin and user capabilities
+  - Pending changes system
+  - Database design details
+  - Real-world flow examples
+  - Limitations summary
+  - Security considerations
+  - Testing checklist
+  - Deployment notes
+
+KEY FEATURES
+============
+
+Photo Management:
+- Local filesystem storage (public/uploads/)
+- Base64 upload from client
+- Automatic ordering (0, 1, 2, ...)
+- Main photo selection (isMain: true for order 0)
+- Photo deletion with file cleanup
+- No reordering capability
+- No photo editing (crop, rotate)
+- AI quality scoring for alt text (read-only)
+
+Service Management:
+- Many-to-many relationship (ProfileService junction)
+- Service categories (PRAKTIKY, DRUHY_MASAZI, EXTRA_SLUZBY, BDSM_PRAKTIKY)
+- Multiple selection via checkboxes
+- Service assignment during profile creation only
+- No service modification after creation
+- Indexed queries for performance
+
+Approval System:
+- Pending changes for user-requested profile edits
+- Admin approval/rejection interface
+- Photo changes can be included in pending changes
+- Cascade delete support for related records
+
+LIMITATIONS
+===========
+
+Critical:
+- Users cannot add/remove photos after creation
+- Users cannot modify services after creation
+- No photo reordering capability
+- No API to change which photo is main
+
+Minor:
+- No image compression or optimization
+- No MIME type validation
+- No bulk photo operations
+- No photo editing capabilities
+- No service creation UI
+
+AUTHENTICATION & AUTHORIZATION
+==============================
+
+Authentication: NextAuth.js with phone-based login
+Roles: USER, PROVIDER, ADMIN
+
+User can:
+- Create own profiles
+- Edit own profile fields (name, age, description)
+- Upload photos during creation
+- Select services during creation
+- Delete own profiles
+
+Admin can:
+- Create/edit/delete all profiles
+- Create/edit/delete all businesses
+- Add/remove photos for any entity
+- Assign services during creation
+- Approve/reject user changes
+
+ENDPOINTS SUMMARY
+=================
+
+Photos:
+- POST /api/admin/profiles/create (with photos)
+- POST /api/admin/profiles/edit (photo management)
+- POST /api/admin/businesses/create (with photos)
+- POST /api/admin/businesses/edit (photo management)
+- GET /api/profiles/[slug] (includes photos)
+- GET /api/user/profiles (includes photos)
+
+Services:
+- GET /api/services (all services)
+- POST /api/profiles (with services)
+- GET /api/profiles/[slug] (includes services)
+
+Changes:
+- GET /api/admin/pending-changes
+- POST /api/admin/pending-changes (approve/reject)
+
+NEXT STEPS FOR DEVELOPERS
+=========================
+
+1. Implement user photo management APIs:
+   - DELETE /api/profiles/[id]/photos/[photoId]
+   - PATCH /api/profiles/[id]/photos/reorder
+   - POST /api/profiles/[id]/photos
+
+2. Add service modification endpoint:
+   - PUT /api/profiles/[id]/services
+
+3. Add image optimization:
+   - Compression on upload
+   - Thumbnail generation
+   - Caching headers
+
+4. Improve security:
+   - MIME type validation
+   - File size enforcement
+   - Rate limiting
+   - Authentication for file serving
+
+5. Add photo metadata editing:
+   - User-editable alt text
+   - Photo captions
+   - Main photo selection
+
+SEE ALSO
+========
+
+For complete details, refer to:
+- PHOTO_SERVICE_MANAGEMENT_REPORT.md (comprehensive guide)
+- PHOTO_SERVICE_QUICK_REFERENCE.md (quick lookup)
+- IMPLEMENTATION_SUMMARY.md (implementation details)
+- prisma/schema.prisma (data model)
+- lib/photo-upload.ts (upload utility source)
+
+Generated: 2024-11-17
+System: Erosko 2.0

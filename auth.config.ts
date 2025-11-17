@@ -13,7 +13,10 @@ export default {
         password: { label: 'Heslo', type: 'password' },
       },
       async authorize(credentials) {
+        console.log('[AUTH] Login attempt for:', credentials?.email);
+
         if (!credentials?.email || !credentials?.password) {
+          console.log('[AUTH] Missing credentials');
           return null;
         }
 
@@ -23,19 +26,29 @@ export default {
           },
         });
 
-        if (!user || !user.passwordHash) {
+        if (!user) {
+          console.log('[AUTH] User not found:', credentials.email);
           return null;
         }
 
+        if (!user.passwordHash) {
+          console.log('[AUTH] User has no password hash');
+          return null;
+        }
+
+        console.log('[AUTH] User found, checking password...');
         const isPasswordValid = await bcrypt.compare(
           credentials.password as string,
           user.passwordHash
         );
 
+        console.log('[AUTH] Password valid:', isPasswordValid);
+
         if (!isPasswordValid) {
           return null;
         }
 
+        console.log('[AUTH] Login successful for:', user.email);
         return {
           id: user.id,
           phone: user.phone,

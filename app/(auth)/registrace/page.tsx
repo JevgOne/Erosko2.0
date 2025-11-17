@@ -60,6 +60,8 @@ export default function RegistracePage() {
   const [selectedMassageTypes, setSelectedMassageTypes] = useState<string[]>([]);
   const [selectedExtraServices, setSelectedExtraServices] = useState<string[]>([]);
   const [selectedEquipment, setSelectedEquipment] = useState<string[]>([]);
+  const [selectedSearchTags, setSelectedSearchTags] = useState<string[]>([]);
+  const [availableSearchTags, setAvailableSearchTags] = useState<any[]>([]);
 
   // Detailní údaje pro SOLO profil
   const [description, setDescription] = useState('');
@@ -175,6 +177,20 @@ export default function RegistracePage() {
     }
   }, [phone]);
 
+  // Load search tags on mount
+  useEffect(() => {
+    const fetchSearchTags = async () => {
+      try {
+        const response = await fetch('/api/search-tags');
+        const data = await response.json();
+        setAvailableSearchTags(data.tags || []);
+      } catch (error) {
+        console.error('Error loading search tags:', error);
+      }
+    };
+    fetchSearchTags();
+  }, []);
+
   // Získat služby podle kategorie
   const getServicesForCategory = () => {
     // Pro podnik jen základní služby
@@ -235,6 +251,14 @@ export default function RegistracePage() {
       prev.includes(item)
         ? prev.filter(i => i !== item)
         : [...prev, item]
+    );
+  };
+
+  const handleSearchTagToggle = (tagId: string) => {
+    setSelectedSearchTags(prev =>
+      prev.includes(tagId)
+        ? prev.filter(t => t !== tagId)
+        : [...prev, tagId]
     );
   };
 
@@ -410,6 +434,7 @@ export default function RegistracePage() {
               businessName: profileType !== 'SOLO' ? businessName : null,
               services: profileType === 'SOLO' ? allServices : [],
               equipment: selectedEquipment,
+              searchTags: selectedSearchTags, // Search tags pro Oblíbené vyhledávání
               photos: photoBase64Array, // Přidáme fotky jako base64
               // Detailní údaje pro SOLO
               ...(profileType === 'SOLO' && {
@@ -1462,6 +1487,49 @@ export default function RegistracePage() {
                             ))}
                           </div>
                         </div>
+
+                        {/* Oblíbené vyhledávání - Search Tags */}
+                        {availableSearchTags.length > 0 && (
+                          <div>
+                            <label className="block text-sm font-medium mb-2">
+                              Oblíbené vyhledávání (volitelné)
+                            </label>
+                            <p className="text-xs text-gray-400 mb-3">
+                              Vyberte tagy pro lepší viditelnost ve vyhledávání
+                            </p>
+                            <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
+                              {/* Group tags by category */}
+                              {['service', 'special'].map(cat => {
+                                const categoryTags = availableSearchTags.filter(t => t.category === cat);
+                                if (categoryTags.length === 0) return null;
+
+                                return (
+                                  <div key={cat}>
+                                    <h4 className="text-xs font-medium text-gray-400 mb-2 uppercase">
+                                      {cat === 'service' ? 'Služby' : cat === 'special' ? 'Speciální' : cat}
+                                    </h4>
+                                    <div className="grid grid-cols-2 gap-2">
+                                      {categoryTags.map(tag => (
+                                        <label
+                                          key={tag.id}
+                                          className="flex items-center space-x-2 p-2 rounded-lg bg-dark-800/50 backdrop-blur border border-white/10 hover:border-primary-500 cursor-pointer transition-colors"
+                                        >
+                                          <input
+                                            type="checkbox"
+                                            checked={selectedSearchTags.includes(tag.id)}
+                                            onChange={() => handleSearchTagToggle(tag.id)}
+                                            className="w-4 h-4"
+                                          />
+                                          <span className="text-xs">{tag.label}</span>
+                                        </label>
+                                      ))}
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
 
                         {/* Notice about photos */}
                         <div className="p-4 rounded-xl bg-blue-500/10 border border-blue-500/20">

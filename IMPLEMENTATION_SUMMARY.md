@@ -1,425 +1,544 @@
-# ✅ EROSKO.CZ - SEO Implementace Kompletní Souhrn
+# Erosko Photo & Service Management - Implementation Summary
 
-## 🎯 Co bylo implementováno
+## Key Files and Locations
 
-### 1. ✅ URL Struktura - LEPŠÍ než konkurence!
+### Absolute File Paths
 
-**Nová URL struktura:**
-```
-https://erosko.cz/divky/lucie-praha-x7k2p9
-                  ↑      ↑     ↑      ↑
-              keyword  jméno  město  unique ID
-```
+**Database Schema:**
+- `/Users/zen/Erosko2.0/prisma/schema.prisma`
 
-**Změny:**
-- ✅ `/profil/` → `/divky/` (SEO keyword!)
-- ✅ `[id]` → `[slug]` (SEO-friendly)
-- ✅ Město vždy v URL (lokální SEO boost)
-- ✅ Unique 6-znakové ID (ne čísla)
+**Upload Utility:**
+- `/Users/zen/Erosko2.0/lib/photo-upload.ts`
 
----
+**API Routes:**
+- `/Users/zen/Erosko2.0/app/api/admin/profiles/create/route.ts`
+- `/Users/zen/Erosko2.0/app/api/admin/profiles/edit/route.ts`
+- `/Users/zen/Erosko2.0/app/api/admin/profiles/delete/route.ts`
+- `/Users/zen/Erosko2.0/app/api/admin/businesses/create/route.ts`
+- `/Users/zen/Erosko2.0/app/api/admin/businesses/edit/route.ts`
+- `/Users/zen/Erosko2.0/app/api/admin/businesses/delete/route.ts`
+- `/Users/zen/Erosko2.0/app/api/admin/pending-changes/route.ts`
+- `/Users/zen/Erosko2.0/app/api/profiles/route.ts`
+- `/Users/zen/Erosko2.0/app/api/profiles/[slug]/route.ts`
+- `/Users/zen/Erosko2.0/app/api/profiles/[slug]/services/route.ts`
+- `/Users/zen/Erosko2.0/app/api/profiles/services/route.ts`
+- `/Users/zen/Erosko2.0/app/api/profiles/edit/route.ts`
+- `/Users/zen/Erosko2.0/app/api/services/route.ts`
+- `/Users/zen/Erosko2.0/app/api/user/profiles/route.ts`
 
-### 2. ✅ Slug Generator (`/lib/slug-generator.ts`)
-
-**Funkce:**
-```typescript
-// Generování profilu
-generateProfileSlug({name, city, category})
-// → "lucie-praha-x7k2p9"
-
-// Generování podniku
-generateBusinessSlug({name, city, profileType})
-// → "relax-salon-praha-x7k2p9"
-
-// Parsování slugu
-parseProfileSlug("lucie-praha-x7k2p9")
-// → { name: "lucie", city: "praha", id: "x7k2p9" }
-
-// Update slug (zachová ID)
-updateSlug(oldSlug, {name: "Lucy"}, 'profile')
-// → "lucy-praha-x7k2p9" (stejné ID!)
-```
-
-**Instalováno:**
-- ✅ `nanoid` pro generování unique ID
+**UI Components:**
+- `/Users/zen/Erosko2.0/app/inzerent_dashboard/page.tsx` (User Dashboard - 2500+ lines)
+- `/Users/zen/Erosko2.0/app/admin_panel/page.tsx` (Admin Panel - 2500+ lines)
 
 ---
 
-### 3. ✅ SEO Utilities (`/lib/seo-utils.ts`)
+## Photo Management System - Complete Overview
 
-**Automatické generování META tagů:**
+### How Photos Are Uploaded
+1. **User selects files** in browser (drag-drop or file input)
+2. **Client-side conversion** to base64 (FileReader.readAsDataURL)
+3. **Base64 sent in JSON** request body to API
+4. **Server validation** in saveBase64Photo():
+   - Check format: `data:image/type;base64,...`
+   - Check size: max 15MB base64 string
+5. **File processing**:
+   - Extract MIME type (e.g., `image/jpeg`)
+   - Generate filename: `{timestamp}-{randomString}.{extension}`
+   - Create directory: `public/uploads/{folder}/`
+   - Convert base64 to buffer
+   - Write to disk using fs.writeFile()
+6. **Database record created** with:
+   - `url`: `/uploads/{folder}/{filename}`
+   - `order`: Auto-calculated from existing photos
+   - `isMain`: true only for order 0
+   - `profileId` or `businessId`: Foreign key
 
-```typescript
-// Profily
-generateProfileMetaTitle(data)
-// → "Lucie, 23 let - holky na sex Praha ✓ | EROSKO.CZ"
+### Where Photos Are Stored
+- **Physical disk**: `public/uploads/profiles/` and `public/uploads/businesses/`
+- **Database**: Photo table with file URL
+- **No cloud storage**: All local filesystem
+- **No compression**: Stored as-is after base64 decode
 
-generateProfileMetaDescription(data, variant)
-// → 3 varianty pro A/B testing!
+### Photo Deletion Process
+1. **Mark for deletion** (admin clicks delete button)
+2. **On save**, for each photo to delete:
+   - Retrieve Photo record from database
+   - Delete file from disk: `fs.unlinkSync(path)`
+   - Delete database record: `prisma.photo.delete()`
+3. **On cascade**: If profile/business deleted, all photos cascade delete (DB constraint)
 
-generateProfileKeywords(data)
-// → 12-15 keywords s long-tail variantami
+### Photo Ordering System
+- **Integer field**: 0, 1, 2, 3, ...
+- **Query ordering**: All queries use `orderBy: { order: 'asc' }`
+- **First photo**: isMain = true (order 0)
+- **No reordering API**: Cannot change order after creation
+- **Workaround**: Delete photo, re-upload in new position
 
-generateProfileImageAlt(data, index)
-// → "Lucie, 23 let - holky na sex Praha - Ověřený profil"
-
-// Podniky
-generateBusinessMetaTitle(data)
-// → "Relax Salon - masážní salon Praha ⭐ 4.8 | EROSKO.CZ"
-
-generateBusinessMetaDescription(data)
-// → S hodnocením a počtem recenzí
-
-generateCanonicalUrl(type, slug)
-// → "https://erosko.cz/divky/lucie-praha-x7k2p9"
-```
-
----
-
-### 4. ✅ Aktualizované soubory
-
-#### Složky přejmenovány:
-```
-/app/profil/[id]/      →  /app/divky/[slug]/
-```
-
-#### Komponenty aktualizovány (6 souborů):
-- ✅ `components/TopProfiles.tsx`
-- ✅ `components/ProfileGrid.tsx`
-- ✅ `components/AllGirlsTabs.tsx`
-- ✅ `components/ProfileSchema.tsx`
-- ✅ `app/podnik/[slug]/page.tsx`
-- ✅ `app/pridat-inzerat/page.tsx`
-
-**Změna:**
-```typescript
-// Před:
-href={`/profil/${profile.id}`}
-
-// Po:
-href={`/divky/${profile.slug || profile.id}`}
-```
-
-#### Layouts aktualizovány:
-- ✅ `/app/divky/[slug]/layout.tsx` - Používá slug místo ID
-- ✅ `/app/podnik/[slug]/layout.tsx` - Automatické SEO
-- ✅ `/lib/seo-utils.ts` - Canonical URL → `/divky/`
+### Main Photo Selection
+- **Automatic**: First uploaded photo (order 0) is main
+- **No user choice**: Cannot select different main photo
+- **To change**: Delete all photos and re-upload in desired order
 
 ---
 
-### 5. ✅ META Tagy - Vylepšené
+## Service Management System - Complete Overview
 
-**Homepage:**
-```html
-<title>Holky na sex, erotické masáže a BDSM z celé ČR ❤️ | EROSKO.CZ</title>
-<meta name="description" content="💋 Přes 500+ ověřených holek na sex, erotické masáže a privát z celé ČR. ✨ Reálné fotky, kontakty bez zprostředkovatele. Praha, Brno, Ostrava a další města. 🔥">
-<meta name="keywords" content="holky na sex, holky na sex Praha, erotické masáže, privát, dívky na sex Brno, BDSM, domina, tantra masáž, společnice, holky Ostrava, masérky, na privát, ověřené holky, reálné fotky">
-```
+### How Services Are Added
+1. **Services exist in database** (created by admin or via seed)
+2. **User selects services** during profile creation (checkboxes)
+3. **Services sent as array of IDs**: `["service-id-1", "service-id-2"]`
+4. **Junction table created**: ProfileService links profile to services
+5. **No photos during creation**: User can only select services, not upload photos yet
 
-**Kategorie stránky:**
-- ✅ `/holky-na-sex/layout.tsx` - Aktualizováno
-- ✅ `/eroticke-masaze/layout.tsx` - Aktualizováno
-- ✅ `/bdsm/layout.tsx` - Aktualizováno
-- ✅ `/escort/layout.tsx` - Aktualizováno
-- ✅ `/eroticke-podniky/layout.tsx` - Aktualizováno
+### Service Categories
+- **PRAKTIKY**: Sex practices for escorts
+- **DRUHY_MASAZI**: Types of massage services
+- **EXTRA_SLUZBY**: Extra services for masseuses
+- **BDSM_PRAKTIKY**: BDSM practices
 
-**Formát:**
-- ✅ Emoji v titulcích (lepší CTR)
-- ✅ "Přes 500+", "Přes 300+" (čísla)
-- ✅ EROSKO.CZ na konci (ne na začátku)
-- ✅ České keywords (ne "escort profily")
+### Service Display UI
+- **Checkboxes**: Multiple selection per category
+- **Grouped tabs**: Shows services filtered by category
+- **Icons**: Optional lucide-react icon for each service
+- **Service name**: Displayed with checkbox
 
----
+### Service Data Storage
+- **Junction table**: ProfileService (many-to-many)
+- **Indexes**: profileId and serviceId indexed for fast queries
+- **Unique constraint**: Prevents duplicate service per profile
+- **Cascade delete**: Removing profile removes all ProfileService records
 
-### 6. ✅ Databáze připravena
-
-**Schema.prisma:**
-```prisma
-model Profile {
-  id          String      @id @default(cuid())
-  name        String
-  slug        String      @unique  // ← SEO-friendly URL
-  city        String
-  // ... další pole
-
-  @@index([slug])  // ← Pro rychlé vyhledávání
-}
-
-model Business {
-  id          String      @id @default(cuid())
-  name        String
-  slug        String      @unique  // ← SEO-friendly URL
-  city        String
-  // ... další pole
-
-  @@index([slug])  // ← Pro rychlé vyhledávání
-}
-```
+### Service Modification
+- **During creation**: User can select/deselect freely
+- **After creation**: NO API to modify services
+- **User workaround**: Must delete and recreate profile
+- **Admin option**: Can add during edit (if supported)
 
 ---
 
-## 🆚 Porovnání s konkurencí
+## Admin Panel Capabilities
 
-### Náš systém vs. Konkurence
+### What Admin Can Do
 
-| Feature | Eroguide | DobryPrivat | **EROSKO.CZ** |
-|---------|----------|-------------|---------------|
-| **URL** | `/elena-99163` | `/divka/ada-2/` | **`/divky/lucie-praha-x7k2p9`** |
-| **Město v URL** | ❌ | ❌ | ✅ **JEDINÍ!** 🏆 |
-| **SEO keyword** | ❌ | `/divka/` | **`/divky/`** ✅ |
-| **Automatizace** | ❌ | ❌ | ✅ 100% |
-| **META varianty** | 1 | 1 | ✅ **3 varianty** |
-| **Schema.org** | ❌ | ❌ | ✅ LocalBusiness |
-| **Keywords** | 5-8 | 6-10 | ✅ **12-15** |
+**With Photos:**
+- Add new photos to any profile/business
+- Delete any photo by ID
+- View all photos for any entity
+- Set photo order (via position in array)
+- Change main photo (by deleting others)
 
-**Výsledek:** 🏆 EROSKO.CZ má nejlepší SEO systém v ČR!
+**With Services:**
+- Assign services when creating profile
+- View services for any profile
+- CANNOT: Modify services on existing profile
+- CANNOT: Create new service definitions (DB only)
 
----
+**With Profiles:**
+- Create from scratch (auto-approves)
+- Edit all fields (name, age, description, attributes)
+- Delete completely
+- View pending changes from users
+- Approve/reject user change requests
 
-## 📊 Příklady vygenerovaných URL
+**With Businesses:**
+- Create from scratch (auto-approves)
+- Edit all fields (name, address, hours, equipment)
+- Delete completely
+- Manage photos (same as profiles)
 
-### Příklad 1: Multiple Lucie v Praze
-
-```
-/divky/lucie-praha-a7k9x2  ← Lucie #1
-/divky/lucie-praha-b3m5n8  ← Lucie #2
-/divky/lucie-praha-c1p7q4  ← Lucie #3
-...
-/divky/lucie-praha-z9w2x5  ← Lucie #16
-```
-
-**Každá má:**
-- ✅ Unique ID (žádné kolize)
-- ✅ Město v URL (lokální SEO)
-- ✅ Čitelné a profesionální
-
-### Příklad 2: Lucie v různých městech
-
-```
-/divky/lucie-praha-a7k9x2    ← Praha (Google ví město!)
-/divky/lucie-brno-m3n8p2     ← Brno (Google ví město!)
-/divky/lucie-ostrava-q5r7s9  ← Ostrava (Google ví město!)
-```
-
-**SEO Impact:**
-- ✅ Lepší ranking pro "holky na sex [město]"
-- ✅ Google přesně ví lokaci
-- ✅ Konkurence tohle nemá!
+### Admin Panel UI Features
+- Modal dialogs for create/edit
+- Photo preview before save
+- Checkbox selection for services
+- Pending changes review with diff
+- Search/filter for users, profiles, businesses
+- Statistics dashboard
 
 ---
 
-## 📈 Očekávané výsledky
+## User Dashboard Capabilities
 
-### Po 6 měsících:
+### What Users Can Do
 
-**Rankings:**
-- "holky na sex praha" → Top 3 🎯
-- "společnice brno" → Top 5 🎯
-- "erotické masáže praha" → Top 3 🎯
-- Long-tail queries → Top 10 🎯
+**Profile Creation:**
+- Fill profile form
+- Upload up to 10 photos
+- Select services from checkboxes
+- Photos converted to base64 automatically
+- Submit for admin review
 
-**Traffic:**
-- Měsíc 1-2: +25% organic
-- Měsíc 3-4: +60% organic
-- Měsíc 5-6: +120% organic
+**Profile Editing:**
+- Edit: name, age, description, height, weight, attributes, hours
+- Send changes for admin approval
+- CANNOT edit: photos or services
+- Must wait for admin approval before changes visible
 
-**CTR:**
-- Bez město v URL: 2-3%
-- S městem v URL: 5-7% (+150%!)
+**Business Management:**
+- Edit business name, address, phone, email, website
+- Edit opening hours (per day)
+- Add/remove business photos
+- Changes apply immediately (no approval needed)
 
----
+**Service Management:**
+- Select services only when creating profile
+- CANNOT change services after creation
+- Only option: Delete profile and recreate
 
-## 📝 Dokumentace vytvořená
-
-### SEO Dokumenty:
-1. ✅ `SEO_EXAMPLES.md` - Příklady vygenerovaných META tagů
-2. ✅ `SEO_SYSTEM.md` - Kompletní systém a porovnání
-3. ✅ `SLUG_USAGE_EXAMPLES.md` - Návod na použití slug generátoru
-4. ✅ `FINAL_SEO_COMPARISON.md` - Finální porovnání s konkurencí
-5. ✅ `IMPLEMENTATION_SUMMARY.md` - Tento souhrn
-
-### Kód vytvořený:
-1. ✅ `/lib/slug-generator.ts` - Generování SEO URL
-2. ✅ `/lib/seo-utils.ts` - Automatické META tagy
-3. ✅ `/app/divky/[slug]/layout.tsx` - Dynamické SEO profily
-4. ✅ `/app/podnik/[slug]/layout.tsx` - Dynamické SEO podniky
-5. ✅ Aktualizováno 6 komponent s novými odkazy
+**Photo Management - What's Missing:**
+- NO API to add photos after creation
+- NO API to delete photos
+- NO API to reorder photos
+- NO API to change main photo
+- Users stuck with initial uploads
 
 ---
 
-## 🔄 Co zbývá udělat
+## Pending Changes System
 
-### 1. Migrace existujících dat
+### How Pending Changes Work
+1. **User requests change** (profile edit)
+2. **PendingChange record created**:
+   - `status`: PENDING
+   - `oldData`: Current profile data
+   - `newData`: Requested changes
+   - `type`: PROFILE_UPDATE or BUSINESS_UPDATE
+3. **Admin reviews** in `/admin_panel`
+4. **Admin action**:
+   - Approve: Apply newData to profile, mark APPROVED
+   - Reject: Discard changes, mark REJECTED
 
-```typescript
-// Vygenerovat slugs pro existující profily
-import { generateProfileSlug } from '@/lib/slug-generator';
-
-async function migrateProfiles() {
-  const profiles = await prisma.profile.findMany({
-    where: { slug: null } // Profily bez slugu
-  });
-
-  for (const profile of profiles) {
-    const slug = generateProfileSlug({
-      name: profile.name,
-      city: profile.city,
-      category: profile.category
-    });
-
-    await prisma.profile.update({
-      where: { id: profile.id },
-      data: { slug }
-    });
+### Photo Changes in Pending Changes
+**If photos included in change request:**
+```json
+{
+  "photoChanges": {
+    "photosToDelete": ["photo-id-1"],
+    "newPhotos": ["data:image/jpeg;base64,..."]
   }
 }
 ```
 
-### 2. 301 Redirects (pro staré URL)
+**On approval:**
+1. Delete marked photos from disk and DB
+2. Save new photos to disk
+3. Create Photo records
+4. Mark change as APPROVED
 
-```typescript
-// middleware.ts nebo next.config.js
-
-// Redirect /profil/123 → /divky/lucie-praha-x7k2p9
-export async function middleware(request: Request) {
-  const url = new URL(request.url);
-
-  if (url.pathname.startsWith('/profil/')) {
-    const oldId = url.pathname.split('/')[2];
-    const profile = await prisma.profile.findUnique({
-      where: { id: oldId },
-      select: { slug: true }
-    });
-
-    if (profile) {
-      return NextResponse.redirect(
-        `${url.origin}/divky/${profile.slug}`,
-        { status: 301 } // Permanent redirect
-      );
-    }
-  }
-
-  return NextResponse.next();
-}
-```
-
-### 3. Testing
-
-- [ ] Test všech URL v aplikaci
-- [ ] Test META tagů v Google Search Console
-- [ ] Test 301 redirects
-- [ ] Test slug generování při vytvoření profilu
-- [ ] Test parsování slugů
-
-### 4. Deployment
-
-- [ ] Deploy na produkci
-- [ ] Spustit migraci dat
-- [ ] Aktivovat redirects
-- [ ] Monitor Google Search Console
-- [ ] Track rankings (Ahrefs/SEMrush)
+**On rejection:**
+- No file operations occur
+- Mark change as REJECTED
 
 ---
 
-## 🎯 Klíčové výhody implementace
+## Database Design
 
-### 1. Město v URL (Unikátní!)
-
+### Photo Table
 ```
-EROSKO:        /divky/lucie-PRAHA-x7k2p9
-Konkurence:    /elena-99163 (žádné město!)
-
-→ +10% ranking boost pro lokální dotazy!
-```
-
-### 2. SEO Keyword v Path
-
-```
-EROSKO:        /DIVKY/lucie-praha-x7k2p9
-DobryPrivat:   /divka/ada-2/
-
-→ Lepší než DobryPrivat (singulár vs. plurál)
+id              CUID (primary key)
+url             String (file path)
+alt             String (optional)
+altQualityScore Int (0-100, optional)
+order           Int (gallery position)
+isMain          Boolean (thumbnail flag)
+profileId       String (optional foreign key)
+businessId      String (optional foreign key)
+createdAt       DateTime (auto)
 ```
 
-### 3. Automatizace
+**Relationships:**
+- Can be linked to Profile OR Business (not both typically)
+- Cascade delete: Removes photo if profile/business deleted
+- Indexes: profileId, businessId for fast queries
 
+### Service Table
 ```
-Konkurence:  Manuální META tagy → chyby, nekonzistence
-EROSKO:      100% automatické → vždy perfektní!
-
-→ Škálovatelné pro tisíce profilů
+id          CUID (primary key)
+name        String (unique)
+description String (optional)
+icon        String (optional)
+category    ServiceCategory (enum)
 ```
 
-### 4. Schema.org Rich Snippets
+**Relationships:**
+- One-to-many with ProfileService (via junction)
 
+### ProfileService Table (Junction)
 ```
-Konkurence:  Žádná structured data
-EROSKO:      ⭐⭐⭐⭐⭐ 4.8 (127 hodnocení) v Google
+id        CUID (primary key)
+profileId String (foreign key)
+serviceId String (foreign key)
+```
 
-→ +20-30% CTR boost!
+**Constraints:**
+- Unique: [profileId, serviceId]
+- Cascade delete both sides
+- Indexes: profileId, serviceId
+
+---
+
+## API Endpoint Summary
+
+### Photo Endpoints
+- `POST /api/admin/profiles/create` - Create profile with photos
+- `POST /api/admin/profiles/edit` - Edit profile and manage photos
+- `POST /api/admin/businesses/create` - Create business with photos
+- `POST /api/admin/businesses/edit` - Edit business and manage photos
+- `POST /api/profiles` - User creates profile (NO photos)
+- `GET /api/profiles/[slug]` - Get profile with ordered photos
+- `GET /api/user/profiles` - Get user's profiles with photos
+
+### Service Endpoints
+- `GET /api/services` - Get all services (optional category filter)
+- `POST /api/profiles` - Create profile with services
+- `GET /api/profiles/[slug]` - Get profile with services
+- `GET /api/profiles/services` - Legacy endpoint
+- `GET /api/profiles/[slug]/services` - Services by slug
+
+### Change Approval Endpoints
+- `GET /api/admin/pending-changes` - List all pending changes
+- `POST /api/admin/pending-changes` - Approve/reject change
+
+---
+
+## Real-World Flow Examples
+
+### Scenario 1: User Creates Profile with Photos
+```
+1. User goes to /inzerent_dashboard
+2. Clicks "Přidat profil"
+3. Fills form: name, age, description, services
+4. Selects 5 photos (clicks file input)
+5. Client converts photos to base64
+6. Clicks submit
+7. POST /api/profiles sent with:
+   - Profile data
+   - services: ["id1", "id2", "id3"]
+   - photos: converted to client (not sent here)
+8. Server creates profile with approved: false
+9. User sees profile pending admin review
+
+Note: Photos are NOT sent in POST /api/profiles!
+They would need to be added separately (current limitation).
+```
+
+### Scenario 2: User Edits Profile Description
+```
+1. User clicks edit on profile
+2. Changes description, age
+3. Clicks save
+4. POST /api/profiles/edit sent with:
+   - profileId
+   - changes: { age: 26, description: "new text" }
+5. Server creates PendingChange record
+6. User sees: "Změny odeslány ke schválení"
+7. Admin approves in pending-changes panel
+8. Profile updated with new data
+9. User sees changes on profile
+```
+
+### Scenario 3: Admin Adds Photos to Profile
+```
+1. Admin goes to /admin_panel → Profiles
+2. Finds profile, clicks edit
+3. Scrolls to photos section
+4. Clicks existing photos to mark for deletion
+5. Uploads new photos (file input)
+6. Photos preview shown
+7. Clicks save
+8. POST /api/admin/profiles/edit sent with:
+   - profileId
+   - data: { photoChanges: { ... } }
+9. Server:
+   - Deletes marked photos from disk
+   - Saves new photos to disk
+   - Updates Photo records
+10. Profile updated immediately (no approval needed)
+```
+
+### Scenario 4: Admin Creates Business with Photos
+```
+1. Admin clicks "Přidat podnik"
+2. Fills all business fields
+3. Selects profile type (PRIVAT, MASSAGE_SALON, etc.)
+4. Uploads photos
+5. Clicks save
+6. POST /api/admin/businesses/create sent
+7. Server:
+   - Creates Business record (approved: true)
+   - Creates User account if needed
+   - Saves photos to disk
+   - Creates Photo records
+8. Business available immediately
 ```
 
 ---
 
-## 📊 Technická specifikace
+## Key Limitations and Gaps
 
-### URL Pattern:
-```
-Profily:   /divky/{jméno}-{město}-{id}
-Podniky:   /podnik/{název}-{město}-{id}
+### Critical Gaps
+1. **No user photo upload after creation**
+   - Users can only upload during initial profile creation
+   - Cannot add/remove photos later without admin
+   - Current workaround: Contact admin
 
-Příklad:   /divky/lucie-praha-x7k2p9
-           /podnik/relax-salon-brno-m3n8p2
-```
+2. **No photo reordering**
+   - Photos fixed in upload order
+   - Cannot change main photo without delete + re-upload
+   - No API endpoint for reordering
 
-### Slug Formát:
-```
-Délka:          minimálně 3 části (jméno-město-id)
-ID délka:       6 znaků (alfanumerické)
-Separátor:      pomlčka (-)
-Diakritika:     automaticky odstraněna
-Speciální znaky: automaticky odstraněny
-```
+3. **No service modification**
+   - Services locked after profile creation
+   - Must delete and recreate profile to change services
+   - No service update endpoint exists
 
-### META Tagy Pattern:
-```
-Title:       "{Jméno}, {Věk} let - {kategorie} {Město} {✓} | EROSKO.CZ"
-Description: "{Emoji} {Jméno} ({Věk} let) - {kategorie} {Město}. {✨} Ověřený profil. {Služby}. 📞 Reálné fotky, diskrétní jednání."
-Keywords:    12-15 keywords, long-tail varianty
-Canonical:   https://erosko.cz/divky/{slug}
-```
+4. **No photo editing**
+   - Cannot rotate, crop, or resize
+   - Cannot edit alt text
+   - ALT score is AI-generated only
 
----
-
-## 🏆 Shrnutí
-
-**EROSKO.CZ má nyní:**
-
-✅ **Nejlepší URL strukturu** v českém escort odvětví
-✅ **Město v URL** (jako jediní!)
-✅ **SEO keyword** v path (`/divky/`)
-✅ **Automatické META tagy** (lepší než konkurence)
-✅ **3 varianty descriptions** (A/B testing)
-✅ **Schema.org rich snippets** (hvězdičky v Google)
-✅ **12-15 keywords** s long-tail variantami
-✅ **100% automatizace** (žádná ruční práce)
-
-**Výsledek:**
-
-🎯 Top 3 rankings pro hlavní keywords
-📈 +120% organic traffic za 6 měsíců
-💰 +150% CTR díky lepším META tagům
+### Minor Gaps
+- No image compression or optimization
+- No bulk photo operations
+- No bulk service assignment
+- No service creation UI (DB only)
 
 ---
 
-**Status:** ✅ HOTOVO - Ready for deployment!
+## Future Improvements
 
-**Next Step:** Migrace existujících dat + 301 redirects + deployment
+### High Priority
+1. **User photo management API**
+   ```
+   PATCH /api/profiles/[id]/photos/reorder
+   DELETE /api/profiles/[id]/photos/[photoId]
+   POST /api/profiles/[id]/photos
+   ```
 
-**Vytvořeno:** 2025-11-03
-**Autor:** Claude Code + ZEN
-**Version:** 1.0.0
+2. **Service modification API**
+   ```
+   PUT /api/profiles/[id]/services
+   PATCH /api/profiles/[id]/services
+   ```
+
+3. **Photo metadata editing**
+   ```
+   PATCH /api/profiles/[id]/photos/[photoId]
+   - alt text (user-editable)
+   - order (reordering)
+   - isMain (set main photo)
+   ```
+
+### Medium Priority
+- Image optimization (compression, resizing)
+- Thumbnail generation
+- MIME type validation
+- File size validation
+- Progressive upload feedback
+
+### Low Priority
+- Advanced photo editing (crop, rotate)
+- Bulk operations
+- Service creation UI
+- Photo tagging system
 
 ---
 
-🚀 **EROSKO.CZ je připravená dominovat českému escort SEO!** 🏆
+## Security Considerations
+
+### Current Implementation
+- **Authentication**: NextAuth.js session required
+- **Authorization**: Role-based (USER, ADMIN)
+- **File validation**: Minimal (base64 format check only)
+- **File permissions**: Standard filesystem permissions
+
+### Security Gaps
+- No MIME type validation (accepts any type)
+- No virus scanning
+- No image content validation
+- No rate limiting on uploads
+- No file size limit enforcement (only base64 string limit)
+- No authentication check for file serving
+
+### Recommendations
+- Add MIME type whitelist validation
+- Add image dimension limits
+- Add user upload quota
+- Serve files through authenticated endpoint
+- Consider cloud storage (S3, etc.)
+- Add virus scanning for production
+
+---
+
+## Performance Notes
+
+### Photo Handling
+- Base64 encoding: ~130% size increase
+- File I/O: Synchronous fs operations (could be optimized)
+- No image caching headers set
+- No CDN integration
+
+### Service Queries
+- Services cacheable (rarely change)
+- Indexed queries for ProfileService
+- Can load with include: { service: true }
+
+### Recommendations
+- Implement image compression
+- Add caching headers
+- Consider async file operations
+- Add pagination for photo lists
+- Consider database denormalization for frequently joined data
+
+---
+
+## Testing Checklist
+
+- [ ] Create profile with 10 photos
+- [ ] Try to add photo after creation (should fail)
+- [ ] Delete photo in admin panel
+- [ ] Reorder photos (should not be possible without recreation)
+- [ ] Change main photo (must delete others)
+- [ ] Assign services during creation
+- [ ] Try to change services after creation (should fail)
+- [ ] Admin approves user profile changes
+- [ ] Admin rejects user profile changes
+- [ ] Create business with photos
+- [ ] Edit business photos (delete + add)
+- [ ] Check photos exist in public/uploads/
+- [ ] Verify database records exist
+- [ ] Check cascading deletes when profile removed
+
+---
+
+## Deployment Notes
+
+### Required Directories
+```bash
+mkdir -p public/uploads/profiles
+mkdir -p public/uploads/businesses
+chmod 755 public/uploads
+```
+
+### Environment Variables
+- `DATABASE_URL`: Turso/LibSQL database URL
+- `TURSO_AUTH_TOKEN`: Database auth token
+- Session secrets for NextAuth
+
+### File Permissions
+- `public/uploads/` must be writable by Node process
+- Photos must be readable by web server
+- Consider SELinux/AppArmor policies
+
+### Database Migrations
+- Run `prisma migrate deploy` to create tables
+- Seed services via script if needed
+- Check `/scripts/` for migration scripts
+
+---
+
+## Conclusion
+
+The Erosko photo and service management system provides a functional, if somewhat limited, interface for managing profile and business content. Photos are stored locally with database tracking, and services use proper relational design. The main limitation is the lack of user-facing APIs for modifying content after initial creation, requiring admin intervention for photo or service changes.
+
+The system is well-organized with clear separation of concerns between user and admin capabilities, proper authentication and authorization, and reasonable database design. However, it would benefit from implementing user photo management APIs and more flexible service modification options.
+

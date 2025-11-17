@@ -48,6 +48,34 @@ const searchTags = [
   { slug: 'lesbičky', label: 'Lesbičky', description: 'Lesbické holky', category: 'special', order: 6 },
   { slug: 'trans', label: 'Trans', description: 'Transgender escort', category: 'special', order: 7 },
   { slug: 'páry', label: 'Páry', description: 'Páry nabízející služby', category: 'special', order: 8 },
+
+  // Podle měst
+  { slug: 'praha', label: 'Praha', description: 'Escort v Praze', category: 'city', order: 1 },
+  { slug: 'brno', label: 'Brno', description: 'Escort v Brně', category: 'city', order: 2 },
+  { slug: 'ostrava', label: 'Ostrava', description: 'Escort v Ostravě', category: 'city', order: 3 },
+  { slug: 'plzen', label: 'Plzeň', description: 'Escort v Plzni', category: 'city', order: 4 },
+  { slug: 'liberec', label: 'Liberec', description: 'Escort v Liberci', category: 'city', order: 5 },
+  { slug: 'olomouc', label: 'Olomouc', description: 'Escort v Olomouci', category: 'city', order: 6 },
+  { slug: 'ceske-budejovice', label: 'České Budějovice', description: 'Escort v Českých Budějovicích', category: 'city', order: 7 },
+  { slug: 'hradec-kralove', label: 'Hradec Králové', description: 'Escort v Hradci Králové', category: 'city', order: 8 },
+  { slug: 'usti-nad-labem', label: 'Ústí nad Labem', description: 'Escort v Ústí nad Labem', category: 'city', order: 9 },
+  { slug: 'pardubice', label: 'Pardubice', description: 'Escort v Pardubicích', category: 'city', order: 10 },
+  { slug: 'karlovy-vary', label: 'Karlovy Vary', description: 'Escort v Karlových Varech', category: 'city', order: 11 },
+  { slug: 'zlin', label: 'Zlín', description: 'Escort ve Zlíně', category: 'city', order: 12 },
+
+  // Podle služeb (často vyhledávané)
+  { slug: 'gfe', label: 'GFE', description: 'Girlfriend Experience - zážitek jako s přítelkyní', category: 'service', order: 1 },
+  { slug: 'analni-sex', label: 'Anální sex', description: 'Anální sex', category: 'service', order: 2 },
+  { slug: 'oralni-bez-kondomu', label: 'Orální bez kondomu', description: 'Orální sex bez kondomu', category: 'service', order: 3 },
+  { slug: 'eroticka-masaz', label: 'Erotická masáž', description: 'Erotické masáže', category: 'service', order: 4 },
+  { slug: 'striptyz', label: 'Striptýz', description: 'Striptýz a erotické tance', category: 'service', order: 5 },
+  { slug: 'bdsm', label: 'BDSM', description: 'BDSM a bondage služby', category: 'service', order: 6 },
+  { slug: 'tantricka-masaz', label: 'Tantrická masáž', description: 'Tantrické masáže', category: 'service', order: 7 },
+  { slug: 'golden-shower', label: 'Golden shower', description: 'Golden shower služby', category: 'service', order: 8 },
+  { slug: 'foot-fetish', label: 'Foot fetish', description: 'Nohy a foot fetish', category: 'service', order: 9 },
+  { slug: 'deepthroat', label: 'Deepthroat', description: 'Hluboké orální služby', category: 'service', order: 10 },
+  { slug: 'sex-na-verejnosti', label: 'Sex na veřejnosti', description: 'Sex venku a na veřejnosti', category: 'service', order: 11 },
+  { slug: 'trojka', label: 'Trojka', description: 'Threesome a skupinový sex', category: 'service', order: 12 },
 ];
 
 async function main() {

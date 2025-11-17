@@ -9,6 +9,14 @@ import { PrismaLibSQL } from '@prisma/adapter-libsql';
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
 function createPrismaClient() {
+  // Use local SQLite for development, Turso for production
+  if (process.env.NODE_ENV === 'development' && process.env.USE_LOCAL_DB === 'true') {
+    // Local SQLite database for development
+    return new PrismaClient({
+      log: ['error', 'warn', 'query'],
+    });
+  }
+
   // Use LibSQL adapter for Turso cloud database
   const adapter = new PrismaLibSQL({
     url: process.env.TURSO_DATABASE_URL || process.env.DATABASE_URL || '',

@@ -211,6 +211,23 @@ export async function POST(request: Request) {
           }
         }
 
+        // Add search tags for "Oblíbené vyhledávání"
+        if (profile.searchTags && Array.isArray(profile.searchTags) && profile.searchTags.length > 0) {
+          for (const tagId of profile.searchTags) {
+            try {
+              await prisma.profileSearchTag.create({
+                data: {
+                  profileId: newProfile.id,
+                  tagId: tagId,
+                },
+              });
+            } catch (error) {
+              console.error(`Error linking search tag ${tagId}:`, error);
+              // Continue with other tags even if one fails
+            }
+          }
+        }
+
         // Save photos if provided (skip if error)
         if (profile.photos && Array.isArray(profile.photos) && profile.photos.length > 0) {
           try {

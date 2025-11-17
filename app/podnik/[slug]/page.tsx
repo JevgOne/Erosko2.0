@@ -96,15 +96,15 @@ const mockBusiness = {
 
   reviews: {
     overall: {
-      average: 4.8,
-      count: 127
+      average: 0,
+      count: 0
     },
     vibe: {
-      atmosphere: 4.8,
-      cleanliness: 4.9,
-      service: 4.7,
-      discretion: 5.0,
-      valueForMoney: 4.5
+      atmosphere: 0,
+      cleanliness: 0,
+      service: 0,
+      discretion: 0,
+      valueForMoney: 0
     },
     items: []
   }
@@ -219,7 +219,36 @@ export default async function Page({ params }: PageProps) {
     },
 
     profiles: [],
-    reviews: mockBusiness.reviews
+
+    reviews: {
+      overall: {
+        average: business.reviews.length > 0 ? business.rating : 0,
+        count: business.reviews.length
+      },
+      vibe: {
+        atmosphere: 0,
+        cleanliness: 0,
+        service: 0,
+        discretion: 0,
+        valueForMoney: 0
+      },
+      items: business.reviews.map(review => ({
+        id: review.id,
+        overallRating: review.rating,
+        vibeRatings: {
+          atmosphere: review.vibeAtmosphere || 0,
+          cleanliness: review.vibeCleanliness || 0,
+          service: review.vibeService || 0,
+          discretion: review.vibeDiscretion || 0,
+          valueForMoney: review.vibeValue || 0
+        },
+        author: review.author?.phone ? `Uživatel ${review.author.phone.slice(-4)}` : 'Anonymní',
+        date: review.createdAt.toISOString(),
+        text: review.text,
+        verified: review.verified,
+        helpful: 0
+      }))
+    }
   };
 
   return <BusinessDetailPage business={businessData} />;

@@ -215,20 +215,25 @@ export default function ContentBlockEditor({ blockId, initialData }: Props) {
                 </p>
               </div>
 
-              {/* Type */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-2">Typ</label>
+              {/* Type - PROMINENT */}
+              <div className="mb-6 p-4 bg-gradient-to-r from-blue-500/20 to-purple-500/20 border-2 border-blue-500/40 rounded-xl">
+                <label className="block text-base font-bold mb-3 text-blue-200">
+                  📝 Typ obsahu <span className="text-red-400">*</span>
+                </label>
                 <select
                   value={formData.type}
                   onChange={(e) => handleChange('type', e.target.value)}
-                  className="w-full glass rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="w-full bg-dark-800 border-2 border-primary-500/50 rounded-xl px-4 py-3 text-white text-base font-medium focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                 >
-                  <option value="TEXT" className="bg-dark-800">Text (prostý text)</option>
-                  <option value="RICH_TEXT" className="bg-dark-800">Rich Text (HTML, WYSIWYG)</option>
-                  <option value="JSON" className="bg-dark-800">JSON (strukturovaná data)</option>
-                  <option value="IMAGE" className="bg-dark-800">Image (URL obrázku)</option>
-                  <option value="VIDEO" className="bg-dark-800">Video (URL videa)</option>
+                  <option value="TEXT" className="bg-dark-800">📄 Text (prostý text bez formátování)</option>
+                  <option value="RICH_TEXT" className="bg-dark-800">✨ Rich Text (HTML editor - bold, links, headings)</option>
+                  <option value="JSON" className="bg-dark-800">🔧 JSON (strukturovaná data)</option>
+                  <option value="IMAGE" className="bg-dark-800">🖼️ Image (URL obrázku)</option>
+                  <option value="VIDEO" className="bg-dark-800">🎥 Video (URL videa)</option>
                 </select>
+                <p className="text-xs text-blue-300 mt-2">
+                  💡 Pro SEO texty s odkazy použij <strong>"Rich Text"</strong>
+                </p>
               </div>
 
               {/* Location Picker with Visual Preview */}

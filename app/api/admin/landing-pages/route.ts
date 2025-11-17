@@ -26,8 +26,8 @@ export async function GET(request: Request) {
     }
     if (search) {
       where.OR = [
-        { path: { contains: search, mode: 'insensitive' } },
-        { seoTitle: { contains: search, mode: 'insensitive' } },
+        { path: { contains: search } },
+        { seoTitle: { contains: search } },
       ];
     }
 

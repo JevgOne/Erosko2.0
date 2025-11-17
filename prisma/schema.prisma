@@ -281,6 +281,7 @@ model Profile {
   favorites      Favorite[]
   pendingChanges PendingChange[]
   verifications  Verification[]   // ➕ NEW: Multi-tier verification badges
+  searchTags     ProfileSearchTag[] // Oblíbené vyhledávání tags
 
   @@index([city])
   @@index([category])
@@ -593,4 +594,42 @@ enum ContentBlockType {
   JSON // Complex data structures
   IMAGE // Image URL
   VIDEO // Video URL or embed code
+}
+
+// Search Tags for "Oblíbené vyhledávání" feature
+model SearchTag {
+  id          String   @id @default(cuid())
+  slug        String   @unique // URL-friendly version
+  label       String   // Display name (e.g., "Studentky na sex")
+  description String?  // SEO description
+  category    String   // age, hair, body, nationality, special
+  icon        String?  // Icon name for display
+  color       String?  // Gradient color class
+  order       Int      @default(0) // Display order within category
+
+  // Relationships
+  profiles    ProfileSearchTag[]
+
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([category])
+  @@index([slug])
+}
+
+// Many-to-many relationship between Profile and SearchTag
+model ProfileSearchTag {
+  id        String   @id @default(cuid())
+  profileId String
+  tagId     String
+
+  profile   Profile    @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  tag       SearchTag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([profileId, tagId])
+  @@index([profileId])
+  @@index([tagId])
 }

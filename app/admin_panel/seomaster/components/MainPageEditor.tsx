@@ -63,6 +63,7 @@ export default function MainPageEditor({ pageId, initialData }: MainPageEditorPr
       CITY: 'Město',
       COMBINATION: 'Kombinace',
       FILTER: 'Filtr',
+      CUSTOM: 'Vlastní',
       OTHER: 'Ostatní',
     };
     return labels[type] || type;

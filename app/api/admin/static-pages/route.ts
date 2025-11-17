@@ -27,7 +27,8 @@ export async function GET(request: Request) {
       where.type = type;
     }
 
-    if (published !== null) {
+    // Only filter by published if the parameter was explicitly provided
+    if (published !== null && published !== '') {
       where.published = published === 'true';
     }
 

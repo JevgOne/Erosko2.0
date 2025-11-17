@@ -19,7 +19,7 @@ interface StaticPage {
   seoScore: number | null;
 }
 
-type PageType = 'all' | 'CATEGORY' | 'CITY' | 'COMBINATION' | 'FILTER' | 'OTHER';
+type PageType = 'all' | 'CATEGORY' | 'CITY' | 'COMBINATION' | 'FILTER' | 'CUSTOM' | 'OTHER';
 
 export default function MainPagesTab() {
   const router = useRouter();
@@ -78,6 +78,7 @@ export default function MainPagesTab() {
       CITY: 'Město',
       COMBINATION: 'Kombinace',
       FILTER: 'Filtr',
+      CUSTOM: 'Vlastní',
       OTHER: 'Ostatní',
     };
     return labels[type] || type;
@@ -89,6 +90,7 @@ export default function MainPagesTab() {
       CITY: 'bg-blue-500/20 text-blue-400',
       COMBINATION: 'bg-green-500/20 text-green-400',
       FILTER: 'bg-orange-500/20 text-orange-400',
+      CUSTOM: 'bg-pink-500/20 text-pink-400',
       OTHER: 'bg-gray-500/20 text-gray-400',
     };
     return colors[type] || colors.OTHER;
@@ -145,6 +147,7 @@ export default function MainPagesTab() {
               className="px-4 py-2 bg-dark border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary-500"
             >
               <option value="all">Všechny typy</option>
+              <option value="CUSTOM">Vlastní stránky</option>
               <option value="CATEGORY">Kategorie</option>
               <option value="CITY">Města</option>
               <option value="COMBINATION">Kombinace</option>

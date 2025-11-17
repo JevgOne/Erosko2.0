@@ -105,6 +105,22 @@ export default function SearchBar({ pageType = 'home' }: SearchBarProps) {
   const handleSearch = () => {
     const params = new URLSearchParams();
 
+    // Map pageType to category (for API filtering)
+    const pageTypeToCategory: { [key: string]: string } = {
+      'escort': 'HOLKY_NA_SEX',
+      'holky-na-sex': 'HOLKY_NA_SEX',
+      'masaze': 'EROTICKE_MASERKY',
+      'eroticke-masaze': 'EROTICKE_MASERKY',
+      'bdsm': 'DOMINA',
+      'online-sex': 'DIGITALNI_SLUZBY',
+      'podniky': 'EROTICKE_PODNIKY',
+    };
+
+    // Add category based on pageType
+    if (pageType && pageType !== 'home' && pageTypeToCategory[pageType]) {
+      params.set('category', pageTypeToCategory[pageType]);
+    }
+
     // Add city filter
     if (selectedCity) params.set('city', selectedCity);
     if (selectedRegion && !selectedCity) params.set('region', selectedRegion);

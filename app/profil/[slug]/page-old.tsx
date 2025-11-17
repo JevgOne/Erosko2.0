@@ -5,12 +5,7 @@ import { useParams } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ProfileSchema from '@/components/ProfileSchema';
-import SearchBar from '@/components/SearchBar';
-import {
-  Star, MapPin, CheckCircle, Phone, Heart, MessageCircle,
-  Clock, Shield, Award, Video, Sparkles, ChevronLeft,
-  ChevronRight, X
-} from 'lucide-react';
+import { Star, MapPin, CheckCircle, Phone, Heart, MessageCircle, Clock, Shield, Award, Video, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 
 // Profile types with their colors
@@ -39,10 +34,6 @@ export default function ProfileDetailPage() {
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [services, setServices] = useState<Array<{label: string, url: string}>>([]);
-
-  // Gallery state
-  const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
-  const [lightboxOpen, setLightboxOpen] = useState(false);
 
   // Fetch profile from API
   useEffect(() => {
@@ -79,19 +70,6 @@ export default function ProfileDetailPage() {
       fetchProfile();
     }
   }, [slug]);
-
-  // Gallery navigation
-  const nextPhoto = () => {
-    if (profile?.photos) {
-      setCurrentPhotoIndex((prev) => (prev + 1) % profile.photos.length);
-    }
-  };
-
-  const prevPhoto = () => {
-    if (profile?.photos) {
-      setCurrentPhotoIndex((prev) => (prev - 1 + profile.photos.length) % profile.photos.length);
-    }
-  };
 
   if (loading) {
     return (
@@ -156,37 +134,10 @@ export default function ProfileDetailPage() {
   const categoryDisplay = getCategoryDisplay(profile.category);
   const categoryUrl = getCategoryUrl(profile.category);
 
-  // Get photos or use placeholder
-  const photos = profile.photos && profile.photos.length > 0
-    ? profile.photos
-    : [{ url: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800&h=1000&fit=crop', id: '1' }];
-
-  const currentPhoto = photos[currentPhotoIndex];
-
-  // Get working hours from profile (if exists)
-  const workingHours = profile.workingHours || {
-    monday: { open: "10:00", close: "22:00", available: true },
-    tuesday: { open: "10:00", close: "22:00", available: true },
-    wednesday: { open: "10:00", close: "22:00", available: true },
-    thursday: { open: "10:00", close: "22:00", available: true },
-    friday: { open: "10:00", close: "24:00", available: true },
-    saturday: { open: "12:00", close: "24:00", available: true },
-    sunday: { open: "12:00", close: "20:00", available: true }
-  };
-
-  const daysOfWeek = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-  const dayLabels: Record<string, string> = {
-    monday: 'Pondělí',
-    tuesday: 'Úterý',
-    wednesday: 'Středa',
-    thursday: 'Čtvrtek',
-    friday: 'Pátek',
-    saturday: 'Sobota',
-    sunday: 'Neděle'
-  };
-
-  const today = new Date().getDay();
-  const todayIndex = today === 0 ? 6 : today - 1; // Convert Sunday from 0 to 6
+  // Get main photo or use placeholder
+  const mainPhoto = profile.photos && profile.photos.length > 0
+    ? profile.photos[0].url
+    : 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800&h=1000&fit=crop';
 
   return (
     <main className="min-h-screen bg-dark-950">
@@ -201,43 +152,7 @@ export default function ProfileDetailPage() {
 
       <Header />
 
-      {/* Lightbox */}
-      {lightboxOpen && (
-        <div className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4">
-          <button
-            onClick={() => setLightboxOpen(false)}
-            className="absolute top-4 right-4 z-50 bg-white/10 backdrop-blur-sm w-12 h-12 rounded-full flex items-center justify-center hover:bg-white/20 transition-all"
-          >
-            <X className="w-6 h-6" />
-          </button>
-
-          <button
-            onClick={prevPhoto}
-            className="absolute left-4 z-50 bg-white/10 backdrop-blur-sm w-12 h-12 rounded-full flex items-center justify-center hover:bg-white/20 transition-all"
-          >
-            <ChevronLeft className="w-6 h-6" />
-          </button>
-
-          <img
-            src={currentPhoto?.url}
-            alt={`${profile.name} ${currentPhotoIndex + 1}`}
-            className="max-w-full max-h-full object-contain"
-          />
-
-          <button
-            onClick={nextPhoto}
-            className="absolute right-4 z-50 bg-white/10 backdrop-blur-sm w-12 h-12 rounded-full flex items-center justify-center hover:bg-white/20 transition-all"
-          >
-            <ChevronRight className="w-6 h-6" />
-          </button>
-
-          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 backdrop-blur-sm px-4 py-2 rounded-full text-sm">
-            {currentPhotoIndex + 1} / {photos.length}
-          </div>
-        </div>
-      )}
-
-      {/* Main Content */}
+      {/* Hero Section with Image */}
       <section className="relative pt-24 pb-8">
         <div className="absolute inset-0 z-0">
           <div className="absolute top-20 left-10 w-96 h-96 bg-primary-500/20 rounded-full blur-3xl"></div>
@@ -245,42 +160,20 @@ export default function ProfileDetailPage() {
         </div>
 
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          {/* Search Bar */}
-          <div className="mb-8">
-            <SearchBar pageType="escort" />
-          </div>
-
-          {/* Back Navigation */}
-          <div className="mb-6 flex items-center gap-2 text-sm text-gray-400">
-            <Link href="/" className="hover:text-primary-400 transition-colors">← Zpět na výpis</Link>
-            <span>/</span>
-            <span>{profile.city}</span>
-            <span>/</span>
-            <span>{categoryDisplay}</span>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-            {/* Left: Gallery (2/3 width on desktop) */}
-            <div className="lg:col-span-2 relative">
-              {/* Main Image */}
-              <div
-                className="relative h-[600px] rounded-3xl overflow-hidden glass group cursor-pointer"
-                onClick={() => setLightboxOpen(true)}
-              >
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            {/* Left: Image Gallery */}
+            <div className="relative">
+              <div className="relative h-[600px] rounded-3xl overflow-hidden glass group">
+                {/* Main Image */}
                 <img
-                  src={currentPhoto?.url}
+                  src={mainPhoto}
                   alt={profile.name}
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-br from-primary-500/20 to-purple-500/20"></div>
 
-                {/* Photo Counter */}
-                <div className="absolute top-4 left-4 bg-black/50 backdrop-blur-sm px-3 py-1.5 rounded-full text-sm font-semibold">
-                  {currentPhotoIndex + 1} / {photos.length}
-                </div>
-
                 {/* Badges on image */}
-                <div className="absolute top-4 right-4 flex flex-col gap-2 z-10">
+                <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
                   {profile.isNew && (
                     <span className="bg-blue-500 px-3 py-1.5 rounded-full text-xs font-semibold inline-flex items-center justify-center">
                       Nový profil
@@ -288,40 +181,23 @@ export default function ProfileDetailPage() {
                   )}
                 </div>
 
-                {/* Gallery Navigation */}
-                <div className="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button
-                    onClick={(e) => { e.stopPropagation(); prevPhoto(); }}
-                    className="bg-black/50 backdrop-blur-sm w-12 h-12 rounded-full flex items-center justify-center hover:bg-black/70 transition-all"
-                  >
-                    <ChevronLeft className="w-6 h-6" />
-                  </button>
-                  <button
-                    onClick={(e) => { e.stopPropagation(); nextPhoto(); }}
-                    className="bg-black/50 backdrop-blur-sm w-12 h-12 rounded-full flex items-center justify-center hover:bg-black/70 transition-all"
-                  >
-                    <ChevronRight className="w-6 h-6" />
-                  </button>
-                </div>
+                {/* Favorite Button */}
+                <button className="absolute top-4 right-4 z-10 bg-black/50 backdrop-blur-sm w-12 h-12 rounded-full flex items-center justify-center hover:bg-black/70 transition-all hover:scale-110">
+                  <Heart className="w-6 h-6 text-white" />
+                </button>
 
                 {/* Hover Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-dark-950 via-dark-950/50 to-transparent opacity-60"></div>
               </div>
 
               {/* Thumbnail Gallery */}
-              {photos.length > 1 && (
-                <div className="grid grid-cols-4 md:grid-cols-8 gap-2 mt-4">
-                  {photos.slice(0, 8).map((photo: any, i: number) => (
-                    <div
-                      key={photo.id || i}
-                      onClick={() => setCurrentPhotoIndex(i)}
-                      className={`relative h-20 md:h-24 rounded-xl overflow-hidden glass cursor-pointer transition-all ${
-                        i === currentPhotoIndex ? 'ring-2 ring-primary-500' : 'hover:ring-2 hover:ring-primary-500/50'
-                      }`}
-                    >
+              {profile.photos && profile.photos.length > 1 && (
+                <div className="grid grid-cols-4 gap-2 mt-4">
+                  {profile.photos.slice(1, 5).map((photo: any, i: number) => (
+                    <div key={i} className="relative h-24 rounded-xl overflow-hidden glass cursor-pointer hover:ring-2 hover:ring-primary-500 transition-all">
                       <img
                         src={photo.url}
-                        alt={`${profile.name} ${i + 1}`}
+                        alt={`${profile.name} ${i + 2}`}
                         className="w-full h-full object-cover"
                       />
                     </div>
@@ -330,94 +206,92 @@ export default function ProfileDetailPage() {
               )}
             </div>
 
-            {/* Right: Profile Info & Contact (1/3 width on desktop) */}
+            {/* Right: Profile Info */}
             <div className="space-y-6">
-              {/* Profile Header */}
+              {/* Profile Type Badge */}
+              <div>
+                <span className={`${(profileTypes as any)[profile.profileType]?.color || 'bg-purple-500'} px-4 py-2 rounded-full text-sm font-bold inline-flex items-center justify-center`}>
+                  {(profileTypes as any)[profile.profileType]?.label || profile.profileType}
+                </span>
+              </div>
+
+              {/* Name and Verification */}
+              <div>
+                <h1 className="text-5xl font-bold mb-2 flex items-center gap-3">
+                  {profile.name}, {profile.age}
+                  {profile.verified && (
+                    <CheckCircle className="w-8 h-8 text-green-500" />
+                  )}
+                </h1>
+                <Link
+                  href={`/${categoryUrl}`}
+                  className="text-xl text-primary-400 hover:text-primary-300 transition-colors inline-block"
+                >
+                  {categoryDisplay}
+                </Link>
+              </div>
+
+              {/* Rating */}
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2 bg-yellow-500/20 backdrop-blur-sm px-4 py-2 rounded-xl">
+                  <Star className="w-6 h-6 text-yellow-400" fill="currentColor" />
+                  <span className="text-2xl font-bold">4.5</span>
+                  <span className="text-gray-400">(0 hodnocení)</span>
+                </div>
+                {profile.verified && (
+                  <div className="flex items-center gap-2 bg-green-500/20 backdrop-blur-sm px-4 py-2 rounded-xl">
+                    <Shield className="w-5 h-5 text-green-400" />
+                    <span className="text-sm font-semibold text-green-400">Ověřený profil</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Service Badges */}
+              {(profile.offersEscort || profile.travels) && (
+                <div className="flex flex-wrap gap-2">
+                  {profile.offersEscort && (
+                    <span className="inline-flex items-center text-sm px-4 py-2 bg-purple-500/20 text-purple-400 rounded-full font-semibold border border-purple-500/30">
+                      Nabízím escort
+                    </span>
+                  )}
+                  {profile.travels && (
+                    <span className="inline-flex items-center text-sm px-4 py-2 bg-blue-500/20 text-blue-400 rounded-full font-semibold border border-blue-500/30">
+                      Cestuji
+                    </span>
+                  )}
+                </div>
+              )}
+
+              {/* Location and Contact */}
               <div className="glass rounded-2xl p-6 space-y-4">
-                {/* Online Status + Name */}
-                <div>
-                  <h1 className="text-3xl font-bold mb-1 flex items-center gap-2">
-                    <span className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></span>
-                    {profile.name}, {profile.age}
-                    {profile.verified && (
-                      <CheckCircle className="w-6 h-6 text-blue-500" />
-                    )}
-                  </h1>
-                  <Link
-                    href={`/${categoryUrl}`}
-                    className="text-sm text-primary-400 hover:text-primary-300 transition-colors inline-block"
-                  >
-                    {categoryDisplay}
-                  </Link>
+                <div className="flex items-center gap-3 text-lg">
+                  <MapPin className="w-6 h-6 text-primary-400" />
+                  <span>{profile.location || profile.city}</span>
                 </div>
-
-                {/* Location */}
-                <div className="flex items-center gap-2 text-gray-300">
-                  <MapPin className="w-4 h-4 text-primary-400" />
-                  <span className="text-sm">{profile.location || profile.city}</span>
-                </div>
-
-                {/* Rating */}
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-1">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <Star key={star} className="w-4 h-4 text-yellow-400" fill="currentColor" />
-                    ))}
-                  </div>
-                  <span className="text-sm text-gray-400">(0 recenzí)</span>
-                </div>
-
-                {/* Quick Stats */}
-                <div className="grid grid-cols-2 gap-3 pt-4 border-t border-white/10">
-                  <div className="text-center">
-                    <div className="text-xs text-gray-400 mb-1">Věk</div>
-                    <div className="text-lg font-semibold">{profile.age}</div>
-                  </div>
-                  {profile.height && (
-                    <div className="text-center">
-                      <div className="text-xs text-gray-400 mb-1">Výška</div>
-                      <div className="text-lg font-semibold">{profile.height} cm</div>
-                    </div>
-                  )}
-                  {profile.weight && (
-                    <div className="text-center">
-                      <div className="text-xs text-gray-400 mb-1">Váha</div>
-                      <div className="text-lg font-semibold">{profile.weight} kg</div>
-                    </div>
-                  )}
-                  {profile.bust && (
-                    <div className="text-center">
-                      <div className="text-xs text-gray-400 mb-1">Prsa</div>
-                      <div className="text-lg font-semibold">{profile.bust}</div>
-                    </div>
-                  )}
+                <div className="flex items-center gap-3 text-lg">
+                  <Phone className="w-6 h-6 text-primary-400" />
+                  <span className="font-semibold">{profile.phone}</span>
                 </div>
               </div>
 
-              {/* Contact CTA */}
-              <div className="glass rounded-2xl p-6 space-y-4 sticky top-24">
-                <div className="text-center">
-                  <h3 className="text-xl font-bold mb-1">Kontaktujte mě</h3>
-                  <p className="text-sm text-gray-400">Jsem online a k dispozici</p>
-                </div>
-
-                {/* Primary CTA */}
-                <a
-                  href={`tel:${profile.phone}`}
-                  className="flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-primary-500 to-pink-500 rounded-xl font-semibold text-lg hover:shadow-2xl hover:shadow-primary-500/50 transition-all w-full"
-                >
-                  <Phone className="w-5 h-5" />
-                  {profile.phone}
-                </a>
-
-                {/* Divider */}
-                <div className="relative">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-white/10"></div>
-                  </div>
-                  <div className="relative flex justify-center text-xs">
-                    <span className="bg-dark-800 px-2 text-gray-400">Nebo napište přes</span>
-                  </div>
+              {/* Action Buttons */}
+              <div className="space-y-3">
+                {/* Primary Actions */}
+                <div className="grid grid-cols-2 gap-3">
+                  <a
+                    href={`tel:${profile.phone}`}
+                    className="flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-primary-500 to-pink-500 rounded-xl font-semibold text-lg hover:shadow-2xl hover:shadow-primary-500/50 transition-all"
+                  >
+                    <Phone className="w-5 h-5" />
+                    Zavolat
+                  </a>
+                  <a
+                    href={`sms:${profile.phone}`}
+                    className="flex items-center justify-center gap-2 px-6 py-4 glass rounded-xl font-semibold text-lg hover:bg-white/10 transition-all"
+                  >
+                    <MessageCircle className="w-5 h-5" />
+                    SMS
+                  </a>
                 </div>
 
                 {/* Messaging Apps */}
@@ -444,34 +318,12 @@ export default function ProfileDetailPage() {
                     </svg>
                     <span className="text-sm">Telegram</span>
                   </a>
-                  <a
-                    href={`sms:${profile.phone}`}
-                    className="flex items-center justify-center gap-2 px-4 py-3 glass rounded-xl font-semibold hover:bg-white/10 transition-all"
-                  >
-                    <MessageCircle className="w-5 h-5" />
-                    <span className="text-sm">SMS</span>
-                  </a>
-                  {profile.website && (
-                    <a
-                      href={profile.website}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-center gap-2 px-4 py-3 glass rounded-xl font-semibold hover:bg-white/10 transition-all"
-                    >
-                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <circle cx="12" cy="12" r="10"/>
-                        <line x1="2" y1="12" x2="22" y2="12"/>
-                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-                      </svg>
-                      <span className="text-sm">Web</span>
-                    </a>
-                  )}
                 </div>
               </div>
             </div>
           </div>
 
-          {/* 🔥 NABÍZENÉ SLUŽBY */}
+          {/* 🔥 NABÍZENÉ SLUŽBY - PROMINENTNÍ SEKCE (ALFA OMEGA) */}
           {services.length > 0 && (
             <div className="glass rounded-2xl p-8 mt-8 border-2 border-primary-500/30">
               <h2 className="text-4xl font-bold mb-6 text-center gradient-text flex items-center justify-center gap-3">
@@ -498,11 +350,11 @@ export default function ProfileDetailPage() {
           )}
 
           {/* Tab Navigation */}
-          <div className="glass rounded-2xl p-2 mt-8 overflow-x-auto">
-            <div className="flex gap-2 min-w-max">
+          <div className="glass rounded-2xl p-2 mt-8">
+            <div className="flex flex-wrap gap-2">
               <button
                 onClick={() => setActiveTab('o-me')}
-                className={`px-6 py-3 rounded-xl font-semibold transition-all whitespace-nowrap ${
+                className={`flex-1 px-6 py-3 rounded-xl font-semibold transition-all ${
                   activeTab === 'o-me'
                     ? 'bg-gradient-to-r from-primary-500 to-pink-500 text-white'
                     : 'text-gray-400 hover:text-white hover:bg-white/5'
@@ -511,38 +363,8 @@ export default function ProfileDetailPage() {
                 O mně
               </button>
               <button
-                onClick={() => setActiveTab('sluzby')}
-                className={`px-6 py-3 rounded-xl font-semibold transition-all whitespace-nowrap ${
-                  activeTab === 'sluzby'
-                    ? 'bg-gradient-to-r from-primary-500 to-pink-500 text-white'
-                    : 'text-gray-400 hover:text-white hover:bg-white/5'
-                }`}
-              >
-                Služby
-              </button>
-              <button
-                onClick={() => setActiveTab('pracovni-doba')}
-                className={`px-6 py-3 rounded-xl font-semibold transition-all whitespace-nowrap ${
-                  activeTab === 'pracovni-doba'
-                    ? 'bg-gradient-to-r from-primary-500 to-pink-500 text-white'
-                    : 'text-gray-400 hover:text-white hover:bg-white/5'
-                }`}
-              >
-                Pracovní doba
-              </button>
-              <button
-                onClick={() => setActiveTab('recenze')}
-                className={`px-6 py-3 rounded-xl font-semibold transition-all whitespace-nowrap ${
-                  activeTab === 'recenze'
-                    ? 'bg-gradient-to-r from-primary-500 to-pink-500 text-white'
-                    : 'text-gray-400 hover:text-white hover:bg-white/5'
-                }`}
-              >
-                Recenze
-              </button>
-              <button
                 onClick={() => setActiveTab('osobni-udaje')}
-                className={`px-6 py-3 rounded-xl font-semibold transition-all whitespace-nowrap ${
+                className={`flex-1 px-6 py-3 rounded-xl font-semibold transition-all ${
                   activeTab === 'osobni-udaje'
                     ? 'bg-gradient-to-r from-primary-500 to-pink-500 text-white'
                     : 'text-gray-400 hover:text-white hover:bg-white/5'
@@ -559,89 +381,9 @@ export default function ProfileDetailPage() {
             {activeTab === 'o-me' && (
               <div className="glass rounded-2xl p-8">
                 <h3 className="text-3xl font-bold mb-4">O mně</h3>
-                <p className="text-gray-300 text-lg leading-relaxed whitespace-pre-wrap">
+                <p className="text-gray-300 text-lg leading-relaxed">
                   {profile.description || `Ahoj, jsem ${profile.name} a ráda bych vás přivítala na nezapomenutelnou relaxační chvíli. Nabízím profesionální erotické služby v příjemném a diskrétním prostředí.`}
                 </p>
-              </div>
-            )}
-
-            {/* Služby Tab */}
-            {activeTab === 'sluzby' && (
-              <div className="glass rounded-2xl p-8">
-                <h3 className="text-3xl font-bold mb-6">Nabízené služby</h3>
-                {services.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {services.map((service: any, index: number) => (
-                      <div
-                        key={index}
-                        className="flex items-center gap-3 p-4 bg-dark-800/30 border border-white/10 rounded-xl"
-                      >
-                        <CheckCircle className="w-5 h-5 text-green-500" />
-                        <span className="text-gray-200">{service.label}</span>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-gray-400">Žádné služby nejsou specifikovány.</p>
-                )}
-              </div>
-            )}
-
-            {/* Pracovní doba Tab */}
-            {activeTab === 'pracovni-doba' && (
-              <div className="glass rounded-2xl p-8">
-                <h3 className="text-3xl font-bold mb-6">Pracovní doba</h3>
-                <div className="space-y-3">
-                  {daysOfWeek.map((day, index) => {
-                    const hours = workingHours[day as keyof typeof workingHours];
-                    const isToday = index === todayIndex;
-
-                    return (
-                      <div
-                        key={day}
-                        className={`flex items-center justify-between p-4 rounded-xl ${
-                          isToday
-                            ? 'bg-primary-500/10 border border-primary-500/30'
-                            : 'bg-dark-800/30 border border-white/10'
-                        }`}
-                      >
-                        <div className="flex items-center gap-3">
-                          {isToday && <Clock className="w-5 h-5 text-primary-400" />}
-                          <span className={`font-semibold ${isToday ? 'text-primary-400' : ''}`}>
-                            {dayLabels[day]}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          {hours.available ? (
-                            <span className="text-gray-300">
-                              {hours.open} - {hours.close}
-                            </span>
-                          ) : (
-                            <span className="text-gray-500">Zavřeno</span>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {/* Recenze Tab */}
-            {activeTab === 'recenze' && (
-              <div className="glass rounded-2xl p-8">
-                <div className="text-center mb-8">
-                  <h3 className="text-3xl font-bold mb-2">Recenze</h3>
-                  <div className="flex items-center justify-center gap-2 mb-2">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <Star key={star} className="w-6 h-6 text-yellow-400" fill="currentColor" />
-                    ))}
-                  </div>
-                  <p className="text-gray-400">0.0 z 5 (0 recenzí)</p>
-                </div>
-                <div className="text-center text-gray-400 py-12">
-                  <p>Zatím žádné recenze. Buďte první, kdo napíše recenzi!</p>
-                </div>
               </div>
             )}
 

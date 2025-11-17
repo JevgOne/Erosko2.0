@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import SearchBar from '@/components/SearchBar';
 
 // ============================================================================
 // TYPESCRIPT INTERFACES
@@ -521,6 +522,11 @@ export default function BusinessDetailPage({ business }: BusinessDetailPageProps
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
       <div className="max-w-[1400px] mx-auto px-5 py-5">
+        {/* Search Bar */}
+        <div className="mb-8">
+          <SearchBar pageType="podniky" />
+        </div>
+
         {/* Breadcrumb */}
         <nav className="flex items-center gap-3 mb-6 text-sm text-[#999]">
           <Link href="/" className="hover:text-[#ff0066] transition-colors">← Zpět</Link>

@@ -16,8 +16,9 @@ import LandingPagesTab from './components/LandingPagesTab';
 import AllPagesTab from './components/AllPagesTab';
 import RedirectsTab from './components/RedirectsTab';
 import RobotsTxtTab from './components/RobotsTxtTab';
+import ContentBlocksTab from './components/ContentBlocksTab';
 
-type Tab = 'dashboard' | 'profiles' | 'landing-pages' | 'all-pages' | 'redirects' | 'robots';
+type Tab = 'dashboard' | 'profiles' | 'landing-pages' | 'all-pages' | 'redirects' | 'robots' | 'content-blocks';
 
 export default function SEOMasterPage() {
   const [activeTab, setActiveTab] = useState<Tab>('dashboard');
@@ -103,6 +104,17 @@ export default function SEOMasterPage() {
           <FileCode className="w-5 h-5" />
           robots.txt
         </button>
+        <button
+          onClick={() => setActiveTab('content-blocks')}
+          className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all ${
+            activeTab === 'content-blocks'
+              ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/50'
+              : 'text-gray-400 hover:text-white hover:bg-white/5'
+          }`}
+        >
+          <FileText className="w-5 h-5" />
+          Content Blocks
+        </button>
       </div>
 
       {/* Tab Content */}
@@ -113,6 +125,7 @@ export default function SEOMasterPage() {
         {activeTab === 'all-pages' && <AllPagesTab />}
         {activeTab === 'redirects' && <RedirectsTab />}
         {activeTab === 'robots' && <RobotsTxtTab />}
+        {activeTab === 'content-blocks' && <ContentBlocksTab />}
       </div>
     </div>
   );

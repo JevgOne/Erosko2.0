@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import prisma from '@/lib/prisma';
-import ContentBlockEditor from '../../components/ContentBlockEditor';
+import ContentBlockEditor from '../../../components/ContentBlockEditor';
 
 interface Props {
   params: { id: string };

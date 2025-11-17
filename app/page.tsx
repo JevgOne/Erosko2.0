@@ -47,6 +47,7 @@ import Footer from '@/components/Footer';
 import AdBanner from '@/components/AdBanner';
 import ProfileCardGrid from '@/components/ProfileCardGrid';
 import { profilesToCards } from '@/lib/profile-card-adapter';
+import { ContentBlockSection } from '@/components/ContentBlock';
 
 async function getProfiles() {
   const profiles = await prisma.profile.findMany({
@@ -106,8 +107,26 @@ export default async function Home() {
       </section>
 
       <Categories />
+
+      {/* Content Blocks Section - Editable from Admin */}
+      <ContentBlockSection
+        page="homepage"
+        section="main"
+        className="container mx-auto px-4 sm:px-6 lg:px-8 py-12"
+        itemClassName="mb-8"
+      />
+
       <TrustSignals />
       <HowItWorks />
+
+      {/* Content Blocks Section - Footer area */}
+      <ContentBlockSection
+        page="homepage"
+        section="footer"
+        className="container mx-auto px-4 sm:px-6 lg:px-8 py-8"
+        itemClassName="mb-6"
+      />
+
       <Footer />
     </main>
   );

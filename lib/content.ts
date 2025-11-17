@@ -6,7 +6,7 @@ import prisma from './prisma';
  */
 export async function getContentBlock(identifier: string, fallback: string = ''): Promise<string> {
   try {
-    const block = await prisma.contentBlock.findUnique({
+    const block = await prisma.contentBlock.findFirst({
       where: {
         identifier,
         published: true,
@@ -30,7 +30,7 @@ export async function getContentBlock(identifier: string, fallback: string = '')
  */
 export async function getContentBlockData<T = any>(identifier: string, fallback: T): Promise<T> {
   try {
-    const block = await prisma.contentBlock.findUnique({
+    const block = await prisma.contentBlock.findFirst({
       where: {
         identifier,
         published: true,

@@ -69,7 +69,7 @@ export default function ContentBlockEditor({ blockId, initialData }: Props) {
 
       if (data.success) {
         alert(blockId ? 'Content block aktualizován!' : 'Content block vytvořen!');
-        router.push('/admin_panel/content');
+        router.push('/admin_panel/seomaster?tab=content-blocks');
         router.refresh();
       } else {
         alert(`Chyba: ${data.error}`);

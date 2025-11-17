@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import prisma from '@/lib/prisma';
+import { revalidatePath } from 'next/cache';
 
 /**
  * GET /api/admin/landing-pages
@@ -74,7 +75,18 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { path, type, seoTitle, seoDescription, h1, content, keywords, published } = body;
+    const {
+      path,
+      type,
+      seoTitle,
+      seoDescription,
+      h1,
+      content,
+      keywords,
+      focusKeyword,
+      secondaryKeywords,
+      published,
+    } = body;
 
     // Validation
     if (!path || !seoTitle || !seoDescription || !h1) {
@@ -109,10 +121,15 @@ export async function POST(request: Request) {
         h1,
         content: content || '',
         keywords,
+        focusKeyword,
+        secondaryKeywords,
         ogImageUrl,
         published: published !== false,
       },
     });
+
+    // Revalidate the path so it appears immediately (Rank Math-like behavior)
+    revalidatePath(path);
 
     return NextResponse.json({
       success: true,

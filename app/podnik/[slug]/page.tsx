@@ -293,22 +293,23 @@ export default function BusinessDetailPage() {
                     <h4 className="font-semibold">Otevírací doba</h4>
                   </div>
                   <div className="space-y-1.5 text-sm">
-                    {[
-                      { day: 'Pondělí', hours: '9:00 - 22:00', open: true },
-                      { day: 'Úterý', hours: '9:00 - 22:00', open: true },
-                      { day: 'Středa', hours: '9:00 - 22:00', open: true },
-                      { day: 'Čtvrtek', hours: '9:00 - 22:00', open: true },
-                      { day: 'Pátek', hours: '9:00 - 23:00', open: true },
-                      { day: 'Sobota', hours: '10:00 - 23:00', open: true },
-                      { day: 'Neděle', hours: '10:00 - 22:00', open: true },
-                    ].map((schedule, index) => (
-                      <div key={index} className="flex justify-between items-center">
-                        <span className="text-gray-400">{schedule.day}</span>
-                        <span className={schedule.open ? 'text-green-400 font-medium' : 'text-red-400'}>
-                          {schedule.hours}
-                        </span>
-                      </div>
-                    ))}
+                    {business.openingHours && typeof business.openingHours === 'object' ? (
+                      Object.entries(czechDays).map(([englishDay, czechDay]) => {
+                        const hours = (business.openingHours as any)[englishDay];
+                        const isClosed = !hours || hours.toLowerCase() === 'zavřeno' || hours.toLowerCase() === 'closed';
+
+                        return (
+                          <div key={englishDay} className="flex justify-between items-center">
+                            <span className="text-gray-400">{czechDay}</span>
+                            <span className={isClosed ? 'text-red-400' : 'text-green-400 font-medium'}>
+                              {hours ? hours.replace('-', ' - ') : 'Zavřeno'}
+                            </span>
+                          </div>
+                        );
+                      })
+                    ) : (
+                      <p className="text-gray-500 text-center py-2">Otevírací doba neuvedena</p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -396,27 +397,68 @@ export default function BusinessDetailPage() {
                 Vybavení
               </h3>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                {[
-                  { icon: '❄️', label: 'Klimatizace' },
-                  { icon: '🚿', label: 'Sprcha' },
-                  { icon: '✅', label: 'Hygiena' },
-                  { icon: '🅿️', label: 'Parkování' },
-                  { icon: '💳', label: 'Platba kartou' },
-                  { icon: '🚪', label: 'Diskrétní vchod' },
-                  { icon: '🌐', label: 'Wi-Fi' },
-                  { icon: '🔒', label: 'Bezpečné prostředí' },
-                  { icon: '🧖', label: 'Sauna' },
-                  { icon: '🛁', label: 'Whirlpool' },
-                  { icon: '🎵', label: 'Hudba' },
-                ].map((item, index) => (
-                  <div
-                    key={index}
-                    className="bg-dark-800/50 rounded-xl p-3 border border-white/5 flex flex-col items-center justify-center gap-2 hover:bg-dark-800 transition-colors"
-                  >
-                    <span className="text-2xl">{item.icon}</span>
-                    <p className="text-xs text-center text-gray-300">{item.label}</p>
-                  </div>
-                ))}
+                {(() => {
+                  // Parse equipment data - can be array or object with items property
+                  let equipmentItems: string[] = [];
+
+                  if (business.equipment) {
+                    if (Array.isArray(business.equipment)) {
+                      equipmentItems = business.equipment;
+                    } else if (typeof business.equipment === 'object' && business.equipment.items) {
+                      equipmentItems = business.equipment.items;
+                    }
+                  }
+
+                  // Equipment icon mapping
+                  const iconMap: Record<string, string> = {
+                    'klimatizace': '❄️',
+                    'sprcha': '🚿',
+                    'hygiena': '✅',
+                    'parkování': '🅿️',
+                    'platba kartou': '💳',
+                    'diskrétní vchod': '🚪',
+                    'wi-fi': '🌐',
+                    'wifi': '🌐',
+                    'bezpečné prostředí': '🔒',
+                    'sauna': '🧖',
+                    'whirlpool': '🛁',
+                    'jacuzzi': '🛁',
+                    'hudba': '🎵',
+                    'bar': '🍹',
+                    'vip pokoje': '👑',
+                    'vip místnosti': '👑',
+                    'masážní stůl': '💆',
+                    'aromaterapie': '🌸',
+                    'ručníky': '🧺',
+                    'pivní lázeň': '🍺',
+                  };
+
+                  const getIcon = (label: string) => {
+                    const lowerLabel = label.toLowerCase();
+                    for (const [key, icon] of Object.entries(iconMap)) {
+                      if (lowerLabel.includes(key)) return icon;
+                    }
+                    return '✨'; // Default icon
+                  };
+
+                  if (equipmentItems.length === 0) {
+                    return (
+                      <div className="col-span-full text-center py-8">
+                        <p className="text-gray-500">Vybavení neuvedeno</p>
+                      </div>
+                    );
+                  }
+
+                  return equipmentItems.map((item, index) => (
+                    <div
+                      key={index}
+                      className="bg-dark-800/50 rounded-xl p-3 border border-white/5 flex flex-col items-center justify-center gap-2 hover:bg-dark-800 transition-colors"
+                    >
+                      <span className="text-2xl">{getIcon(item)}</span>
+                      <p className="text-xs text-center text-gray-300">{item}</p>
+                    </div>
+                  ));
+                })()}
               </div>
             </div>
 

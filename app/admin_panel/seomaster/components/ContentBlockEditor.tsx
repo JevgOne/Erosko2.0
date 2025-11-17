@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Save, ArrowLeft, Eye } from 'lucide-react';
 import EnhancedEditor from '../../landing-pages/components/EnhancedEditor';
+import LocationPicker from './LocationPicker';
 
 interface ContentBlockData {
   id?: string;
@@ -230,32 +231,14 @@ export default function ContentBlockEditor({ blockId, initialData }: Props) {
                 </select>
               </div>
 
-              {/* Page */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-2">Stránka</label>
-                <select
-                  value={formData.page}
-                  onChange={(e) => handleChange('page', e.target.value)}
-                  className="w-full glass rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
-                >
-                  <option value="homepage" className="bg-dark-800">Homepage</option>
-                  <option value="about" className="bg-dark-800">O nás</option>
-                  <option value="contact" className="bg-dark-800">Kontakt</option>
-                  <option value="other" className="bg-dark-800">Jiná</option>
-                </select>
-              </div>
-
-              {/* Section */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-2">Sekce</label>
-                <input
-                  type="text"
-                  value={formData.section}
-                  onChange={(e) => handleChange('section', e.target.value)}
-                  placeholder="hero, features, testimonials, etc."
-                  className="w-full glass rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500"
-                />
-              </div>
+              {/* Location Picker with Visual Preview */}
+              <LocationPicker
+                value={{ page: formData.page, section: formData.section }}
+                onChange={(page, section) => {
+                  handleChange('page', page);
+                  handleChange('section', section);
+                }}
+              />
 
               {/* Order */}
               <div className="mb-4">

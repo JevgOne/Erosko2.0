@@ -65,7 +65,7 @@ export async function ContentBlockSection({
           ) : block.type === 'VIDEO' ? (
             <iframe
               src={block.content || ''}
-              title={block.title}
+              title={block.title || 'Video'}
               className="w-full aspect-video"
               allowFullScreen
             />

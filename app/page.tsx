@@ -78,7 +78,24 @@ export default async function Home() {
   return (
     <main className="min-h-screen">
       <Header />
+
+      {/* Content Blocks - Above Hero */}
+      <ContentBlockSection
+        page="homepage"
+        section="hero-top"
+        className="container mx-auto px-4 sm:px-6 lg:px-8 py-4"
+        itemClassName="mb-4"
+      />
+
       <Hero />
+
+      {/* Content Blocks - After Hero */}
+      <ContentBlockSection
+        page="homepage"
+        section="after-hero"
+        className="container mx-auto px-4 sm:px-6 lg:px-8 py-8"
+        itemClassName="mb-6"
+      />
 
       {/* Instagram-Style Profile Cards */}
       <section className="py-12 sm:py-16 lg:py-20 bg-black">
@@ -95,6 +112,14 @@ export default async function Home() {
           <ProfileCardGrid cards={cards} />
         </div>
       </section>
+
+      {/* Content Blocks - After Profiles */}
+      <ContentBlockSection
+        page="homepage"
+        section="after-profiles"
+        className="container mx-auto px-4 sm:px-6 lg:px-8 py-8"
+        itemClassName="mb-6"
+      />
 
       {/* Subtle horizontal banner between sections */}
       <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">

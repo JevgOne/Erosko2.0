@@ -53,12 +53,17 @@ export async function getContentBlockData<T = any>(identifier: string, fallback:
  */
 export async function getContentBlocks(page: string, section?: string) {
   try {
+    const where: any = {
+      page,
+      published: true,
+    };
+
+    if (section) {
+      where.section = section;
+    }
+
     const blocks = await prisma.contentBlock.findMany({
-      where: {
-        page,
-        section: section || undefined,
-        published: true,
-      },
+      where,
       orderBy: {
         order: 'asc',
       },

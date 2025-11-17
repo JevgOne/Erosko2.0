@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Save, ArrowLeft, Eye } from 'lucide-react';
 import EnhancedEditor from '../../landing-pages/components/EnhancedEditor';
-import LocationPicker from './LocationPicker';
+import LocationPicker from './LocationPickerNew';
 
 interface ContentBlockData {
   id?: string;

@@ -171,20 +171,20 @@ export default function LocationPicker({ value, onChange }: LocationPickerProps)
 
           {/* Dropdown */}
           {isOpen && (
-            <div className="absolute z-50 w-full mt-2 glass rounded-xl border border-white/10 max-h-96 overflow-y-auto">
+            <div className="absolute z-50 w-full mt-2 bg-dark-800 rounded-xl border border-white/20 shadow-2xl max-h-96 overflow-y-auto">
               {AVAILABLE_LOCATIONS.map((location, index) => (
                 <button
                   key={index}
                   type="button"
                   onClick={() => handleSelect(location)}
-                  className={`w-full text-left px-4 py-3 hover:bg-white/5 transition-colors border-b border-white/5 last:border-b-0 ${
+                  className={`w-full text-left px-4 py-3 hover:bg-white/10 transition-colors border-b border-white/10 last:border-b-0 ${
                     location.page === value.page && location.section === value.section
-                      ? 'bg-primary-500/10'
+                      ? 'bg-primary-500/20 border-l-4 border-l-primary-500'
                       : ''
                   }`}
                 >
-                  <div className="font-medium text-white">{location.label}</div>
-                  <div className="text-sm text-gray-400 mt-1">{location.description}</div>
+                  <div className="font-medium text-white text-base">{location.label}</div>
+                  <div className="text-sm text-gray-300 mt-1">{location.description}</div>
                 </button>
               ))}
             </div>
@@ -197,33 +197,33 @@ export default function LocationPicker({ value, onChange }: LocationPickerProps)
       </div>
 
       {/* Visual Preview */}
-      <div className="glass rounded-xl p-6 border-2 border-primary-500/20">
+      <div className="bg-dark-800 rounded-xl p-6 border-2 border-primary-500/30 shadow-lg">
         <div className="flex items-center gap-2 mb-4">
           <div className="w-2 h-2 bg-primary-500 rounded-full animate-pulse"></div>
-          <h3 className="text-sm font-bold text-primary-400 uppercase">Live Preview Pozice</h3>
+          <h3 className="text-sm font-bold text-primary-400 uppercase tracking-wider">Live Preview Pozice</h3>
         </div>
 
-        <div className="bg-dark-800/50 rounded-lg p-4 font-mono text-sm">
-          <pre className="text-gray-300 whitespace-pre-wrap">{selectedLocation.visualPosition}</pre>
+        <div className="bg-black/50 rounded-lg p-5 font-mono text-sm border border-white/10">
+          <pre className="text-gray-200 whitespace-pre-wrap leading-relaxed">{selectedLocation.visualPosition}</pre>
         </div>
 
-        <div className="mt-4 p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
-          <p className="text-sm text-blue-300">
-            💡 <strong>Tip:</strong> {selectedLocation.description}
+        <div className="mt-4 p-4 bg-blue-500/10 border border-blue-500/30 rounded-lg">
+          <p className="text-sm text-blue-200">
+            💡 <strong className="text-blue-100">Tip:</strong> {selectedLocation.description}
           </p>
         </div>
       </div>
 
       {/* Technical Info */}
-      <div className="glass rounded-lg p-4">
-        <div className="text-xs text-gray-400 space-y-1">
-          <div>
-            <span className="text-gray-500">Page:</span>{' '}
-            <code className="text-primary-400 font-mono">{value.page}</code>
+      <div className="bg-dark-800/80 rounded-lg p-4 border border-white/10">
+        <div className="text-xs text-gray-300 space-y-2">
+          <div className="flex items-center gap-2">
+            <span className="text-gray-400 font-medium">Page:</span>
+            <code className="px-2 py-1 bg-primary-500/20 text-primary-300 font-mono rounded">{value.page}</code>
           </div>
-          <div>
-            <span className="text-gray-500">Section:</span>{' '}
-            <code className="text-primary-400 font-mono">{value.section}</code>
+          <div className="flex items-center gap-2">
+            <span className="text-gray-400 font-medium">Section:</span>
+            <code className="px-2 py-1 bg-primary-500/20 text-primary-300 font-mono rounded">{value.section}</code>
           </div>
         </div>
       </div>

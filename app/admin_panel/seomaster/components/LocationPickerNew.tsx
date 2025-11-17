@@ -470,18 +470,25 @@ export default function LocationPicker({ value, onChange }: LocationPickerProps)
           {getCategoryBadge(selectedLocation.category, selectedLocation.categoryColor, selectedLocation.categoryLabel)}
         </div>
 
-        {/* Live Mini Preview */}
-        <div className="grid md:grid-cols-2 gap-6 mb-5">
-          {/* ASCII Diagram */}
-          <div className="bg-black/60 rounded-xl p-6 font-mono text-xs border-2 border-white/20 shadow-inner">
-            <pre className="text-gray-100 whitespace-pre leading-tight font-bold">{selectedLocation.visualPosition}</pre>
+        {/* Live Mini Preview - FULL WIDTH */}
+        <div className="mb-5">
+          {/* Visual Wireframe Preview - HUGE, FULL WIDTH */}
+          <div className="bg-gradient-to-b from-dark-900 to-black rounded-xl p-8 border-2 border-primary-500/30 shadow-2xl">
+            <div className="text-lg text-gray-200 mb-6 text-center font-bold">🎨 Vizuální náhled - Kde se zobrazí</div>
+            <div className="max-w-md mx-auto">
+              <MiniPreview location={selectedLocation} />
+            </div>
           </div>
 
-          {/* Visual Wireframe Preview - BIGGER */}
-          <div className="bg-gradient-to-b from-dark-900 to-black rounded-xl p-6 border-2 border-primary-500/30 shadow-inner">
-            <div className="text-sm text-gray-300 mb-4 text-center font-bold">🎨 Vizuální náhled</div>
-            <MiniPreview location={selectedLocation} />
-          </div>
+          {/* ASCII Diagram - Smaller, below */}
+          <details className="mt-4">
+            <summary className="cursor-pointer text-gray-400 text-sm hover:text-gray-300 transition-colors">
+              📋 Technický diagram (klikni pro zobrazení)
+            </summary>
+            <div className="bg-black/60 rounded-xl p-6 font-mono text-xs border-2 border-white/20 shadow-inner mt-2">
+              <pre className="text-gray-100 whitespace-pre leading-tight font-bold">{selectedLocation.visualPosition}</pre>
+            </div>
+          </details>
         </div>
 
         {/* Full Description */}

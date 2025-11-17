@@ -8,17 +8,17 @@ function MiniPreview({ location }: { location: Location }) {
   const isHighlighted = (section: string) => location.section === section;
 
   return (
-    <div className="space-y-1 text-xs">
+    <div className="space-y-2 text-sm font-medium">
       {/* Header */}
-      <div className="h-6 bg-gray-700 rounded flex items-center justify-center text-gray-400">
+      <div className="h-8 bg-gray-700 rounded flex items-center justify-center text-gray-300">
         Header
       </div>
 
       {/* Hero-top (Alert Bar) */}
       {location.page === 'homepage' && (
-        <div className={`h-4 rounded flex items-center justify-center transition-all ${
+        <div className={`h-6 rounded flex items-center justify-center transition-all text-xs ${
           isHighlighted('hero-top')
-            ? 'bg-gradient-to-r from-red-500 to-orange-500 text-white font-bold animate-pulse ring-2 ring-yellow-400'
+            ? 'bg-gradient-to-r from-red-500 to-orange-500 text-white font-bold animate-pulse ring-4 ring-yellow-400'
             : 'bg-gray-800 text-gray-500'
         }`}>
           {isHighlighted('hero-top') ? '🎯 VÁŠ CONTENT!' : 'Alert'}
@@ -26,15 +26,15 @@ function MiniPreview({ location }: { location: Location }) {
       )}
 
       {/* Hero Section */}
-      <div className="h-16 bg-gray-700 rounded flex items-center justify-center text-gray-400">
+      <div className="h-20 bg-gray-700 rounded flex items-center justify-center text-gray-300">
         Hero / Search
       </div>
 
       {/* After-hero */}
       {location.page === 'homepage' && (
-        <div className={`h-8 rounded flex items-center justify-center transition-all ${
+        <div className={`h-12 rounded flex items-center justify-center transition-all text-xs ${
           isHighlighted('after-hero')
-            ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold animate-pulse ring-2 ring-yellow-400'
+            ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold animate-pulse ring-4 ring-yellow-400'
             : 'bg-gray-800 text-gray-500'
         }`}>
           {isHighlighted('after-hero') ? '🎯 VÁŠ CONTENT!' : 'CTA Area'}
@@ -43,16 +43,16 @@ function MiniPreview({ location }: { location: Location }) {
 
       {/* Filters for category pages */}
       {location.page !== 'homepage' && (
-        <div className="h-10 bg-gray-700 rounded flex items-center justify-center text-gray-400">
+        <div className="h-12 bg-gray-700 rounded flex items-center justify-center text-gray-300">
           Filters
         </div>
       )}
 
       {/* Main content for category pages */}
       {location.page !== 'homepage' && (
-        <div className={`h-12 rounded flex items-center justify-center transition-all ${
+        <div className={`h-16 rounded flex items-center justify-center transition-all text-xs ${
           isHighlighted('main') && location.page !== 'homepage'
-            ? 'bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold animate-pulse ring-2 ring-yellow-400'
+            ? 'bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold animate-pulse ring-4 ring-yellow-400'
             : 'bg-gray-800 text-gray-500'
         }`}>
           {isHighlighted('main') && location.page !== 'homepage' ? '🎯 VÁŠ CONTENT!' : 'Info'}
@@ -60,57 +60,57 @@ function MiniPreview({ location }: { location: Location }) {
       )}
 
       {/* Profile Cards Grid */}
-      <div className="grid grid-cols-3 gap-1">
+      <div className="grid grid-cols-3 gap-2">
         {[...Array(6)].map((_, i) => (
-          <div key={i} className="h-10 bg-gray-700 rounded"></div>
+          <div key={i} className="h-12 bg-gray-700 rounded"></div>
         ))}
       </div>
 
       {/* After-profiles */}
       {location.page === 'homepage' && (
-        <div className={`h-8 rounded flex items-center justify-center transition-all ${
+        <div className={`h-12 rounded flex items-center justify-center transition-all text-xs ${
           isHighlighted('after-profiles')
-            ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold animate-pulse ring-2 ring-yellow-400'
+            ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold animate-pulse ring-4 ring-yellow-400'
             : 'bg-gray-800 text-gray-500'
         }`}>
-          {isHighlighted('after-profiles') ? '🎯 VÁŠ CONTENT!' : 'Membership CTA'}
+          {isHighlighted('after-profiles') ? '🎯 VÁŠ CONTENT!' : 'CTA'}
         </div>
       )}
 
       {/* Ad Banner */}
       {location.page === 'homepage' && (
-        <div className="h-6 bg-gray-800 rounded flex items-center justify-center text-gray-500">
+        <div className="h-8 bg-gray-800 rounded flex items-center justify-center text-gray-500">
           Ad
         </div>
       )}
 
       {/* Categories */}
       {location.page === 'homepage' && (
-        <div className="grid grid-cols-2 gap-1">
+        <div className="grid grid-cols-2 gap-2">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="h-8 bg-gray-700 rounded"></div>
+            <div key={i} className="h-10 bg-gray-700 rounded"></div>
           ))}
         </div>
       )}
 
       {/* Main section on homepage */}
       {location.page === 'homepage' && (
-        <div className={`h-12 rounded flex items-center justify-center transition-all ${
+        <div className={`h-16 rounded flex items-center justify-center transition-all text-xs ${
           isHighlighted('main') && location.page === 'homepage'
-            ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white font-bold animate-pulse ring-2 ring-yellow-400'
+            ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white font-bold animate-pulse ring-4 ring-yellow-400'
             : 'bg-gray-800 text-gray-500'
         }`}>
-          {isHighlighted('main') && location.page === 'homepage' ? '🎯 VÁŠ CONTENT!' : 'SEO Text'}
+          {isHighlighted('main') && location.page === 'homepage' ? '🎯 VÁŠ CONTENT!' : 'SEO'}
         </div>
       )}
 
       {/* Trust Signals / How it Works */}
       {location.page === 'homepage' && (
         <>
-          <div className="h-10 bg-gray-700 rounded flex items-center justify-center text-gray-400">
+          <div className="h-12 bg-gray-700 rounded flex items-center justify-center text-gray-300">
             Trust Signals
           </div>
-          <div className="h-10 bg-gray-700 rounded flex items-center justify-center text-gray-400">
+          <div className="h-12 bg-gray-700 rounded flex items-center justify-center text-gray-300">
             How It Works
           </div>
         </>
@@ -118,9 +118,9 @@ function MiniPreview({ location }: { location: Location }) {
 
       {/* Footer section */}
       {location.page === 'homepage' && (
-        <div className={`h-8 rounded flex items-center justify-center transition-all ${
+        <div className={`h-12 rounded flex items-center justify-center transition-all text-xs ${
           isHighlighted('footer')
-            ? 'bg-gradient-to-r from-purple-500 to-fuchsia-500 text-white font-bold animate-pulse ring-2 ring-yellow-400'
+            ? 'bg-gradient-to-r from-purple-500 to-fuchsia-500 text-white font-bold animate-pulse ring-4 ring-yellow-400'
             : 'bg-gray-800 text-gray-500'
         }`}>
           {isHighlighted('footer') ? '🎯 VÁŠ CONTENT!' : 'Newsletter'}
@@ -128,7 +128,7 @@ function MiniPreview({ location }: { location: Location }) {
       )}
 
       {/* Footer */}
-      <div className="h-8 bg-gray-700 rounded flex items-center justify-center text-gray-400">
+      <div className="h-10 bg-gray-700 rounded flex items-center justify-center text-gray-300">
         Footer
       </div>
     </div>
@@ -166,16 +166,14 @@ const AVAILABLE_LOCATIONS: Location[] = [
       '⏰ Letní akce: Registrace zdarma jen tento týden'
     ],
     visualPosition: `
-╔═══════════════════════════════╗
-║ Header (Logo + Navigace)      ║
-╠═══════════════════════════════╣
-║ 🎯 SEM PŮJDE VÁŠ CONTENT!    ║ ← TADY!
-║    (Alert Bar - Červený/      ║
-║     Oranžový banner)          ║
-╠═══════════════════════════════╣
-║ Hero - Search Bar             ║
-║ (Vyhledávání)                 ║
-╚═══════════════════════════════╝`
+╔════════════════════╗
+║ Header             ║
+╠════════════════════╣
+║ 🎯 VÁŠ CONTENT!   ║
+║   (Alert Bar)     ║
+╠════════════════════╣
+║ Hero / Search     ║
+╚════════════════════╝`
   },
   {
     page: 'homepage',
@@ -193,17 +191,14 @@ const AVAILABLE_LOCATIONS: Location[] = [
       '🔒 100% Diskrétnost zaručena • SSL šifrování'
     ],
     visualPosition: `
-╔═══════════════════════════════╗
-║ Hero - Search Bar             ║
-║ (Vyhledávání + City Buttons)  ║
-╠═══════════════════════════════╣
-║ 🎯 SEM PŮJDE VÁŠ CONTENT!    ║ ← TADY!
-║    (CTA Banner - Modrý/       ║
-║     Fialový gradient)         ║
-╠═══════════════════════════════╣
-║ Profile Cards Grid            ║
-║ (18 profilů)                  ║
-╚═══════════════════════════════╝`
+╔════════════════════╗
+║ Hero / Search     ║
+╠════════════════════╣
+║ 🎯 VÁŠ CONTENT!   ║
+║   (CTA Banner)    ║
+╠════════════════════╣
+║ Profile Cards     ║
+╚════════════════════╝`
   },
   {
     page: 'homepage',
@@ -221,16 +216,14 @@ const AVAILABLE_LOCATIONS: Location[] = [
       '🚀 Získejte TOP pozici ve výsledcích vyhledávání'
     ],
     visualPosition: `
-╔═══════════════════════════════╗
-║ Profile Cards Grid            ║
-║ (18 profilů v gridu)          ║
-╠═══════════════════════════════╣
-║ 🎯 SEM PŮJDE VÁŠ CONTENT!    ║ ← TADY!
-║    (Členství CTA Banner)      ║
-╠═══════════════════════════════╣
-║ Ad Banner                     ║
-║ "Propagujte svůj profil"      ║
-╚═══════════════════════════════╝`
+╔════════════════════╗
+║ Profile Cards     ║
+╠════════════════════╣
+║ 🎯 VÁŠ CONTENT!   ║
+║   (CTA Banner)    ║
+╠════════════════════╣
+║ Ad Banner         ║
+╚════════════════════╝`
   },
   {
     page: 'homepage',
@@ -248,18 +241,14 @@ const AVAILABLE_LOCATIONS: Location[] = [
       '📊 Dlouhý popisný text o službách (200-300 slov)'
     ],
     visualPosition: `
-╔═══════════════════════════════╗
-║ Categories                    ║
-║ (4 barevné karty - Escort,    ║
-║  Masáže, BDSM, Online)        ║
-╠═══════════════════════════════╣
-║ 🎯 SEM PŮJDE VÁŠ CONTENT!    ║ ← TADY!
-║    (SEO Text - dlouhý popis,  ║
-║     keywords, "o nás")        ║
-╠═══════════════════════════════╣
-║ Trust Signals                 ║
-║ (500+ profilů, statistiky)    ║
-╚═══════════════════════════════╝`
+╔════════════════════╗
+║ Categories        ║
+╠════════════════════╣
+║ 🎯 VÁŠ CONTENT!   ║
+║   (SEO Text)      ║
+╠════════════════════╣
+║ Trust Signals     ║
+╚════════════════════╝`
   },
   {
     page: 'homepage',
@@ -277,16 +266,14 @@ const AVAILABLE_LOCATIONS: Location[] = [
       '🎁 "Staňte se partnerem - Affiliate program"'
     ],
     visualPosition: `
-╔═══════════════════════════════╗
-║ How It Works                  ║
-║ (3 kroky jak to funguje)      ║
-╠═══════════════════════════════╣
-║ 🎯 SEM PŮJDE VÁŠ CONTENT!    ║ ← TADY!
-║    (Newsletter / Partners)    ║
-╠═══════════════════════════════╣
-║ Footer                        ║
-║ (Odkazy, Copyright)           ║
-╚═══════════════════════════════╝`
+╔════════════════════╗
+║ How It Works      ║
+╠════════════════════╣
+║ 🎯 VÁŠ CONTENT!   ║
+║   (Newsletter)    ║
+╠════════════════════╣
+║ Footer            ║
+╚════════════════════╝`
   },
   {
     page: 'holky-na-sex',
@@ -304,16 +291,14 @@ const AVAILABLE_LOCATIONS: Location[] = [
       '📱 "Jak objednat: 1) Vyber profil 2) Zavolej 3) Domluv se"'
     ],
     visualPosition: `
-╔═══════════════════════════════╗
-║ Search Bar & Filters          ║
-║ (Město, Služby, Vzhled)       ║
-╠═══════════════════════════════╣
-║ 🎯 SEM PŮJDE VÁŠ CONTENT!    ║ ← TADY!
-║    (Info o escort službách)   ║
-╠═══════════════════════════════╣
-║ Escort Profiles Grid          ║
-║ (Výsledky vyhledávání)        ║
-╚═══════════════════════════════╝`
+╔════════════════════╗
+║ Search & Filters  ║
+╠════════════════════╣
+║ 🎯 VÁŠ CONTENT!   ║
+║   (Info Text)     ║
+╠════════════════════╣
+║ Profiles Grid     ║
+╚════════════════════╝`
   },
   {
     page: 'eroticke-masaze',
@@ -331,16 +316,14 @@ const AVAILABLE_LOCATIONS: Location[] = [
       '💰 "Ceny od 1500 Kč/hod - Diskrétní prostory"'
     ],
     visualPosition: `
-╔═══════════════════════════════╗
-║ Search Bar & Filters          ║
-║ (Město, Typy masáží)          ║
-╠═══════════════════════════════╣
-║ 🎯 SEM PŮJDE VÁŠ CONTENT!    ║ ← TADY!
-║    (Info o masážích)          ║
-╠═══════════════════════════════╣
-║ Masseuse Profiles             ║
-║ (Masérky v gridu)             ║
-╚═══════════════════════════════╝`
+╔════════════════════╗
+║ Search & Filters  ║
+╠════════════════════╣
+║ 🎯 VÁŠ CONTENT!   ║
+║   (Info Text)     ║
+╠════════════════════╣
+║ Profiles Grid     ║
+╚════════════════════╝`
   },
   {
     page: 'bdsm',
@@ -358,16 +341,14 @@ const AVAILABLE_LOCATIONS: Location[] = [
       '⚠️ "Pravidla bezpečné hry - SSC, RACK, PRICK"'
     ],
     visualPosition: `
-╔═══════════════════════════════╗
-║ Search Bar & Filters          ║
-║ (Město, BDSM Praktiky)        ║
-╠═══════════════════════════════╣
-║ 🎯 SEM PŮJDE VÁŠ CONTENT!    ║ ← TADY!
-║    (BDSM Safety Guide)        ║
-╠═══════════════════════════════╣
-║ Domina Profiles               ║
-║ (Dominy, Subs v gridu)        ║
-╚═══════════════════════════════╝`
+╔════════════════════╗
+║ Search & Filters  ║
+╠════════════════════╣
+║ 🎯 VÁŠ CONTENT!   ║
+║   (Info Text)     ║
+╠════════════════════╣
+║ Profiles Grid     ║
+╚════════════════════╝`
   },
   {
     page: 'online-sex',
@@ -385,16 +366,14 @@ const AVAILABLE_LOCATIONS: Location[] = [
       '🎥 "Jak funguje cam show? Průvodce pro začátečníky"'
     ],
     visualPosition: `
-╔═══════════════════════════════╗
-║ Online Categories             ║
-║ (OnlyFans, Cam, Sexting)      ║
-╠═══════════════════════════════╣
-║ 🎯 SEM PŮJDE VÁŠ CONTENT!    ║ ← TADY!
-║    (Platform Info & Safety)   ║
-╠═══════════════════════════════╣
-║ Online Profiles               ║
-║ (Cam Girls, Creators)         ║
-╚═══════════════════════════════╝`
+╔════════════════════╗
+║ Online Categories ║
+╠════════════════════╣
+║ 🎯 VÁŠ CONTENT!   ║
+║   (Info Text)     ║
+╠════════════════════╣
+║ Profiles Grid     ║
+╚════════════════════╝`
   },
 ];
 

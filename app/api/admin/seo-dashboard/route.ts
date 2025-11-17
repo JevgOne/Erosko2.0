@@ -52,11 +52,6 @@ export async function GET(request: Request) {
         { seoTitle: { not: null } },
         { seoQualityScore: { lt: 70 } },
       ];
-    } else if (status === 'needs-review') {
-      where.AND = [
-        { seoTitle: { not: null } },
-        { seoLastReviewed: null },
-      ];
     }
 
     // Fetch profiles with SEO data
@@ -81,8 +76,6 @@ export async function GET(request: Request) {
           seoQualityScore: true,
           seoActiveVariant: true,
           seoVariantStats: true,
-          seoLastGenerated: true,
-          seoLastReviewed: true,
           seoManualOverride: true,
           ogImageUrl: true,
           createdAt: true,
@@ -136,7 +129,6 @@ async function calculateSEOStats() {
     totalProfiles,
     profilesWithSEO,
     avgQualityScore,
-    needsReview,
     lowQuality,
     avgPhotosAltQuality,
   ] = await Promise.all([
@@ -152,13 +144,6 @@ async function calculateSEOStats() {
     prisma.profile.aggregate({
       where: { seoQualityScore: { not: null } },
       _avg: { seoQualityScore: true },
-    }),
-
-    // Needs review
-    prisma.profile.count({
-      where: {
-        AND: [{ seoTitle: { not: null } }, { seoLastReviewed: null }],
-      },
     }),
 
     // Low quality (< 70)
@@ -180,7 +165,7 @@ async function calculateSEOStats() {
     profilesWithSEO,
     coveragePercent: totalProfiles > 0 ? Math.round((profilesWithSEO / totalProfiles) * 100) : 0,
     avgQualityScore: Math.round(avgQualityScore._avg.seoQualityScore || 0),
-    needsReview,
+    needsReview: 0, // Disabled due to DateTime format issues
     lowQuality,
     avgPhotosAltQuality: Math.round(avgPhotosAltQuality._avg.altQualityScore || 0),
   };

@@ -53,8 +53,6 @@ interface Profile {
   seoKeywords: string | null;
   seoQualityScore: number | null;
   seoActiveVariant: string;
-  seoLastGenerated: string | null;
-  seoLastReviewed: string | null;
   seoManualOverride: boolean;
   ogImageUrl: string | null;
   photos: Array<{ id: string; alt: string | null; altQualityScore: number | null }>;
@@ -522,7 +520,7 @@ export default function ProfilesTab() {
                   </td>
                   <td className="px-6 py-4">
                     <div className="text-sm text-gray-400">
-                      {formatDate(profile.seoLastGenerated)}
+                      —
                     </div>
                   </td>
                   <td className="px-6 py-4">

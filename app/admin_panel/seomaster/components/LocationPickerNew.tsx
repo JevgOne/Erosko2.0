@@ -8,17 +8,17 @@ function MiniPreview({ location }: { location: Location }) {
   const isHighlighted = (section: string) => location.section === section;
 
   return (
-    <div className="space-y-2 text-sm font-medium">
+    <div className="space-y-3 text-base font-semibold">
       {/* Header */}
-      <div className="h-8 bg-gray-700 rounded flex items-center justify-center text-gray-300">
+      <div className="h-10 bg-gray-700 rounded-lg flex items-center justify-center text-gray-200 shadow-md">
         Header
       </div>
 
       {/* Hero-top (Alert Bar) */}
       {location.page === 'homepage' && (
-        <div className={`h-6 rounded flex items-center justify-center transition-all text-xs ${
+        <div className={`h-8 rounded-lg flex items-center justify-center transition-all text-sm ${
           isHighlighted('hero-top')
-            ? 'bg-gradient-to-r from-red-500 to-orange-500 text-white font-bold animate-pulse ring-4 ring-yellow-400'
+            ? 'bg-gradient-to-r from-red-500 to-orange-500 text-white font-bold animate-pulse ring-4 ring-yellow-400 shadow-xl'
             : 'bg-gray-800 text-gray-500'
         }`}>
           {isHighlighted('hero-top') ? '🎯 VÁŠ CONTENT!' : 'Alert'}
@@ -26,33 +26,33 @@ function MiniPreview({ location }: { location: Location }) {
       )}
 
       {/* Hero Section */}
-      <div className="h-20 bg-gray-700 rounded flex items-center justify-center text-gray-300">
+      <div className="h-24 bg-gray-700 rounded-lg flex items-center justify-center text-gray-200 shadow-md">
         Hero / Search
       </div>
 
       {/* After-hero */}
       {location.page === 'homepage' && (
-        <div className={`h-12 rounded flex items-center justify-center transition-all text-xs ${
+        <div className={`h-14 rounded-lg flex items-center justify-center transition-all text-sm ${
           isHighlighted('after-hero')
-            ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold animate-pulse ring-4 ring-yellow-400'
+            ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold animate-pulse ring-4 ring-yellow-400 shadow-xl'
             : 'bg-gray-800 text-gray-500'
         }`}>
-          {isHighlighted('after-hero') ? '🎯 VÁŠ CONTENT!' : 'CTA Area'}
+          {isHighlighted('after-hero') ? '🎯 VÁŠ CONTENT!' : 'CTA'}
         </div>
       )}
 
       {/* Filters for category pages */}
       {location.page !== 'homepage' && (
-        <div className="h-12 bg-gray-700 rounded flex items-center justify-center text-gray-300">
+        <div className="h-14 bg-gray-700 rounded-lg flex items-center justify-center text-gray-200 shadow-md">
           Filters
         </div>
       )}
 
       {/* Main content for category pages */}
       {location.page !== 'homepage' && (
-        <div className={`h-16 rounded flex items-center justify-center transition-all text-xs ${
+        <div className={`h-20 rounded-lg flex items-center justify-center transition-all text-sm ${
           isHighlighted('main') && location.page !== 'homepage'
-            ? 'bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold animate-pulse ring-4 ring-yellow-400'
+            ? 'bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold animate-pulse ring-4 ring-yellow-400 shadow-xl'
             : 'bg-gray-800 text-gray-500'
         }`}>
           {isHighlighted('main') && location.page !== 'homepage' ? '🎯 VÁŠ CONTENT!' : 'Info'}
@@ -60,17 +60,17 @@ function MiniPreview({ location }: { location: Location }) {
       )}
 
       {/* Profile Cards Grid */}
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-3 gap-3">
         {[...Array(6)].map((_, i) => (
-          <div key={i} className="h-12 bg-gray-700 rounded"></div>
+          <div key={i} className="h-14 bg-gray-700 rounded-lg shadow-md"></div>
         ))}
       </div>
 
       {/* After-profiles */}
       {location.page === 'homepage' && (
-        <div className={`h-12 rounded flex items-center justify-center transition-all text-xs ${
+        <div className={`h-14 rounded-lg flex items-center justify-center transition-all text-sm ${
           isHighlighted('after-profiles')
-            ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold animate-pulse ring-4 ring-yellow-400'
+            ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold animate-pulse ring-4 ring-yellow-400 shadow-xl'
             : 'bg-gray-800 text-gray-500'
         }`}>
           {isHighlighted('after-profiles') ? '🎯 VÁŠ CONTENT!' : 'CTA'}
@@ -79,25 +79,25 @@ function MiniPreview({ location }: { location: Location }) {
 
       {/* Ad Banner */}
       {location.page === 'homepage' && (
-        <div className="h-8 bg-gray-800 rounded flex items-center justify-center text-gray-500">
+        <div className="h-10 bg-gray-800 rounded-lg flex items-center justify-center text-gray-500">
           Ad
         </div>
       )}
 
       {/* Categories */}
       {location.page === 'homepage' && (
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-2 gap-3">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="h-10 bg-gray-700 rounded"></div>
+            <div key={i} className="h-12 bg-gray-700 rounded-lg shadow-md"></div>
           ))}
         </div>
       )}
 
       {/* Main section on homepage */}
       {location.page === 'homepage' && (
-        <div className={`h-16 rounded flex items-center justify-center transition-all text-xs ${
+        <div className={`h-20 rounded-lg flex items-center justify-center transition-all text-sm ${
           isHighlighted('main') && location.page === 'homepage'
-            ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white font-bold animate-pulse ring-4 ring-yellow-400'
+            ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white font-bold animate-pulse ring-4 ring-yellow-400 shadow-xl'
             : 'bg-gray-800 text-gray-500'
         }`}>
           {isHighlighted('main') && location.page === 'homepage' ? '🎯 VÁŠ CONTENT!' : 'SEO'}
@@ -107,10 +107,10 @@ function MiniPreview({ location }: { location: Location }) {
       {/* Trust Signals / How it Works */}
       {location.page === 'homepage' && (
         <>
-          <div className="h-12 bg-gray-700 rounded flex items-center justify-center text-gray-300">
+          <div className="h-14 bg-gray-700 rounded-lg flex items-center justify-center text-gray-200 shadow-md">
             Trust Signals
           </div>
-          <div className="h-12 bg-gray-700 rounded flex items-center justify-center text-gray-300">
+          <div className="h-14 bg-gray-700 rounded-lg flex items-center justify-center text-gray-200 shadow-md">
             How It Works
           </div>
         </>
@@ -118,9 +118,9 @@ function MiniPreview({ location }: { location: Location }) {
 
       {/* Footer section */}
       {location.page === 'homepage' && (
-        <div className={`h-12 rounded flex items-center justify-center transition-all text-xs ${
+        <div className={`h-14 rounded-lg flex items-center justify-center transition-all text-sm ${
           isHighlighted('footer')
-            ? 'bg-gradient-to-r from-purple-500 to-fuchsia-500 text-white font-bold animate-pulse ring-4 ring-yellow-400'
+            ? 'bg-gradient-to-r from-purple-500 to-fuchsia-500 text-white font-bold animate-pulse ring-4 ring-yellow-400 shadow-xl'
             : 'bg-gray-800 text-gray-500'
         }`}>
           {isHighlighted('footer') ? '🎯 VÁŠ CONTENT!' : 'Newsletter'}
@@ -128,7 +128,7 @@ function MiniPreview({ location }: { location: Location }) {
       )}
 
       {/* Footer */}
-      <div className="h-10 bg-gray-700 rounded flex items-center justify-center text-gray-300">
+      <div className="h-12 bg-gray-700 rounded-lg flex items-center justify-center text-gray-200 shadow-md">
         Footer
       </div>
     </div>
@@ -471,15 +471,15 @@ export default function LocationPicker({ value, onChange }: LocationPickerProps)
         </div>
 
         {/* Live Mini Preview */}
-        <div className="grid md:grid-cols-2 gap-4 mb-5">
+        <div className="grid md:grid-cols-2 gap-6 mb-5">
           {/* ASCII Diagram */}
-          <div className="bg-black/60 rounded-xl p-4 font-mono text-sm border-2 border-white/20 shadow-inner">
-            <pre className="text-gray-100 whitespace-pre leading-relaxed font-bold">{selectedLocation.visualPosition}</pre>
+          <div className="bg-black/60 rounded-xl p-6 font-mono text-xs border-2 border-white/20 shadow-inner">
+            <pre className="text-gray-100 whitespace-pre leading-tight font-bold">{selectedLocation.visualPosition}</pre>
           </div>
 
-          {/* Visual Wireframe Preview */}
-          <div className="bg-gradient-to-b from-dark-900 to-black rounded-xl p-4 border-2 border-primary-500/30 shadow-inner">
-            <div className="text-xs text-gray-400 mb-3 text-center font-bold">🎨 Vizuální náhled</div>
+          {/* Visual Wireframe Preview - BIGGER */}
+          <div className="bg-gradient-to-b from-dark-900 to-black rounded-xl p-6 border-2 border-primary-500/30 shadow-inner">
+            <div className="text-sm text-gray-300 mb-4 text-center font-bold">🎨 Vizuální náhled</div>
             <MiniPreview location={selectedLocation} />
           </div>
         </div>

@@ -56,18 +56,21 @@ model User {
   email         String?  @unique // Optional for notifications, unique for email login
   passwordHash  String
   phoneVerified Boolean  @default(false)
+  emailVerified Boolean  @default(false) // ➕ NEW: Email verification status
   role          UserRole @default(USER)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
   // Relations
-  profiles          Profile[]
-  businesses        Business[]
-  reviews           Review[]
-  favorites         Favorite[]
-  requestedChanges  PendingChange[]    @relation("RequestedChanges")
-  reviewedChanges   PendingChange[]    @relation("ReviewedChanges")
-  verificationCodes VerificationCode[]
+  profiles              Profile[]
+  businesses            Business[]
+  reviews               Review[]
+  favorites             Favorite[]
+  requestedChanges      PendingChange[]    @relation("RequestedChanges")
+  reviewedChanges       PendingChange[]    @relation("ReviewedChanges")
+  verificationCodes     VerificationCode[]
+  verifiedVerifications Verification[]     @relation("VerifiedVerifications") // ➕ NEW
+  searchQueries         SearchQuery[]      // ➕ NEW
 
   @@index([phone])
 }
@@ -93,6 +96,21 @@ model VerificationCode {
 enum VerificationCodeType {
   PHONE_VERIFICATION
   PASSWORD_RESET
+}
+
+// ➕ NEW ENUMS for Multi-Tier Verification
+enum VerificationType {
+  PHONE        // ✅ SMS verification (automatic)
+  PHOTO        // 📸 Selfie with paper "Erosko.cz + date"
+  VIDEO        // 🎥 10-second verification video
+  ID_DOCUMENT  // 🆔 Passport/ID card scan
+}
+
+enum VerificationStatus {
+  PENDING   // Waiting for admin review
+  APPROVED  // Verified by admin
+  REJECTED  // Rejected with reason
+  EXPIRED   // Verification expired (photo/video only)
 }
 
 model Business {
@@ -151,6 +169,7 @@ model Business {
   photos         Photo[]
   reviews        Review[]
   pendingChanges PendingChange[]
+  verifications  Verification[]  // ➕ NEW: Multi-tier verification badges
 
   @@index([city])
   @@index([profileType])
@@ -179,8 +198,11 @@ model Profile {
   height      Int? // cm
   weight      Int? // kg
   bust        String? // 1, 2, 3, 4
+  waist       Int? // cm
+  hips        Int? // cm
   hairColor   String? // blonde, brunette, black, red, other
   hairLength  String? // short, medium, long
+  eyeColor    String? // blue, green, brown, hazel, other
   breastType  String? // natural, silicone
   bodyType    String? // slim, athletic, curvy, plus-size
   ageCategory String? // 18-25, 26-35, 36-45, 46+
@@ -258,6 +280,7 @@ model Profile {
   services       ProfileService[]
   favorites      Favorite[]
   pendingChanges PendingChange[]
+  verifications  Verification[]   // ➕ NEW: Multi-tier verification badges
 
   @@index([city])
   @@index([category])
@@ -441,6 +464,100 @@ model Redirect {
 
   @@index([from])
   @@index([enabled])
+}
+
+// ➕ NEW: Multi-Tier Verification System
+model Verification {
+  id           String             @id @default(cuid())
+  type         VerificationType
+  status       VerificationStatus @default(PENDING)
+
+  // Evidence
+  documentUrl  String? // URL to uploaded photo/video/ID scan
+  notes        String? // Admin notes during review
+
+  // Relations
+  profileId    String?
+  profile      Profile?  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  businessId   String?
+  business     Business? @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  // Who verified it
+  verifiedById String?
+  verifiedBy   User?     @relation("VerifiedVerifications", fields: [verifiedById], references: [id])
+  verifiedAt   DateTime?
+
+  // Metadata
+  expiresAt       DateTime? // For photo/video verifications (expire after 6 months)
+  rejectionReason String?
+
+  // Timestamps
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([profileId])
+  @@index([businessId])
+  @@index([status])
+  @@index([type])
+}
+
+// ➕ NEW: Search Query Tracking
+model SearchQuery {
+  id          String   @id @default(cuid())
+  query       String   // Raw search query (e.g., "escort praha")
+  filters     String? // Applied filters JSON: { city: "Praha", service: "tantric" }
+
+  // User tracking
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  // Metadata
+  resultCount      Int      // How many results were shown
+  clickedProfileId String? // If user clicked on a profile
+  sessionId        String?  // Anonymous session tracking
+
+  // Analytics
+  deviceType  String? // "mobile", "desktop", "tablet"
+  referrer    String? // Where did user come from
+
+  createdAt   DateTime @default(now())
+
+  @@index([query])
+  @@index([userId])
+  @@index([createdAt])
+}
+
+// ➕ NEW: Popular Searches (Dynamic)
+model PopularSearch {
+  id           String   @id @default(cuid())
+  keyword      String   @unique     // Normalized keyword (e.g., "escort-praha")
+  displayText  String               // User-friendly text (e.g., "Escort Praha")
+
+  // Categorization
+  category     String?              // "city", "service", "city-service", "custom"
+  city         String?              // For filtering by location
+  serviceType  String?              // For filtering by service
+
+  // Stats
+  searchCount  Int      @default(0) // Total searches in last 30 days
+  clickCount   Int      @default(0) // How many times users clicked it
+  lastSearched DateTime @default(now())
+
+  // Admin control
+  isPinned     Boolean  @default(false) // Admin can pin important searches
+  isActive     Boolean  @default(true)  // Hide inactive searches
+  order        Int      @default(0)     // Manual ordering (pinned first, then by searchCount)
+
+  // SEO
+  linkedPageUrl String? // Link to landing page (e.g., "/holky-na-sex/praha")
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([searchCount])
+  @@index([lastSearched])
+  @@index([isPinned])
+  @@index([category])
 }
 
 // Content Management System - Editable Blocks

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import { Upload, X, Check, AlertCircle } from 'lucide-react';
 import Header from '@/components/Header';
@@ -43,7 +44,8 @@ export default function RegistracePage() {
   const [email, setEmail] = useState('');  // Volitelné pro notifikace
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [role, setRole] = useState<'USER' | 'PROVIDER'>('PROVIDER');
+  const [role, setRole] = useState<'USER' | 'PROVIDER'>('USER');
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   // Údaje pro poskytovatele
   const [profileType, setProfileType] = useState('SOLO');
@@ -61,8 +63,6 @@ export default function RegistracePage() {
 
   // Detailní údaje pro SOLO profil
   const [description, setDescription] = useState('');
-  const [pricePerHour, setPricePerHour] = useState('');
-  const [pricePerHalfHour, setPricePerHalfHour] = useState('');
   const [height, setHeight] = useState('');
   const [weight, setWeight] = useState('');
   const [bust, setBust] = useState('');
@@ -289,8 +289,13 @@ export default function RegistracePage() {
     setError('');
 
     // Validace
-    if (!phone || !password) {
-      setError('Telefonní číslo a heslo jsou povinné');
+    if (!phone || !email || !password) {
+      setError('Telefonní číslo, email a heslo jsou povinné');
+      return;
+    }
+
+    if (!email.trim()) {
+      setError('Email je povinný');
       return;
     }
 
@@ -299,13 +304,27 @@ export default function RegistracePage() {
       return;
     }
 
-    if (password.length < 6) {
-      setError('Heslo musí mít alespoň 6 znaků');
+    if (password.length < 4) {
+      setError('Heslo musí mít alespoň 4 znaky');
+      return;
+    }
+
+    if (!agreedToTerms) {
+      setError('Musíte souhlasit s obchodními podmínkami');
       return;
     }
 
     if (role === 'PROVIDER') {
+      console.log('[CLIENT] PROVIDER Validation - Starting checks');
+      console.log('[CLIENT] city:', city);
+      console.log('[CLIENT] address:', address);
+      console.log('[CLIENT] name:', name);
+      console.log('[CLIENT] businessName:', businessName);
+      console.log('[CLIENT] description:', description);
+      console.log('[CLIENT] profileType:', profileType);
+
       if (!city) {
+        console.log('[CLIENT] Validation FAILED: city missing');
         setError('Vyplňte všechny povinné údaje profilu');
         return;
       }
@@ -369,12 +388,14 @@ export default function RegistracePage() {
       }
       */
 
+      console.log('[CLIENT] About to submit registration for role:', role);
+
       const response = await fetch('/api/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           phone,
-          email: email || undefined,
+          email: email.trim(),
           password,
           role,
           ...(role === 'PROVIDER' && {
@@ -393,8 +414,6 @@ export default function RegistracePage() {
               // Detailní údaje pro SOLO
               ...(profileType === 'SOLO' && {
                 description,
-                pricePerHour: pricePerHour ? parseInt(pricePerHour) : undefined,
-                pricePerHalfHour: pricePerHalfHour ? parseInt(pricePerHalfHour) : undefined,
                 height: height ? parseInt(height) : undefined,
                 weight: weight ? parseInt(weight) : undefined,
                 bust: bust ? parseInt(bust) : undefined,
@@ -424,8 +443,37 @@ export default function RegistracePage() {
         throw new Error(data.error || 'Chyba při registraci');
       }
 
-      // Úspěšná registrace - přesměruj na přihlášení
-      router.push('/prihlaseni?registered=true');
+      // Úspěšná registrace - automaticky přihlas uživatele
+      console.log('[CLIENT] Registration successful, attempting auto-login');
+      console.log('[CLIENT] Email:', email.trim());
+
+      // Small delay to ensure database transaction is committed
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      const signInResult = await signIn('credentials', {
+        email: email.trim(),
+        password: password,
+        redirect: false,
+      });
+
+      console.log('[CLIENT] SignIn result:', signInResult);
+
+      if (signInResult?.error) {
+        console.log('[CLIENT] Auto-login failed, error:', signInResult.error);
+        // Přesměruj na přihlašovací stránku s informací o úspěšné registraci
+        router.push('/prihlaseni?registered=true&email=' + encodeURIComponent(email.trim()));
+      } else {
+        console.log('[CLIENT] Auto-login successful!');
+        // Wait for session to be established
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        // Přesměruj na dashboard podle role
+        if (role === 'PROVIDER') {
+          window.location.href = '/inzerent_dashboard';
+        } else {
+          window.location.href = '/';
+        }
+      }
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -609,7 +657,7 @@ export default function RegistracePage() {
 
                     <div>
                       <label htmlFor="email" className="block text-sm font-medium mb-2">
-                        Email (volitelné)
+                        Email <span className="text-red-400">*</span>
                       </label>
                       <input
                         type="email"
@@ -617,10 +665,11 @@ export default function RegistracePage() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         className="w-full px-4 py-3 rounded-lg bg-dark-800 border border-white/10 focus:border-primary-500 focus:outline-none transition-colors"
-                        placeholder="pro@notifikace.cz"
+                        placeholder="vas@email.cz"
+                        required
                       />
                       <p className="text-xs text-gray-400 mt-1">
-                        Pro zasílání notifikací
+                        Potřebné pro přihlášení
                       </p>
                     </div>
 
@@ -652,9 +701,9 @@ export default function RegistracePage() {
                             ? 'border-red-500 focus:border-red-500'
                             : 'border-white/10 focus:border-primary-500'
                         } focus:outline-none transition-colors`}
-                        placeholder="Minimálně 6 znaků"
+                        placeholder="Minimálně 4 znaky"
                         required
-                        minLength={6}
+                        minLength={4}
                       />
                       {password.length > 0 && !fieldErrors.password && (
                         <div className="mt-2">
@@ -719,7 +768,7 @@ export default function RegistracePage() {
                         } focus:outline-none transition-colors`}
                         placeholder="Zadejte heslo znovu"
                         required
-                        minLength={6}
+                        minLength={4}
                       />
                       {confirmPassword && password && confirmPassword === password && (
                         <p className="text-xs text-green-400 mt-1 flex items-center gap-1">
@@ -735,9 +784,44 @@ export default function RegistracePage() {
                       )}
                     </div>
 
+                    {/* Souhlas s podmínkami */}
+                    <div className="flex items-start gap-3">
+                      <input
+                        type="checkbox"
+                        id="agreedToTerms"
+                        checked={agreedToTerms}
+                        onChange={(e) => setAgreedToTerms(e.target.checked)}
+                        className="mt-1 w-4 h-4 rounded border-white/20 bg-dark-800 text-primary-500 focus:ring-primary-500 focus:ring-offset-0"
+                      />
+                      <label htmlFor="agreedToTerms" className="text-sm text-white/70">
+                        Souhlasím s{' '}
+                        <a
+                          href="/obchodni-podminky"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary-400 hover:text-primary-300 underline"
+                        >
+                          obchodními podmínkami
+                        </a>
+                        {' '}a{' '}
+                        <a
+                          href="/ochrana-osobnich-udaju"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary-400 hover:text-primary-300 underline"
+                        >
+                          zpracováním osobních údajů
+                        </a>{' '}
+                        *
+                      </label>
+                    </div>
+
                     <button
                       type="button"
-                      onClick={() => {
+                      onClick={async () => {
+                        console.log('[CLIENT] BUTTON CLICKED - START OF HANDLER');
+                        console.log('[CLIENT] Current role:', role);
+
                         // Validate step 1
                         const errors: Record<string, string> = {};
 
@@ -760,15 +844,86 @@ export default function RegistracePage() {
                           errors.confirmPassword = 'Hesla se neshodují';
                         }
 
+                        if (!agreedToTerms) {
+                          setError('Musíte souhlasit s obchodními podmínkami');
+                          return;
+                        }
+
                         if (Object.keys(errors).length > 0) {
+                          console.log('[CLIENT] Validation errors:', errors);
                           setFieldErrors(errors);
                           setError('Opravte prosím chyby ve formuláři');
                           return;
                         }
 
+                        console.log('[CLIENT] Validation passed!');
                         setFieldErrors({});
                         setError('');
-                        setStep(2);
+
+                        // If PROVIDER, go to step 2 for profile details
+                        // If USER, submit directly
+                        console.log('[CLIENT] Checking role - role is:', role);
+                        if (role === 'PROVIDER') {
+                          console.log('[CLIENT] Role is PROVIDER - going to step 2');
+                          setStep(2);
+                        } else {
+                          console.log('[CLIENT] Role is USER - submitting registration');
+
+                          // Submit for USER role
+                          setLoading(true);
+
+                          try {
+                            const response = await fetch('/api/register', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({
+                                phone,
+                                email: email.trim(),
+                                password,
+                                role: role || 'USER',
+                              }),
+                            });
+
+                            const data = await response.json();
+
+                            if (!response.ok) {
+                              setError(data.error || 'Něco se pokazilo');
+                              setLoading(false);
+                              return;
+                            }
+
+                            console.log('[CLIENT] Registration successful, attempting auto-login');
+                            console.log('[CLIENT] Email:', email.trim());
+
+                            // Small delay to ensure database transaction is committed
+                            await new Promise(resolve => setTimeout(resolve, 1000));
+
+                            const signInResult = await signIn('credentials', {
+                              email: email.trim(),
+                              password: password,
+                              redirect: false,
+                            });
+
+                            console.log('[CLIENT] SignIn result:', signInResult);
+
+                            if (signInResult?.error) {
+                              console.log('[CLIENT] Auto-login failed, error:', signInResult.error);
+                              // Přesměruj na přihlašovací stránku s informací o úspěšné registraci
+                              router.push('/prihlaseni?registered=true&email=' + encodeURIComponent(email.trim()));
+                            } else {
+                              console.log('[CLIENT] Auto-login successful!');
+                              // Wait for session to be established
+                              await new Promise(resolve => setTimeout(resolve, 500));
+
+                              // Přesměruj na homepage pro běžného uživatele
+                              window.location.href = '/';
+                            }
+                          } catch (err) {
+                            console.error('[CLIENT] Registration error:', err);
+                            setError('Něco se pokazilo při registraci');
+                            setLoading(false);
+                          }
+                        }
                       }}
                       className="w-full gradient-primary py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
                     >
@@ -1378,36 +1533,6 @@ export default function RegistracePage() {
                             rows={4}
                             placeholder="Napiš něco o sobě a svých službách..."
                           />
-                        </div>
-
-                        {/* Ceny */}
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <label htmlFor="pricePerHour" className="block text-sm font-medium mb-2">
-                              Cena za hodinu (Kč)
-                            </label>
-                            <input
-                              type="number"
-                              id="pricePerHour"
-                              value={pricePerHour}
-                              onChange={(e) => setPricePerHour(e.target.value)}
-                              className="w-full px-4 py-3 rounded-xl bg-dark-800/50 backdrop-blur border border-white/20 focus:border-primary-500 focus:outline-none transition-all hover:border-white/30"
-                              placeholder="např. 3000"
-                            />
-                          </div>
-                          <div>
-                            <label htmlFor="pricePerHalfHour" className="block text-sm font-medium mb-2">
-                              Cena za půl hodiny (Kč)
-                            </label>
-                            <input
-                              type="number"
-                              id="pricePerHalfHour"
-                              value={pricePerHalfHour}
-                              onChange={(e) => setPricePerHalfHour(e.target.value)}
-                              className="w-full px-4 py-3 rounded-xl bg-dark-800/50 backdrop-blur border border-white/20 focus:border-primary-500 focus:outline-none transition-all hover:border-white/30"
-                              placeholder="např. 2000"
-                            />
-                          </div>
                         </div>
 
                         {/* Fyzické údaje */}

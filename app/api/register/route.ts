@@ -10,17 +10,28 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { phone, email, password, role, profile } = body;
 
+    console.log('[REGISTER] Starting registration:', { phone, email, role, hasProfile: !!profile });
+
     // Validation
     if (!phone || !password) {
+      console.log('[REGISTER] Validation failed: missing phone or password');
       return NextResponse.json(
         { error: 'Telefonní číslo a heslo jsou povinné' },
         { status: 400 }
       );
     }
 
-    if (password.length < 6) {
+    if (!email || !email.trim()) {
+      console.log('[REGISTER] Validation failed: missing email');
       return NextResponse.json(
-        { error: 'Heslo musí mít alespoň 6 znaků' },
+        { error: 'Email je povinný' },
+        { status: 400 }
+      );
+    }
+
+    if (password.length < 4) {
+      return NextResponse.json(
+        { error: 'Heslo musí mít alespoň 4 znaky' },
         { status: 400 }
       );
     }
@@ -56,23 +67,21 @@ export async function POST(request: Request) {
 
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
+    console.log('[REGISTER] Password hashed successfully');
 
     // Create user with profile if provider
-    // Generate unique email if not provided to avoid UNIQUE constraint issues
-    const userData: any = {
+    const userData = {
       phone: normalizedPhone,
+      email: email.trim(), // Email is now required
       passwordHash: hashedPassword,
       role: role || UserRole.USER,
     };
 
-    // Only add email if provided (SQLite treats NULL as unique value)
-    if (email && email.trim()) {
-      userData.email = email.trim();
-    }
-
+    console.log('[REGISTER] Creating user with data:', { ...userData, passwordHash: '[REDACTED]' });
     const user = await prisma.user.create({
       data: userData,
     });
+    console.log('[REGISTER] User created successfully:', user.id);
 
     // If provider, create profile or business
     if (role === UserRole.PROVIDER && profile) {
@@ -167,6 +176,14 @@ export async function POST(request: Request) {
             ownerId: user.id,
             verified: false,
             isNew: true,
+            // Physical attributes
+            height: profile.height || null,
+            weight: profile.weight || null,
+            bust: profile.bust || null,
+            waist: profile.waist || null,
+            hips: profile.hips || null,
+            hairColor: profile.hairColor || null,
+            eyeColor: profile.eyeColor || null,
           },
         });
 
@@ -253,9 +270,10 @@ export async function POST(request: Request) {
       { status: 201 }
     );
   } catch (error) {
-    console.error('Registration error:', error);
+    console.error('[REGISTER] Registration error:', error);
+    console.error('[REGISTER] Error stack:', error instanceof Error ? error.stack : 'No stack trace');
     return NextResponse.json(
-      { error: 'Něco se pokazilo při registraci' },
+      { error: 'Něco se pokazilo při registraci: ' + (error instanceof Error ? error.message : String(error)) },
       { status: 500 }
     );
   }

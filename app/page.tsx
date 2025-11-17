@@ -46,7 +46,6 @@ import HowItWorks from '@/components/HowItWorks';
 import Footer from '@/components/Footer';
 import AdBanner from '@/components/AdBanner';
 import ProfileCardGrid from '@/components/ProfileCardGrid';
-import prisma from '@/lib/prisma';
 import { profilesToCards } from '@/lib/profile-card-adapter';
 
 async function getProfiles() {

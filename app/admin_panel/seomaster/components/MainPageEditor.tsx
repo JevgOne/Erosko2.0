@@ -110,7 +110,7 @@ export default function MainPageEditor({ pageId, initialData }: MainPageEditorPr
           </div>
           <div className="flex items-center gap-3">
             <button
-              onClick={() => window.open(`http://localhost:3000${formData.path}`, '_blank')}
+              onClick={() => window.open(`https://erosko.cz${formData.path}`, '_blank')}
               className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors"
             >
               <Eye className="w-4 h-4" />
@@ -152,7 +152,7 @@ export default function MainPageEditor({ pageId, initialData }: MainPageEditorPr
             value={formData.seoTitle}
             onChange={(e) => handleChange('seoTitle', e.target.value)}
             placeholder="Zadejte SEO title..."
-            className="w-full px-4 py-3 bg-dark border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-primary-500"
+            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-primary-500 focus:bg-white/10"
           />
           <div className="flex items-center justify-between mt-2">
             <p className="text-sm text-gray-400">
@@ -175,7 +175,7 @@ export default function MainPageEditor({ pageId, initialData }: MainPageEditorPr
             onChange={(e) => handleChange('seoDescription', e.target.value)}
             placeholder="Zadejte SEO description..."
             rows={3}
-            className="w-full px-4 py-3 bg-dark border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-primary-500 resize-none"
+            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-primary-500 focus:bg-white/10 resize-none"
           />
           <div className="flex items-center justify-between mt-2">
             <p className="text-sm text-gray-400">
@@ -198,7 +198,7 @@ export default function MainPageEditor({ pageId, initialData }: MainPageEditorPr
             value={formData.h1}
             onChange={(e) => handleChange('h1', e.target.value)}
             placeholder="Zadejte H1 nadpis..."
-            className="w-full px-4 py-3 bg-dark border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-primary-500"
+            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-primary-500 focus:bg-white/10"
           />
           <p className="text-sm text-gray-400 mt-2">
             Hlavní nadpis stránky, měl by obsahovat klíčová slova
@@ -218,7 +218,7 @@ export default function MainPageEditor({ pageId, initialData }: MainPageEditorPr
               value={formData.focusKeyword}
               onChange={(e) => handleChange('focusKeyword', e.target.value)}
               placeholder="např. holky na sex"
-              className="w-full px-4 py-3 bg-dark border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-primary-500"
+              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-primary-500 focus:bg-white/10"
             />
             <p className="text-sm text-gray-400 mt-2">
               Primární keyword pro SEO optimalizaci
@@ -236,7 +236,7 @@ export default function MainPageEditor({ pageId, initialData }: MainPageEditorPr
               value={formData.secondaryKeywords}
               onChange={(e) => handleChange('secondaryKeywords', e.target.value)}
               placeholder="escort, společnice, erotika"
-              className="w-full px-4 py-3 bg-dark border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-primary-500"
+              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-primary-500 focus:bg-white/10"
             />
             <p className="text-sm text-gray-400 mt-2">
               Oddělené čárkami
@@ -255,7 +255,7 @@ export default function MainPageEditor({ pageId, initialData }: MainPageEditorPr
             onChange={(e) => handleChange('keywords', e.target.value)}
             placeholder="holky na sex, escort, společnice, erotické služby..."
             rows={2}
-            className="w-full px-4 py-3 bg-dark border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-primary-500 resize-none"
+            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-primary-500 focus:bg-white/10 resize-none"
           />
           <p className="text-sm text-gray-400 mt-2">
             Všechna klíčová slova oddělená čárkami
@@ -273,7 +273,7 @@ export default function MainPageEditor({ pageId, initialData }: MainPageEditorPr
             onChange={(e) => handleChange('content', e.target.value)}
             placeholder="Zadejte text pro SEO optimalizaci stránky..."
             rows={8}
-            className="w-full px-4 py-3 bg-dark border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-primary-500 resize-none font-mono text-sm"
+            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-primary-500 focus:bg-white/10 resize-none font-mono text-sm"
           />
           <p className="text-sm text-gray-400 mt-2">
             Dlouhý popisný text pro lepší SEO

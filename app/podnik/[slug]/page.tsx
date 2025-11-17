@@ -218,7 +218,26 @@ export default async function Page({ params }: PageProps) {
       updatedAt: business.updatedAt?.toISOString() || new Date().toISOString()
     },
 
-    profiles: [],
+    profiles: business.profiles.map(profile => ({
+      id: profile.id,
+      slug: profile.slug,
+      name: profile.name,
+      photo: profile.photos[0]?.url || '/placeholder-avatar.jpg',
+      age: profile.age,
+      online: false, // TODO: implement online status
+      verified: profile.approved,
+      rating: {
+        average: 0, // TODO: calculate from reviews
+        count: 0
+      },
+      category: profile.category,
+      location: {
+        city: profile.city,
+        area: profile.location
+      },
+      phone: profile.phone,
+      isNew: false // TODO: check if created within last 7 days
+    })),
 
     reviews: {
       overall: {

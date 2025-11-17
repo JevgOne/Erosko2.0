@@ -21,8 +21,8 @@ export async function GET(req: Request) {
         approved: true,
         ...(search && {
           OR: [
-            { name: { contains: search, mode: 'insensitive' } },
-            { city: { contains: search, mode: 'insensitive' } },
+            { name: { contains: search } },
+            { city: { contains: search } },
           ],
         }),
       },
@@ -46,8 +46,8 @@ export async function GET(req: Request) {
         approved: true,
         ...(search && {
           OR: [
-            { name: { contains: search, mode: 'insensitive' } },
-            { city: { contains: search, mode: 'insensitive' } },
+            { name: { contains: search } },
+            { city: { contains: search } },
           ],
         }),
       },
@@ -69,8 +69,8 @@ export async function GET(req: Request) {
       where: {
         ...(search && {
           OR: [
-            { path: { contains: search, mode: 'insensitive' } },
-            { seoTitle: { contains: search, mode: 'insensitive' } },
+            { path: { contains: search } },
+            { seoTitle: { contains: search } },
           ],
         }),
       },

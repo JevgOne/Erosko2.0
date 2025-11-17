@@ -236,16 +236,16 @@ export default async function Page({ params }: PageProps) {
         id: review.id,
         overallRating: review.rating,
         vibeRatings: {
-          atmosphere: review.vibeAtmosphere || 0,
-          cleanliness: review.vibeCleanliness || 0,
-          service: review.vibeService || 0,
-          discretion: review.vibeDiscretion || 0,
-          valueForMoney: review.vibeValue || 0
+          atmosphere: 0,
+          cleanliness: 0,
+          service: 0,
+          discretion: 0,
+          valueForMoney: 0
         },
         author: review.author?.phone ? `Uživatel ${review.author.phone.slice(-4)}` : 'Anonymní',
         date: review.createdAt.toISOString(),
-        text: review.text,
-        verified: review.verified,
+        text: review.comment || '',
+        verified: true,
         helpful: 0
       }))
     }

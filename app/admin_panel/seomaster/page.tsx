@@ -9,6 +9,7 @@ import {
   BarChart3,
   ArrowRight,
   FileCode,
+  Layout,
 } from 'lucide-react';
 import DashboardTab from './components/DashboardTab';
 import ProfilesTab from './components/ProfilesTab';
@@ -17,8 +18,9 @@ import AllPagesTab from './components/AllPagesTab';
 import RedirectsTab from './components/RedirectsTab';
 import RobotsTxtTab from './components/RobotsTxtTab';
 import ContentBlocksTab from './components/ContentBlocksTab';
+import MainPagesTab from './components/MainPagesTab';
 
-type Tab = 'dashboard' | 'profiles' | 'landing-pages' | 'all-pages' | 'redirects' | 'robots' | 'content-blocks';
+type Tab = 'dashboard' | 'profiles' | 'landing-pages' | 'main-pages' | 'all-pages' | 'redirects' | 'robots' | 'content-blocks';
 
 export default function SEOMasterPage() {
   const [activeTab, setActiveTab] = useState<Tab>('dashboard');
@@ -72,6 +74,17 @@ export default function SEOMasterPage() {
           Landing Pages
         </button>
         <button
+          onClick={() => setActiveTab('main-pages')}
+          className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all ${
+            activeTab === 'main-pages'
+              ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/50'
+              : 'text-gray-400 hover:text-white hover:bg-white/5'
+          }`}
+        >
+          <Layout className="w-5 h-5" />
+          Hlavní Stránky
+        </button>
+        <button
           onClick={() => setActiveTab('all-pages')}
           className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all ${
             activeTab === 'all-pages'
@@ -122,6 +135,7 @@ export default function SEOMasterPage() {
         {activeTab === 'dashboard' && <DashboardTab />}
         {activeTab === 'profiles' && <ProfilesTab />}
         {activeTab === 'landing-pages' && <LandingPagesTab />}
+        {activeTab === 'main-pages' && <MainPagesTab />}
         {activeTab === 'all-pages' && <AllPagesTab />}
         {activeTab === 'redirects' && <RedirectsTab />}
         {activeTab === 'robots' && <RobotsTxtTab />}

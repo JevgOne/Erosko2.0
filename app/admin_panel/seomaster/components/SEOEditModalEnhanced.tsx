@@ -146,8 +146,8 @@ export default function SEOEditModalEnhanced({
     formData[`seoDescription${formData.seoActiveVariant}` as keyof typeof formData] || '';
 
   // Keyword density calculation
-  const calculateDensity = (keyword: string) => {
-    if (!keyword || !formData.seoTitle) return 0;
+  const calculateDensity = (keyword: string): string => {
+    if (!keyword || !formData.seoTitle) return '0';
     const text = `${formData.seoTitle} ${activeDescription}`.toLowerCase();
     const count = (text.match(new RegExp(keyword.toLowerCase(), 'g')) || []).length;
     const words = text.split(/\s+/).length;

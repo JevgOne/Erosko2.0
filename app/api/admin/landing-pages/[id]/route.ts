@@ -69,7 +69,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
     if (h1 !== undefined || type !== undefined) {
       const newH1 = h1 || existing.h1;
       const newType = type || existing.type;
-      updateData.ogImageUrl = \`/api/seo/generate-og-image?name=\${encodeURIComponent(newH1)}&city=&category=\${newType}\`;
+      updateData.ogImageUrl = `/api/seo/generate-og-image?name=${encodeURIComponent(newH1)}&city=&category=${newType}`;
     }
 
     // Update page

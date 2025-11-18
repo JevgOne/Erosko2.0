@@ -130,8 +130,14 @@ export async function GET(request: Request) {
     });
   } catch (error) {
     console.error('Error fetching admin stats:', error);
+    console.error('Error details:', error instanceof Error ? error.message : String(error));
+    console.error('Error stack:', error instanceof Error ? error.stack : 'no stack');
     return NextResponse.json(
-      { error: 'Chyba při načítání admin dat' },
+      {
+        error: 'Chyba při načítání admin dat',
+        details: error instanceof Error ? error.message : String(error),
+        stack: process.env.NODE_ENV === 'development' ? (error instanceof Error ? error.stack : undefined) : undefined
+      },
       { status: 500 }
     );
   }

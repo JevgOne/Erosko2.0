@@ -28,6 +28,7 @@ export default function AdminPanel() {
   const [profiles, setProfiles] = useState<any[]>([]);
   const [pendingChanges, setPendingChanges] = useState<any[]>([]);
   const [businessFilter, setBusinessFilter] = useState<'all' | 'pending_approval' | 'pending_verification'>('all');
+  const [profileFilter, setProfileFilter] = useState<'all' | 'pending_approval' | 'pending_verification'>('all');
 
   // Search and expand states for users
   const [userSearchQuery, setUserSearchQuery] = useState<string>('');
@@ -575,9 +576,9 @@ export default function AdminPanel() {
                 >
                   <Building2 className="w-5 h-5" />
                   <span>Podniky</span>
-                  {stats?.stats?.pendingBusinesses > 0 && (
+                  {stats?.stats?.pendingApprovalBusinesses > 0 && (
                     <span className="ml-auto bg-orange-500 text-white text-xs px-2 py-0.5 rounded-full">
-                      {stats.stats.pendingBusinesses}
+                      {stats.stats.pendingApprovalBusinesses}
                     </span>
                   )}
                 </button>
@@ -592,9 +593,9 @@ export default function AdminPanel() {
                 >
                   <UserCircle className="w-5 h-5" />
                   <span>Profily</span>
-                  {stats?.stats?.pendingProfiles > 0 && (
+                  {stats?.stats?.pendingApprovalProfiles > 0 && (
                     <span className="ml-auto bg-orange-500 text-white text-xs px-2 py-0.5 rounded-full">
-                      {stats.stats.pendingProfiles}
+                      {stats.stats.pendingApprovalProfiles}
                     </span>
                   )}
                 </button>
@@ -673,6 +674,7 @@ export default function AdminPanel() {
                       <Users className="w-5 h-5 text-primary-400" />
                     </div>
                     <p className="text-3xl font-bold">{stats.stats.totalUsers}</p>
+                    <p className="text-sm text-gray-400 mt-2">Registrovaní uživatelé</p>
                   </div>
 
                   <div className="glass rounded-xl p-6">
@@ -681,10 +683,10 @@ export default function AdminPanel() {
                       <Building2 className="w-5 h-5 text-primary-400" />
                     </div>
                     <p className="text-3xl font-bold">{stats.stats.totalBusinesses}</p>
-                    {stats.stats.pendingBusinesses > 0 && (
-                      <p className="text-sm text-orange-400 mt-2">
-                        {stats.stats.pendingBusinesses} čeká na schválení
-                      </p>
+                    {stats.stats.pendingApprovalBusinesses > 0 && (
+                      <span className="inline-block text-xs px-2 py-1 bg-orange-500/20 text-orange-400 rounded mt-2">
+                        {stats.stats.pendingApprovalBusinesses} čeká
+                      </span>
                     )}
                   </div>
 
@@ -694,20 +696,20 @@ export default function AdminPanel() {
                       <UserCircle className="w-5 h-5 text-primary-400" />
                     </div>
                     <p className="text-3xl font-bold">{stats.stats.totalProfiles}</p>
-                    {stats.stats.pendingProfiles > 0 && (
-                      <p className="text-sm text-orange-400 mt-2">
-                        {stats.stats.pendingProfiles} čeká na schválení
-                      </p>
+                    {stats.stats.pendingApprovalProfiles > 0 && (
+                      <span className="inline-block text-xs px-2 py-1 bg-orange-500/20 text-orange-400 rounded mt-2">
+                        {stats.stats.pendingApprovalProfiles} čeká
+                      </span>
                     )}
                   </div>
 
                   <div className="glass rounded-xl p-6">
                     <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-sm font-medium text-gray-400">Aktivita</h3>
-                      <TrendingUp className="w-5 h-5 text-green-400" />
+                      <h3 className="text-sm font-medium text-gray-400">Hodnocení</h3>
+                      <MessageSquare className="w-5 h-5 text-primary-400" />
                     </div>
-                    <p className="text-3xl font-bold">+12%</p>
-                    <p className="text-sm text-gray-400 mt-2">Tento týden</p>
+                    <p className="text-3xl font-bold">{stats.stats.totalReviews}</p>
+                    <p className="text-sm text-gray-400 mt-2">Celkem recenzí</p>
                   </div>
                 </div>
 
@@ -777,90 +779,76 @@ export default function AdminPanel() {
                   </ResponsiveContainer>
                 </div>
 
-                {/* SEO Keywords (KW) */}
-                <div className="glass rounded-xl p-6">
-                  <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-xl font-bold">Top vyhledávací dotazy (SEO Keywords)</h3>
-                    <Search className="w-5 h-5 text-primary-400" />
+                {/* Approval Stats */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Pending Approval Card */}
+                  <div className="glass rounded-xl p-6 border border-orange-500/20">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="p-3 bg-orange-500/20 rounded-lg">
+                        <AlertCircle className="w-6 h-6 text-orange-400" />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-bold text-orange-400">Čeká na schválení</h3>
+                        <p className="text-sm text-gray-400">Vyžaduje okamžitou pozornost</p>
+                      </div>
+                    </div>
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
+                        <div>
+                          <p className="text-sm text-gray-400">Podniky</p>
+                          <p className="text-2xl font-bold">{stats.stats.pendingApprovalBusinesses}</p>
+                        </div>
+                        <Building2 className="w-8 h-8 text-orange-400 opacity-50" />
+                      </div>
+                      <div className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
+                        <div>
+                          <p className="text-sm text-gray-400">Profily</p>
+                          <p className="text-2xl font-bold">{stats.stats.pendingApprovalProfiles}</p>
+                        </div>
+                        <UserCircle className="w-8 h-8 text-orange-400 opacity-50" />
+                      </div>
+                      <div className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
+                        <div>
+                          <p className="text-sm text-gray-400">Změny k revizi</p>
+                          <p className="text-2xl font-bold">{stats.stats.pendingChanges}</p>
+                        </div>
+                        <MessageSquare className="w-8 h-8 text-orange-400 opacity-50" />
+                      </div>
+                    </div>
                   </div>
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="p-4 bg-white/5 rounded-lg">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium">escort praha</span>
-                          <span className="text-xs text-green-400">+24%</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <div className="flex-1 h-2 bg-white/10 rounded-full overflow-hidden">
-                            <div className="h-full bg-primary-500" style={{ width: '85%' }}></div>
-                          </div>
-                          <span className="text-xs text-gray-400">1,234</span>
-                        </div>
-                      </div>
 
-                      <div className="p-4 bg-white/5 rounded-lg">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium">erotické masáže</span>
-                          <span className="text-xs text-green-400">+18%</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <div className="flex-1 h-2 bg-white/10 rounded-full overflow-hidden">
-                            <div className="h-full bg-primary-500" style={{ width: '72%' }}></div>
-                          </div>
-                          <span className="text-xs text-gray-400">987</span>
-                        </div>
+                  {/* Pending Verification Card */}
+                  <div className="glass rounded-xl p-6 border border-blue-500/20">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="p-3 bg-blue-500/20 rounded-lg">
+                        <Shield className="w-6 h-6 text-blue-400" />
                       </div>
-
-                      <div className="p-4 bg-white/5 rounded-lg">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium">holky na sex</span>
-                          <span className="text-xs text-green-400">+32%</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <div className="flex-1 h-2 bg-white/10 rounded-full overflow-hidden">
-                            <div className="h-full bg-primary-500" style={{ width: '68%' }}></div>
-                          </div>
-                          <span className="text-xs text-gray-400">856</span>
-                        </div>
+                      <div>
+                        <h3 className="text-xl font-bold text-blue-400">Čeká na ověření</h3>
+                        <p className="text-sm text-gray-400">Schválené, vyžaduje ověření</p>
                       </div>
-
-                      <div className="p-4 bg-white/5 rounded-lg">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium">privát brno</span>
-                          <span className="text-xs text-green-400">+15%</span>
+                    </div>
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
+                        <div>
+                          <p className="text-sm text-gray-400">Podniky</p>
+                          <p className="text-2xl font-bold">{stats.stats.pendingVerificationBusinesses}</p>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <div className="flex-1 h-2 bg-white/10 rounded-full overflow-hidden">
-                            <div className="h-full bg-primary-500" style={{ width: '54%' }}></div>
-                          </div>
-                          <span className="text-xs text-gray-400">634</span>
-                        </div>
+                        <Building2 className="w-8 h-8 text-blue-400 opacity-50" />
                       </div>
-
-                      <div className="p-4 bg-white/5 rounded-lg">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium">domina ostrava</span>
-                          <span className="text-xs text-orange-400">-3%</span>
+                      <div className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
+                        <div>
+                          <p className="text-sm text-gray-400">Profily</p>
+                          <p className="text-2xl font-bold">{stats.stats.pendingVerificationProfiles}</p>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <div className="flex-1 h-2 bg-white/10 rounded-full overflow-hidden">
-                            <div className="h-full bg-primary-500" style={{ width: '42%' }}></div>
-                          </div>
-                          <span className="text-xs text-gray-400">512</span>
-                        </div>
+                        <UserCircle className="w-8 h-8 text-blue-400 opacity-50" />
                       </div>
-
-                      <div className="p-4 bg-white/5 rounded-lg">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium">erotický salon</span>
-                          <span className="text-xs text-green-400">+9%</span>
+                      <div className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
+                        <div>
+                          <p className="text-sm text-gray-400">Celkem schválených</p>
+                          <p className="text-2xl font-bold">{stats.stats.approvedBusinesses + stats.stats.approvedProfiles}</p>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <div className="flex-1 h-2 bg-white/10 rounded-full overflow-hidden">
-                            <div className="h-full bg-primary-500" style={{ width: '38%' }}></div>
-                          </div>
-                          <span className="text-xs text-gray-400">478</span>
-                        </div>
+                        <CheckCircle className="w-8 h-8 text-blue-400 opacity-50" />
                       </div>
                     </div>
                   </div>
@@ -1176,7 +1164,7 @@ export default function AdminPanel() {
                   {businesses
                     .filter(business => {
                       if (businessFilter === 'pending_approval') return !business.approved;
-                      if (businessFilter === 'pending_verification') return !business.verified;
+                      if (businessFilter === 'pending_verification') return business.approved && !business.verified;
                       return true;
                     })
                     .map((business) => (
@@ -1309,9 +1297,49 @@ export default function AdminPanel() {
                   </button>
                 </div>
 
+                {/* Filter buttons */}
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setProfileFilter('all')}
+                    className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                      profileFilter === 'all'
+                        ? 'bg-primary-500 text-white'
+                        : 'bg-white/5 text-gray-400 hover:bg-white/10'
+                    }`}
+                  >
+                    Všechny ({profiles.length})
+                  </button>
+                  <button
+                    onClick={() => setProfileFilter('pending_approval')}
+                    className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                      profileFilter === 'pending_approval'
+                        ? 'bg-orange-500 text-white'
+                        : 'bg-white/5 text-gray-400 hover:bg-white/10'
+                    }`}
+                  >
+                    Čeká na schválení ({profiles.filter(p => !p.approved).length})
+                  </button>
+                  <button
+                    onClick={() => setProfileFilter('pending_verification')}
+                    className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                      profileFilter === 'pending_verification'
+                        ? 'bg-yellow-500 text-white'
+                        : 'bg-white/5 text-gray-400 hover:bg-white/10'
+                    }`}
+                  >
+                    Čeká na ověření ({profiles.filter(p => !p.verified).length})
+                  </button>
+                </div>
+
                 {profiles.length > 0 ? (
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    {profiles.map((profile: any) => (
+                    {profiles
+                      .filter(profile => {
+                        if (profileFilter === 'pending_approval') return !profile.approved;
+                        if (profileFilter === 'pending_verification') return profile.approved && !profile.verified;
+                        return true;
+                      })
+                      .map((profile: any) => (
                       <div key={profile.id} className="glass rounded-xl p-6">
                         <div className="flex items-start justify-between mb-4">
                           <div className="flex-1">

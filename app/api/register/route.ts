@@ -108,6 +108,7 @@ export async function POST(request: Request) {
             equipment: profile.equipment && profile.equipment.length > 0 ? profile.equipment : null,
             openingHours: profile.openingHours || null,
             ownerId: user.id,
+            approved: false, // User registration requires admin approval
             verified: false,
             isNew: true,
           },
@@ -174,6 +175,7 @@ export async function POST(request: Request) {
             profileType: profileType,
             category: profile.category as Category,
             ownerId: user.id,
+            approved: false, // User registration requires admin approval
             verified: false,
             isNew: true,
             // Physical attributes

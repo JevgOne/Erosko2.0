@@ -132,14 +132,25 @@ export default function AdminPanel() {
     setLoading(true);
     try {
       console.log('[Admin Panel] Fetching admin data...');
+      console.log('[Admin Panel] Current session:', {
+        hasSession: !!session,
+        userRole: session?.user?.role,
+        userId: session?.user?.id
+      });
+
+      const fetchOptions = {
+        credentials: 'include' as RequestCredentials,
+        cache: 'no-store' as RequestCache,
+      };
+
       const [statsRes, usersRes, businessesRes, profilesRes, changesRes, servicesRes, searchTagsRes] = await Promise.all([
-        fetch('/api/admin/stats'),
-        fetch('/api/admin/users'),
-        fetch('/api/admin/businesses'),
-        fetch('/api/admin/profiles'),
-        fetch('/api/admin/pending-changes'),
-        fetch('/api/services'),
-        fetch('/api/search-tags'),
+        fetch('/api/admin/stats', fetchOptions),
+        fetch('/api/admin/users', fetchOptions),
+        fetch('/api/admin/businesses', fetchOptions),
+        fetch('/api/admin/profiles', fetchOptions),
+        fetch('/api/admin/pending-changes', fetchOptions),
+        fetch('/api/services', fetchOptions),
+        fetch('/api/search-tags', fetchOptions),
       ]);
 
       console.log('[Admin Panel] API responses:', {

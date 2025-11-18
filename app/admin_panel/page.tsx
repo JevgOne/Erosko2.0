@@ -9,7 +9,7 @@ import Header from '@/components/Header';
 import {
   LayoutDashboard, Users, Building2, UserCircle, MessageSquare,
   CreditCard, Image as ImageIcon, CheckCircle, XCircle, Eye,
-  TrendingUp, AlertCircle, Shield, Search, Plus
+  TrendingUp, AlertCircle, Shield, Search, Plus, FileText
 } from 'lucide-react';
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -574,9 +574,19 @@ export default function AdminPanel() {
           {/* Sidebar */}
           <aside className="w-64 min-h-screen bg-dark-800/50 border-r border-white/10 fixed top-20 left-0">
             <div className="p-6">
-              <div className="flex items-center gap-2 mb-8">
-                <Shield className="w-6 h-6 text-primary-400" />
-                <h2 className="text-xl font-bold">Admin Panel</h2>
+              <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center gap-2">
+                  <Shield className="w-6 h-6 text-primary-400" />
+                  <h2 className="text-xl font-bold">Admin Panel</h2>
+                </div>
+                <button
+                  onClick={() => router.push('/admin_panel/seomaster')}
+                  className="flex items-center gap-2 px-3 py-2 bg-primary-500/20 text-primary-400 rounded-lg hover:bg-primary-500/30 transition-colors text-sm font-medium"
+                  title="Otevřít SEO Master"
+                >
+                  <FileText className="w-4 h-4" />
+                  <span className="hidden xl:inline">SEO</span>
+                </button>
               </div>
 
               <nav className="space-y-2">

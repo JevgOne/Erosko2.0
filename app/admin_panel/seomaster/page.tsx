@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   Sparkles,
   Users,
@@ -10,6 +11,7 @@ import {
   ArrowRight,
   FileCode,
   Layout,
+  Shield,
 } from 'lucide-react';
 import DashboardTab from './components/DashboardTab';
 import ProfilesTab from './components/ProfilesTab';
@@ -24,14 +26,25 @@ type Tab = 'dashboard' | 'profiles' | 'landing-pages' | 'main-pages' | 'all-page
 
 export default function SEOMasterPage() {
   const [activeTab, setActiveTab] = useState<Tab>('dashboard');
+  const router = useRouter();
 
   return (
     <div className="min-h-screen bg-dark-950 text-white p-6">
       {/* Header */}
       <div className="mb-8">
-        <div className="flex items-center gap-3 mb-2">
-          <Sparkles className="w-8 h-8 text-primary-400" />
-          <h1 className="text-3xl font-bold gradient-text">SEO MASTER</h1>
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-3">
+            <Sparkles className="w-8 h-8 text-primary-400" />
+            <h1 className="text-3xl font-bold gradient-text">SEO MASTER</h1>
+          </div>
+          <button
+            onClick={() => router.push('/admin_panel')}
+            className="flex items-center gap-2 px-4 py-2 bg-dark-800/50 text-gray-300 rounded-lg hover:bg-dark-800 transition-colors border border-white/10"
+            title="Zpět do Admin Panelu"
+          >
+            <Shield className="w-5 h-5" />
+            <span className="font-medium">ADMIN PANEL</span>
+          </button>
         </div>
         <p className="text-gray-400">
           AI-powered SEO management • Google Gemini

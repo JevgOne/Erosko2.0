@@ -3,6 +3,7 @@ import { auth } from '@/auth';
 import prisma from '@/lib/prisma';
 import { ProfileType, Category } from '@prisma/client';
 import { generateProfileSEO } from '@/lib/seo-automation';
+import { translateFilterValue } from '@/lib/filter-translations';
 
 export async function POST(request: Request) {
   try {
@@ -237,17 +238,19 @@ export async function GET(request: Request) {
       };
     }
 
-    // Physical attributes filters
+    // Physical attributes filters - translate Czech values to English DB values
     if (hairColor) {
+      const translatedValue = translateFilterValue('hairColor', hairColor);
       where.hairColor = {
-        contains: hairColor,
+        equals: translatedValue,
         mode: 'insensitive',
       };
     }
 
     if (eyeColor) {
+      const translatedValue = translateFilterValue('eyeColor', eyeColor);
       where.eyeColor = {
-        contains: eyeColor,
+        equals: translatedValue,
         mode: 'insensitive',
       };
     }
@@ -257,29 +260,33 @@ export async function GET(request: Request) {
     }
 
     if (bodyType) {
+      const translatedValue = translateFilterValue('bodyType', bodyType);
       where.bodyType = {
-        contains: bodyType,
+        equals: translatedValue,
         mode: 'insensitive',
       };
     }
 
     if (ethnicity) {
+      const translatedValue = translateFilterValue('nationality', ethnicity);
       where.nationality = {
-        contains: ethnicity,
+        equals: translatedValue,
         mode: 'insensitive',
       };
     }
 
     if (tattoo) {
+      const translatedValue = translateFilterValue('tattoos', tattoo);
       where.tattoos = {
-        contains: tattoo,
+        equals: translatedValue,
         mode: 'insensitive',
       };
     }
 
     if (piercing) {
+      const translatedValue = translateFilterValue('piercing', piercing);
       where.piercing = {
-        contains: piercing,
+        equals: translatedValue,
         mode: 'insensitive',
       };
     }

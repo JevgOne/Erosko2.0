@@ -76,7 +76,7 @@ export default function SearchBar({ pageType = 'home' }: SearchBarProps) {
 
   // Detailed filters state
   const [hairColor, setHairColor] = useState('');
-  const [eyeColor, setEyeColor] = useState('');
+  // eyeColor removed - 0% data in database
   const [breastSize, setBreastSize] = useState('');
   const [bodyType, setBodyType] = useState('');
   const [ethnicity, setEthnicity] = useState('');
@@ -132,7 +132,7 @@ export default function SearchBar({ pageType = 'home' }: SearchBarProps) {
 
     // Add detailed filters
     if (hairColor) params.set('hairColor', hairColor);
-    if (eyeColor) params.set('eyeColor', eyeColor);
+    // eyeColor removed - 0% data in database
     if (breastSize) params.set('breastSize', breastSize);
     if (bodyType) params.set('bodyType', bodyType);
     if (ethnicity) params.set('ethnicity', ethnicity);
@@ -168,7 +168,7 @@ export default function SearchBar({ pageType = 'home' }: SearchBarProps) {
     setSelectedCity('');
     setSearchQuery('');
     setHairColor('');
-    setEyeColor('');
+    // eyeColor removed - 0% data in database
     setBreastSize('');
     setBodyType('');
     setEthnicity('');
@@ -345,25 +345,7 @@ export default function SearchBar({ pageType = 'home' }: SearchBarProps) {
                 </div>
               </div>
 
-              {/* Eye Color */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-3">Barva očí</label>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                  {['Modré', 'Zelené', 'Hnědé', 'Šedé', 'Jiné'].map((color) => (
-                    <button
-                      key={color}
-                      onClick={() => setEyeColor(eyeColor === color ? '' : color)}
-                      className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-                        eyeColor === color
-                          ? 'bg-gradient-to-r from-primary-500 to-pink-500 text-white'
-                          : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-                      }`}
-                    >
-                      {color}
-                    </button>
-                  ))}
-                </div>
-              </div>
+              {/* Eye Color - REMOVED: 0% data in database */}
 
               {/* Breast Size */}
               <div>

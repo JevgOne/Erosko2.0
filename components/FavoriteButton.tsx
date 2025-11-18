@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { Heart, Loader2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+
+const FAVORITES_KEY = 'erosko_favorites';
 
 interface FavoriteButtonProps {
   profileId: string;
@@ -13,15 +14,15 @@ interface FavoriteButtonProps {
 
 export default function FavoriteButton({ profileId, className = '', variant = 'default' }: FavoriteButtonProps) {
   const { data: session } = useSession();
-  const router = useRouter();
   const [isFavorite, setIsFavorite] = useState(false);
   const [loading, setLoading] = useState(false);
   const [checking, setChecking] = useState(true);
 
-  // Check if already favorited
+  // Check if already favorited (database or localStorage)
   useEffect(() => {
     const checkFavorite = async () => {
       if (session?.user) {
+        // Logged in - check database
         try {
           const response = await fetch(`/api/favorites/check?profileId=${profileId}`);
           if (response.ok) {
@@ -34,6 +35,10 @@ export default function FavoriteButton({ profileId, className = '', variant = 'd
           setChecking(false);
         }
       } else {
+        // Anonymous - check localStorage
+        const stored = localStorage.getItem(FAVORITES_KEY);
+        const favorites = stored ? JSON.parse(stored) : [];
+        setIsFavorite(favorites.includes(profileId));
         setChecking(false);
       }
     };
@@ -45,32 +50,42 @@ export default function FavoriteButton({ profileId, className = '', variant = 'd
     e.preventDefault();
     e.stopPropagation();
 
-    if (!session) {
-      router.push('/prihlaseni?redirect=' + encodeURIComponent(window.location.pathname));
-      return;
-    }
-
     setLoading(true);
 
     try {
-      if (isFavorite) {
-        // Remove from favorites
-        const response = await fetch(`/api/favorites?profileId=${profileId}`, {
-          method: 'DELETE'
-        });
-
-        if (response.ok) {
-          setIsFavorite(false);
+      if (session?.user) {
+        // Logged in - use database
+        if (isFavorite) {
+          const response = await fetch(`/api/favorites?profileId=${profileId}`, {
+            method: 'DELETE'
+          });
+          if (response.ok) {
+            setIsFavorite(false);
+          }
+        } else {
+          const response = await fetch('/api/favorites', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ profileId }),
+          });
+          if (response.ok) {
+            setIsFavorite(true);
+          }
         }
       } else {
-        // Add to favorites
-        const response = await fetch('/api/favorites', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ profileId }),
-        });
+        // Anonymous - use localStorage
+        const stored = localStorage.getItem(FAVORITES_KEY);
+        const favorites = stored ? JSON.parse(stored) : [];
 
-        if (response.ok) {
+        if (isFavorite) {
+          // Remove from favorites
+          const updated = favorites.filter((id: string) => id !== profileId);
+          localStorage.setItem(FAVORITES_KEY, JSON.stringify(updated));
+          setIsFavorite(false);
+        } else {
+          // Add to favorites
+          favorites.push(profileId);
+          localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
           setIsFavorite(true);
         }
       }

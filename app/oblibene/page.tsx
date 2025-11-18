@@ -8,42 +8,48 @@ import Image from 'next/image';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 
+const FAVORITES_KEY = 'erosko_favorites';
+
+interface Profile {
+  id: string;
+  name: string;
+  slug: string;
+  age: number;
+  city: string;
+  location: string;
+  rating: number;
+  reviewCount: number;
+  viewCount: number;
+  verified: boolean;
+  isNew: boolean;
+  isOnline: boolean;
+  photos: Array<{
+    url: string;
+    alt?: string;
+  }>;
+}
+
 interface FavoriteProfile {
   id: string;
   createdAt: string;
-  profile: {
-    id: string;
-    name: string;
-    slug: string;
-    age: number;
-    city: string;
-    location: string;
-    rating: number;
-    reviewCount: number;
-    viewCount: number;
-    verified: boolean;
-    isNew: boolean;
-    isOnline: boolean;
-    photos: Array<{
-      url: string;
-      alt?: string;
-    }>;
-  };
+  profile: Profile;
 }
 
 export default function FavoritesPage() {
   const { data: session, status } = useSession();
-  const [favorites, setFavorites] = useState<FavoriteProfile[]>([]);
+  const [favorites, setFavorites] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchFavorites = async () => {
-      if (status === 'authenticated') {
+      if (status === 'authenticated' && session?.user) {
+        // Logged in - fetch from database
         try {
           const response = await fetch('/api/favorites');
           if (response.ok) {
             const data = await response.json();
-            setFavorites(data.favorites || []);
+            const profiles = (data.favorites || []).map((f: FavoriteProfile) => f.profile);
+            setFavorites(profiles);
           }
         } catch (error) {
           console.error('Error fetching favorites:', error);
@@ -51,21 +57,50 @@ export default function FavoritesPage() {
           setLoading(false);
         }
       } else if (status === 'unauthenticated') {
-        setLoading(false);
+        // Anonymous - load from localStorage and fetch profile data
+        try {
+          const stored = localStorage.getItem(FAVORITES_KEY);
+          const profileIds = stored ? JSON.parse(stored) : [];
+
+          if (profileIds.length > 0) {
+            const response = await fetch('/api/profiles/by-ids', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ ids: profileIds }),
+            });
+            if (response.ok) {
+              const data = await response.json();
+              setFavorites(data.profiles || []);
+            }
+          }
+        } catch (error) {
+          console.error('Error loading favorites:', error);
+        } finally {
+          setLoading(false);
+        }
       }
     };
 
     fetchFavorites();
-  }, [status]);
+  }, [status, session]);
 
   const removeFavorite = async (profileId: string) => {
     try {
-      const response = await fetch(`/api/favorites?profileId=${profileId}`, {
-        method: 'DELETE',
-      });
-
-      if (response.ok) {
-        setFavorites(favorites.filter((fav) => fav.profile.id !== profileId));
+      if (session?.user) {
+        // Logged in - remove from database
+        const response = await fetch(`/api/favorites?profileId=${profileId}`, {
+          method: 'DELETE',
+        });
+        if (response.ok) {
+          setFavorites(favorites.filter((profile) => profile.id !== profileId));
+        }
+      } else {
+        // Anonymous - remove from localStorage
+        const stored = localStorage.getItem(FAVORITES_KEY);
+        const profileIds = stored ? JSON.parse(stored) : [];
+        const updated = profileIds.filter((id: string) => id !== profileId);
+        localStorage.setItem(FAVORITES_KEY, JSON.stringify(updated));
+        setFavorites(favorites.filter((profile) => profile.id !== profileId));
       }
     } catch (error) {
       console.error('Error removing favorite:', error);
@@ -79,28 +114,6 @@ export default function FavoritesPage() {
         <div className="container mx-auto px-4 py-32 text-center">
           <Loader2 className="w-12 h-12 mx-auto mb-4 text-primary-400 animate-spin" />
           <p className="text-gray-400">Načítání oblíbených...</p>
-        </div>
-        <Footer />
-      </main>
-    );
-  }
-
-  if (!session) {
-    return (
-      <main className="min-h-screen bg-dark-950">
-        <Header />
-        <div className="container mx-auto px-4 py-32 text-center">
-          <Heart className="w-16 h-16 mx-auto mb-4 text-gray-600" />
-          <h1 className="text-3xl font-bold mb-4">Oblíbené profily</h1>
-          <p className="text-gray-400 mb-6">
-            Přihlaste se pro zobrazení oblíbených profilů
-          </p>
-          <Link
-            href="/prihlaseni?redirect=/oblibene"
-            className="px-6 py-3 bg-gradient-to-r from-primary-500 to-pink-500 rounded-xl font-semibold inline-flex items-center gap-2 hover:shadow-lg hover:shadow-primary-500/50 transition-all"
-          >
-            Přihlásit se
-          </Link>
         </div>
         <Footer />
       </main>
@@ -139,6 +152,29 @@ export default function FavoritesPage() {
             </div>
           </div>
 
+          {/* Upsell banner for anonymous users */}
+          {!session && favorites.length > 0 && (
+            <div className="glass border border-yellow-500/20 rounded-2xl p-6 mb-6">
+              <div className="flex items-start gap-4">
+                <div className="text-4xl">💡</div>
+                <div>
+                  <h3 className="text-lg font-semibold text-yellow-400 mb-2">
+                    Oblíbené jsou uložené pouze v tomto prohlížeči
+                  </h3>
+                  <p className="text-gray-300 mb-3">
+                    Registrací získáte synchronizaci oblíbených napříč všemi vašimi zařízeními.
+                  </p>
+                  <Link
+                    href="/registrace"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary-500 to-pink-500 rounded-lg font-semibold hover:shadow-lg hover:shadow-primary-500/50 transition-all"
+                  >
+                    Zaregistrovat se zdarma
+                  </Link>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Profiles Grid */}
           {favorites.length === 0 ? (
             <div className="glass rounded-2xl p-12 text-center">
@@ -156,8 +192,7 @@ export default function FavoritesPage() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {favorites.map((favorite) => {
-                const profile = favorite.profile;
+              {favorites.map((profile) => {
                 const mainPhoto =
                   profile.photos && profile.photos.length > 0
                     ? profile.photos[0]

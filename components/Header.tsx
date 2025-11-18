@@ -1,14 +1,47 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Menu, X, User, Heart, Bell, LogOut } from 'lucide-react';
 import Link from 'next/link';
 import { useSession, signOut } from 'next-auth/react';
+
+const FAVORITES_KEY = 'erosko_favorites';
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const { data: session, status } = useSession();
+
+  // Auto-sync localStorage favorites when user logs in
+  useEffect(() => {
+    const syncFavorites = async () => {
+      if (session?.user && typeof window !== 'undefined') {
+        const stored = localStorage.getItem(FAVORITES_KEY);
+        if (stored) {
+          try {
+            const profileIds = JSON.parse(stored);
+            if (profileIds.length > 0) {
+              const response = await fetch('/api/favorites/sync', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ profileIds }),
+              });
+
+              if (response.ok) {
+                // Clear localStorage after successful sync
+                localStorage.removeItem(FAVORITES_KEY);
+                console.log('Favorites synced successfully');
+              }
+            }
+          } catch (error) {
+            console.error('Error syncing favorites:', error);
+          }
+        }
+      }
+    };
+
+    syncFavorites();
+  }, [session]);
 
   const handleLogout = async () => {
     await signOut({ callbackUrl: '/' });
@@ -44,6 +77,10 @@ export default function Header() {
             <Link href="/eroticke-podniky" className="text-gray-300 hover:text-white transition-colors">
               Erotické podniky
             </Link>
+            <Link href="/oblibene" className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors">
+              <Heart className="w-4 h-4" />
+              Oblíbené
+            </Link>
           </div>
 
           {/* Right Section */}
@@ -73,14 +110,6 @@ export default function Header() {
                       >
                         <User className="w-4 h-4" />
                         <span>Můj dashboard</span>
-                      </Link>
-                      <Link
-                        href="/oblibene"
-                        className="w-full flex items-center space-x-2 px-4 py-3 hover:bg-white/5 transition-colors"
-                        onClick={() => setUserMenuOpen(false)}
-                      >
-                        <Heart className="w-4 h-4" />
-                        <span>Oblíbené</span>
                       </Link>
                       <div className="border-t border-white/5"></div>
                       <button
@@ -144,6 +173,14 @@ export default function Header() {
             <Link href="/eroticke-podniky" className="block px-4 py-2 hover:bg-white/5 rounded-lg transition-colors">
               Erotické podniky
             </Link>
+            <Link
+              href="/oblibene"
+              className="flex items-center gap-2 px-4 py-2 hover:bg-white/5 rounded-lg transition-colors"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <Heart className="w-4 h-4" />
+              <span>Oblíbené</span>
+            </Link>
             <div className="border-t border-white/5 pt-2 mt-2 space-y-2">
               {status === 'authenticated' && session?.user ? (
                 <>
@@ -156,14 +193,6 @@ export default function Header() {
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Dashboard
-                  </Link>
-                  <Link
-                    href="/oblibene"
-                    className="flex items-center space-x-2 px-4 py-2 hover:bg-white/5 rounded-lg transition-colors"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    <Heart className="w-4 h-4" />
-                    <span>Oblíbené</span>
                   </Link>
                   <button
                     onClick={handleLogout}

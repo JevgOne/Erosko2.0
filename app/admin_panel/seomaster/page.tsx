@@ -13,6 +13,7 @@ import {
   Layout,
   Shield,
   MessageSquare,
+  Eye,
 } from 'lucide-react';
 import DashboardTab from './components/DashboardTab';
 import ProfilesTab from './components/ProfilesTab';
@@ -23,8 +24,9 @@ import RobotsTxtTab from './components/RobotsTxtTab';
 import ContentBlocksTab from './components/ContentBlocksTab';
 import MainPagesTab from './components/MainPagesTab';
 import AIReviewsTab from './components/AIReviewsTab';
+import VisualEditorTab from './components/VisualEditorTab';
 
-type Tab = 'dashboard' | 'profiles' | 'landing-pages' | 'main-pages' | 'all-pages' | 'redirects' | 'robots' | 'content-blocks' | 'ai-reviews';
+type Tab = 'dashboard' | 'profiles' | 'landing-pages' | 'main-pages' | 'all-pages' | 'redirects' | 'robots' | 'content-blocks' | 'ai-reviews' | 'visual-editor';
 
 export default function SEOMasterPage() {
   const [activeTab, setActiveTab] = useState<Tab>('dashboard');
@@ -55,6 +57,17 @@ export default function SEOMasterPage() {
 
       {/* Tab Navigation */}
       <div className="glass rounded-xl p-2 mb-6 flex flex-wrap gap-2">
+        <button
+          onClick={() => setActiveTab('visual-editor')}
+          className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all ${
+            activeTab === 'visual-editor'
+              ? 'bg-gradient-to-r from-primary-500 to-pink-500 text-white shadow-xl shadow-primary-500/50 scale-105'
+              : 'bg-gradient-to-r from-primary-500/20 to-pink-500/20 text-white hover:from-primary-500/30 hover:to-pink-500/30'
+          }`}
+        >
+          <Eye className="w-5 h-5" />
+          <span className="font-bold">✨ Visual Editor</span>
+        </button>
         <button
           onClick={() => setActiveTab('dashboard')}
           className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all ${
@@ -158,6 +171,7 @@ export default function SEOMasterPage() {
 
       {/* Tab Content */}
       <div>
+        {activeTab === 'visual-editor' && <VisualEditorTab />}
         {activeTab === 'dashboard' && <DashboardTab />}
         {activeTab === 'profiles' && <ProfilesTab />}
         {activeTab === 'landing-pages' && <LandingPagesTab />}

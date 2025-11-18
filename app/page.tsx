@@ -79,12 +79,12 @@ export default async function Home() {
     <main className="min-h-screen">
       <Header />
 
-      {/* Content Blocks - Above Hero */}
+      {/* Content Blocks - Above Hero (Promo Banners) */}
       <ContentBlockSection
         page="homepage"
         section="hero-top"
         className="container mx-auto px-4 sm:px-6 lg:px-8 py-4"
-        itemClassName="mb-4"
+        itemClassName="mb-4 bg-gradient-to-r from-primary-500/10 to-pink-500/10 border border-primary-500/30 rounded-2xl p-4 md:p-6"
       />
 
       <Hero />

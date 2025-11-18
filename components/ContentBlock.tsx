@@ -50,23 +50,30 @@ export async function ContentBlockSection({
 
   if (!blocks || blocks.length === 0) return null;
 
+  // Default styling for content blocks
+  const defaultBoxClass = 'glass rounded-2xl p-6 md:p-8 border border-white/10 backdrop-blur-sm';
+  const defaultContentClass = 'prose prose-invert max-w-none prose-headings:gradient-text prose-a:text-primary-400 prose-a:hover:underline prose-strong:text-white prose-p:text-gray-300 prose-li:text-gray-300';
+
   return (
     <div className={className}>
       {blocks.map((block) => (
         <div
           key={block.id}
-          className={itemClassName}
+          className={itemClassName || defaultBoxClass}
           data-block-id={block.identifier}
         >
           {block.type === 'RICH_TEXT' || block.type === 'TEXT' ? (
-            <div dangerouslySetInnerHTML={{ __html: block.content || '' }} />
+            <div
+              className={defaultContentClass}
+              dangerouslySetInnerHTML={{ __html: block.content || '' }}
+            />
           ) : block.type === 'IMAGE' ? (
-            <img src={block.content || ''} alt={block.title || ''} className="w-full h-auto" />
+            <img src={block.content || ''} alt={block.title || ''} className="w-full h-auto rounded-lg" />
           ) : block.type === 'VIDEO' ? (
             <iframe
               src={block.content || ''}
               title={block.title || 'Video'}
-              className="w-full aspect-video"
+              className="w-full aspect-video rounded-lg"
               allowFullScreen
             />
           ) : null}

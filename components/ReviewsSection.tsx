@@ -1,63 +1,75 @@
 'use client';
 
 import { Star, ThumbsUp } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-// TODO: Replace with actual API types from your review system
 interface Review {
-  id?: number;
+  id: string;
   name: string;
   rating: number;
   date: string;
   text: string;
   helpful?: number;
+  isAI?: boolean;
+}
+
+interface ReviewStats {
+  total: number;
+  average: string;
+  breakdown: {
+    5: number;
+    4: number;
+    3: number;
+    2: number;
+    1: number;
+  };
 }
 
 interface ReviewsSectionProps {
-  profileId?: number;
+  profileId?: string;
   businessId?: string;
-  averageRating: string | number;
-  totalReviews: number;
-  // TODO: Add API endpoint prop when ready
-  // apiEndpoint?: string;
 }
 
 export default function ReviewsSection({
   profileId,
   businessId,
-  averageRating,
-  totalReviews,
 }: ReviewsSectionProps) {
-  const [reviews, setReviews] = useState<Review[]>([
-    // TODO: Replace with API call
-    // Example: const { data: reviews } = useReviews(profileId || businessId)
-    {
-      name: 'Jan K.',
-      rating: 5,
-      date: 'Před 2 dny',
-      text: 'Perfektní služby, krásné prostředí a milý personál. Určitě se vrátím!',
-      helpful: 12,
-    },
-    {
-      name: 'Petr M.',
-      rating: 5,
-      date: 'Před týdnem',
-      text: 'Skvělé masáže, profesionální přístup. Doporučuji!',
-      helpful: 8,
-    },
-    {
-      name: 'Martin S.',
-      rating: 4,
-      date: 'Před 2 týdny',
-      text: 'Velmi příjemné prostředí, čisté a diskrétní. Jen parkování mohlo být lepší.',
-      helpful: 5,
-    },
-  ]);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [stats, setStats] = useState<ReviewStats>({
+    total: 0,
+    average: '0.0',
+    breakdown: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 },
+  });
+  const [loading, setLoading] = useState(true);
 
-  // TODO: Implement API integration
-  // useEffect(() => {
-  //   fetchReviews(profileId || businessId).then(setReviews);
-  // }, [profileId, businessId]);
+  // Fetch reviews from API
+  useEffect(() => {
+    const fetchReviews = async () => {
+      if (!profileId && !businessId) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const params = new URLSearchParams();
+        if (profileId) params.set('profileId', profileId);
+        if (businessId) params.set('businessId', businessId);
+
+        const response = await fetch(`/api/reviews?${params.toString()}`);
+        if (response.ok) {
+          const data = await response.json();
+          setReviews(data.reviews || []);
+          setStats(data.stats || { total: 0, average: '0.0', breakdown: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 } });
+        }
+      } catch (error) {
+        console.error('Error fetching reviews:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchReviews();
+  }, [profileId, businessId]);
 
   const handleAddReview = () => {
     // TODO: Implement review submission to API
@@ -70,22 +82,27 @@ export default function ReviewsSection({
     console.log('Mark helpful:', reviewIndex);
   };
 
-  // Mock rating breakdown data
-  // TODO: Calculate from actual reviews when API is connected
-  const ratingBreakdown = [
-    { stars: 5, count: Math.floor(totalReviews * 0.6), percentage: 60 },
-    { stars: 4, count: Math.floor(totalReviews * 0.25), percentage: 25 },
-    { stars: 3, count: Math.floor(totalReviews * 0.1), percentage: 10 },
-    { stars: 2, count: Math.floor(totalReviews * 0.03), percentage: 3 },
-    { stars: 1, count: Math.floor(totalReviews * 0.02), percentage: 2 },
-  ];
+  // Calculate rating breakdown percentages
+  const ratingBreakdown = [5, 4, 3, 2, 1].map((stars) => {
+    const count = stats.breakdown[stars as keyof typeof stats.breakdown] || 0;
+    const percentage = stats.total > 0 ? Math.round((count / stats.total) * 100) : 0;
+    return { stars, count, percentage };
+  });
+
+  if (loading) {
+    return (
+      <div className="glass rounded-2xl p-8 mb-8">
+        <div className="text-center text-gray-400">Načítání recenzí...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="glass rounded-2xl p-8 mb-8">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-3xl font-bold flex items-center gap-2">
           <Star className="w-7 h-7 text-yellow-400" fill="currentColor" />
-          Hodnocení a recenze ({totalReviews})
+          Hodnocení a recenze ({stats.total})
         </h2>
         <button
           onClick={handleAddReview}
@@ -99,13 +116,13 @@ export default function ReviewsSection({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 pb-8 border-b border-white/10">
         {/* Overall Rating */}
         <div className="text-center md:col-span-1">
-          <div className="text-6xl font-bold mb-2">{averageRating}</div>
+          <div className="text-6xl font-bold mb-2">{stats.average}</div>
           <div className="flex items-center justify-center gap-1 mb-2">
             {[1, 2, 3, 4, 5].map((star) => (
               <Star key={star} className="w-6 h-6 text-yellow-400" fill="currentColor" />
             ))}
           </div>
-          <p className="text-gray-400">Na základě {totalReviews} hodnocení</p>
+          <p className="text-gray-400">Na základě {stats.total} hodnocení</p>
         </div>
 
         {/* Rating Breakdown */}
@@ -167,26 +184,11 @@ export default function ReviewsSection({
       </div>
 
       {/* Show More Button */}
-      {reviews.length > 0 && (
+      {reviews.length > 0 && stats.total > reviews.length && (
         <div className="text-center mt-6">
           <button className="px-6 py-3 glass rounded-xl font-medium hover:bg-white/10 transition-all">
-            Zobrazit všechna hodnocení ({totalReviews})
+            Zobrazit všechna hodnocení ({stats.total})
           </button>
-        </div>
-      )}
-
-      {/* API Integration Notes (hidden in production) */}
-      {process.env.NODE_ENV === 'development' && (
-        <div className="mt-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-xl text-xs text-blue-400">
-          <p className="font-semibold mb-2">🔧 API Integration TODO:</p>
-          <ul className="list-disc list-inside space-y-1 text-gray-400">
-            <li>Connect to review API endpoint</li>
-            <li>Profile ID: {profileId || 'N/A'}</li>
-            <li>Business ID: {businessId || 'N/A'}</li>
-            <li>Implement fetchReviews()</li>
-            <li>Implement submitReview()</li>
-            <li>Implement markHelpful()</li>
-          </ul>
         </div>
       )}
     </div>

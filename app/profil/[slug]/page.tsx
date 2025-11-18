@@ -9,6 +9,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ProfileSchema from '@/components/ProfileSchema';
 import SearchBar from '@/components/SearchBar';
+import FavoriteButton from '@/components/FavoriteButton';
 import {
   Star, MapPin, CheckCircle, Phone, Heart, MessageCircle,
   Clock, Shield, Award, Video, Sparkles, ChevronLeft,
@@ -460,6 +461,19 @@ export default function ProfileDetailPage() {
                   </div>
                   <div className="relative flex justify-center text-xs">
                     <span className="bg-dark-800 px-2 text-gray-400">Nebo napište přes</span>
+                  </div>
+                </div>
+
+                {/* Favorite Button */}
+                <FavoriteButton profileId={profile.id} className="w-full" />
+
+                {/* Divider */}
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-white/10"></div>
+                  </div>
+                  <div className="relative flex justify-center text-xs">
+                    <span className="bg-dark-800 px-2 text-gray-400">Kontakt</span>
                   </div>
                 </div>
 

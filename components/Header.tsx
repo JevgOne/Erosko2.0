@@ -74,6 +74,14 @@ export default function Header() {
                         <User className="w-4 h-4" />
                         <span>Můj dashboard</span>
                       </Link>
+                      <Link
+                        href="/oblibene"
+                        className="w-full flex items-center space-x-2 px-4 py-3 hover:bg-white/5 transition-colors"
+                        onClick={() => setUserMenuOpen(false)}
+                      >
+                        <Heart className="w-4 h-4" />
+                        <span>Oblíbené</span>
+                      </Link>
                       <div className="border-t border-white/5"></div>
                       <button
                         onClick={handleLogout}
@@ -148,6 +156,14 @@ export default function Header() {
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Dashboard
+                  </Link>
+                  <Link
+                    href="/oblibene"
+                    className="flex items-center space-x-2 px-4 py-2 hover:bg-white/5 rounded-lg transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Heart className="w-4 h-4" />
+                    <span>Oblíbené</span>
                   </Link>
                   <button
                     onClick={handleLogout}

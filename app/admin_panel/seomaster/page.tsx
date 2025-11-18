@@ -12,6 +12,7 @@ import {
   FileCode,
   Layout,
   Shield,
+  MessageSquare,
 } from 'lucide-react';
 import DashboardTab from './components/DashboardTab';
 import ProfilesTab from './components/ProfilesTab';
@@ -21,8 +22,9 @@ import RedirectsTab from './components/RedirectsTab';
 import RobotsTxtTab from './components/RobotsTxtTab';
 import ContentBlocksTab from './components/ContentBlocksTab';
 import MainPagesTab from './components/MainPagesTab';
+import AIReviewsTab from './components/AIReviewsTab';
 
-type Tab = 'dashboard' | 'profiles' | 'landing-pages' | 'main-pages' | 'all-pages' | 'redirects' | 'robots' | 'content-blocks';
+type Tab = 'dashboard' | 'profiles' | 'landing-pages' | 'main-pages' | 'all-pages' | 'redirects' | 'robots' | 'content-blocks' | 'ai-reviews';
 
 export default function SEOMasterPage() {
   const [activeTab, setActiveTab] = useState<Tab>('dashboard');
@@ -141,6 +143,17 @@ export default function SEOMasterPage() {
           <FileText className="w-5 h-5" />
           Content Blocks
         </button>
+        <button
+          onClick={() => setActiveTab('ai-reviews')}
+          className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all ${
+            activeTab === 'ai-reviews'
+              ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/50'
+              : 'text-gray-400 hover:text-white hover:bg-white/5'
+          }`}
+        >
+          <MessageSquare className="w-5 h-5" />
+          AI Recenze
+        </button>
       </div>
 
       {/* Tab Content */}
@@ -153,6 +166,7 @@ export default function SEOMasterPage() {
         {activeTab === 'redirects' && <RedirectsTab />}
         {activeTab === 'robots' && <RobotsTxtTab />}
         {activeTab === 'content-blocks' && <ContentBlocksTab />}
+        {activeTab === 'ai-reviews' && <AIReviewsTab />}
       </div>
     </div>
   );

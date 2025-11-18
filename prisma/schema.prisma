@@ -350,12 +350,15 @@ model ProfileService {
 }
 
 model Review {
-  id         String    @id @default(cuid())
-  rating     Int // 1-5
-  comment    String?
-  // Relations
-  authorId   String
-  author     User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  id            String    @id @default(cuid())
+  rating        Int // 1-5
+  comment       String?
+  authorName    String? // For non-registered users / AI reviews
+  isAIGenerated Boolean   @default(false) // Mark AI-generated reviews
+
+  // Relations (authorId now optional for AI reviews)
+  authorId   String?
+  author     User?     @relation(fields: [authorId], references: [id], onDelete: Cascade)
   profileId  String?
   profile    Profile?  @relation(fields: [profileId], references: [id], onDelete: Cascade)
   businessId String?
@@ -367,6 +370,7 @@ model Review {
   @@index([profileId])
   @@index([businessId])
   @@index([authorId])
+  @@index([rating])
 }
 
 model Favorite {

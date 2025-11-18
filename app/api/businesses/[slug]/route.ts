@@ -47,3 +47,37 @@ export async function GET(
     );
   }
 }
+
+export async function POST(
+  request: Request,
+  { params }: { params: { slug: string } }
+) {
+  try {
+    const body = await request.json();
+
+    // Check if this is a view tracking request
+    if (body.action === 'track_view') {
+      await prisma.business.update({
+        where: { slug: params.slug },
+        data: {
+          viewCount: {
+            increment: 1
+          }
+        }
+      });
+
+      return NextResponse.json({ success: true });
+    }
+
+    return NextResponse.json(
+      { error: 'Invalid action' },
+      { status: 400 }
+    );
+  } catch (error) {
+    console.error('Error tracking view:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}

@@ -96,12 +96,14 @@ export default function ProfileDetailPage() {
 
   // Track profile view
   useEffect(() => {
-    if (profile?.id) {
-      fetch(`/api/profiles/${profile.id}/view`, { method: 'POST' }).catch(err =>
-        console.error('Failed to track view:', err)
-      );
+    if (slug) {
+      fetch(`/api/profiles/${slug}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'track_view' })
+      }).catch(err => console.error('Failed to track view:', err));
     }
-  }, [profile?.id]);
+  }, [slug]);
 
   // Gallery navigation
   const nextPhoto = () => {

@@ -96,6 +96,7 @@ export default function AdminPanel() {
     description: '',
     businessId: '',
     services: [] as string[], // Array of service IDs
+    roles: [] as string[], // Array of selected fantasy roles
   });
   const [newProfilePhotos, setNewProfilePhotos] = useState<File[]>([]);
   const [newProfilePhotosPreviews, setNewProfilePhotosPreviews] = useState<string[]>([]);
@@ -2229,6 +2230,55 @@ export default function AdminPanel() {
                 />
               </div>
 
+              {/* Fantasy Roles */}
+              <div>
+                <label className="block text-sm font-medium mb-3">Role / Fantasy (volitelné)</label>
+                <p className="text-xs text-gray-400 mb-3">
+                  Vyberte role, které profil nabízí (lze vybrat více)
+                </p>
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    { value: 'schoolgirl', label: 'Školačka' },
+                    { value: 'secretary', label: 'Sekretářka' },
+                    { value: 'nurse', label: 'Zdravotní sestra' },
+                    { value: 'teacher', label: 'Učitelka' },
+                    { value: 'maid', label: 'Pokojská' },
+                    { value: 'stewardess', label: 'Letuška' },
+                    { value: 'police', label: 'Policistka' },
+                    { value: 'student', label: 'Studentka' },
+                    { value: 'boss', label: 'Šéfka' },
+                    { value: 'neighbor', label: 'Sousedka' },
+                    { value: 'librarian', label: 'Knihovnice' },
+                    { value: 'athlete', label: 'Sportovkyně' },
+                  ].map((role) => (
+                    <label
+                      key={role.value}
+                      className="flex items-center space-x-2 p-2 hover:bg-white/5 rounded cursor-pointer"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={newProfileFormData.roles.includes(role.value)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setNewProfileFormData({
+                              ...newProfileFormData,
+                              roles: [...newProfileFormData.roles, role.value]
+                            });
+                          } else {
+                            setNewProfileFormData({
+                              ...newProfileFormData,
+                              roles: newProfileFormData.roles.filter(r => r !== role.value)
+                            });
+                          }
+                        }}
+                        className="w-4 h-4"
+                      />
+                      <span className="text-sm">{role.label}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
               {/* Services based on category */}
               <div className="space-y-4">
                 {newProfileFormData.category === 'EROTICKE_MASERKY' && (
@@ -2300,6 +2350,68 @@ export default function AdminPanel() {
                     <label className="block text-sm font-medium mb-3">Praktiky</label>
                     <div className="grid grid-cols-2 gap-3">
                       {allServices.filter(s => s.category === 'PRAKTIKY').map((service) => (
+                        <label key={service.id} className="flex items-center space-x-2 p-2 hover:bg-white/5 rounded cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={newProfileFormData.services.includes(service.id)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setNewProfileFormData({
+                                  ...newProfileFormData,
+                                  services: [...newProfileFormData.services, service.id]
+                                });
+                              } else {
+                                setNewProfileFormData({
+                                  ...newProfileFormData,
+                                  services: newProfileFormData.services.filter(id => id !== service.id)
+                                });
+                              }
+                            }}
+                            className="w-4 h-4"
+                          />
+                          <span className="text-sm">{service.name}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {newProfileFormData.category === 'DOMINA' && (
+                  <div>
+                    <label className="block text-sm font-medium mb-3">BDSM Praktiky</label>
+                    <div className="grid grid-cols-2 gap-3">
+                      {allServices.filter(s => s.category === 'BDSM_PRAKTIKY').map((service) => (
+                        <label key={service.id} className="flex items-center space-x-2 p-2 hover:bg-white/5 rounded cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={newProfileFormData.services.includes(service.id)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setNewProfileFormData({
+                                  ...newProfileFormData,
+                                  services: [...newProfileFormData.services, service.id]
+                                });
+                              } else {
+                                setNewProfileFormData({
+                                  ...newProfileFormData,
+                                  services: newProfileFormData.services.filter(id => id !== service.id)
+                                });
+                              }
+                            }}
+                            className="w-4 h-4"
+                          />
+                          <span className="text-sm">{service.name}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {newProfileFormData.category === 'DIGITALNI_SLUZBY' && (
+                  <div>
+                    <label className="block text-sm font-medium mb-3">Online služby</label>
+                    <div className="grid grid-cols-2 gap-3">
+                      {allServices.filter(s => s.category === 'ONLINE_SLUZBY').map((service) => (
                         <label key={service.id} className="flex items-center space-x-2 p-2 hover:bg-white/5 rounded cursor-pointer">
                           <input
                             type="checkbox"
@@ -2446,10 +2558,11 @@ export default function AdminPanel() {
                     setShowAddProfileModal(false);
                     setNewProfileFormData({
                       name: '', age: '', phone: '', email: '', city: '', address: '',
-                      category: 'HOLKY_NA_SEX', description: '', businessId: '', services: [],
+                      category: 'HOLKY_NA_SEX', description: '', businessId: '', services: [], roles: [],
                     });
                     setNewProfilePhotos([]);
                     setNewProfilePhotosPreviews([]);
+                    setSelectedSearchTags([]);
                   }}
                   className="flex-1 px-6 py-3 bg-white/5 rounded-lg font-semibold hover:bg-white/10 transition-colors"
                 >

@@ -234,7 +234,7 @@ export default function SearchBar({ pageType = 'home' }: SearchBarProps) {
             <button
               onClick={() => setShowDetailedFilters(!showDetailedFilters)}
               className={`flex-1 px-6 py-4 rounded-2xl font-semibold transition-all text-left relative ${
-                hairColor || eyeColor || breastSize || bodyType || ethnicity || tattoo || piercing || ageRange.min !== 18 || ageRange.max !== 50 || heightRange.min !== 150 || heightRange.max !== 190
+                hairColor || breastSize || bodyType || ethnicity || tattoo || piercing || ageRange.min !== 18 || ageRange.max !== 50 || heightRange.min !== 150 || heightRange.max !== 190
                   ? 'bg-gradient-to-r from-primary-500 to-pink-500 text-white'
                   : 'bg-white border-2 border-gray-200 text-gray-700 hover:border-primary-300'
               }`}
@@ -527,7 +527,6 @@ export default function SearchBar({ pageType = 'home' }: SearchBarProps) {
               <button
                 onClick={() => {
                   setHairColor('');
-                  setEyeColor('');
                   setBreastSize('');
                   setBodyType('');
                   setEthnicity('');

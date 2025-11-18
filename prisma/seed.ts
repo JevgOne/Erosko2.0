@@ -105,48 +105,48 @@ async function main() {
   // ONLINE SLUŽBY
   const onlineServices = await Promise.all([
     // Video služby
-    prisma.service.create({ data: { name: 'Webka/video', description: 'Kategorie: Online', icon: 'Video' } }),
-    prisma.service.create({ data: { name: 'Webcam show', description: 'Kategorie: Online', icon: 'Video' } }),
-    prisma.service.create({ data: { name: 'Live cam show', description: 'Kategorie: Online', icon: 'Video' } }),
-    prisma.service.create({ data: { name: 'Video call sex', description: 'Kategorie: Online', icon: 'Video' } }),
-    prisma.service.create({ data: { name: 'Custom videa', description: 'Kategorie: Online', icon: 'Camera' } }),
-    prisma.service.create({ data: { name: 'Video na míru', description: 'Kategorie: Online', icon: 'Camera' } }),
+    prisma.service.create({ data: { name: 'Webka/video', description: 'Kategorie: Online', icon: 'Video', category: 'ONLINE_SLUZBY' } }),
+    prisma.service.create({ data: { name: 'Webcam show', description: 'Kategorie: Online', icon: 'Video', category: 'ONLINE_SLUZBY' } }),
+    prisma.service.create({ data: { name: 'Live cam show', description: 'Kategorie: Online', icon: 'Video', category: 'ONLINE_SLUZBY' } }),
+    prisma.service.create({ data: { name: 'Video call sex', description: 'Kategorie: Online', icon: 'Video', category: 'ONLINE_SLUZBY' } }),
+    prisma.service.create({ data: { name: 'Custom videa', description: 'Kategorie: Online', icon: 'Camera', category: 'ONLINE_SLUZBY' } }),
+    prisma.service.create({ data: { name: 'Video na míru', description: 'Kategorie: Online', icon: 'Camera', category: 'ONLINE_SLUZBY' } }),
 
     // Telefonní služby
-    prisma.service.create({ data: { name: 'Sex po telefonu', description: 'Kategorie: Online', icon: 'Phone' } }),
-    prisma.service.create({ data: { name: 'Phone sex', description: 'Kategorie: Online', icon: 'Phone' } }),
-    prisma.service.create({ data: { name: 'Audio call', description: 'Kategorie: Online', icon: 'Phone' } }),
+    prisma.service.create({ data: { name: 'Sex po telefonu', description: 'Kategorie: Online', icon: 'Phone', category: 'ONLINE_SLUZBY' } }),
+    prisma.service.create({ data: { name: 'Phone sex', description: 'Kategorie: Online', icon: 'Phone', category: 'ONLINE_SLUZBY' } }),
+    prisma.service.create({ data: { name: 'Audio call', description: 'Kategorie: Online', icon: 'Phone', category: 'ONLINE_SLUZBY' } }),
 
     // Fotografie
-    prisma.service.create({ data: { name: 'Custom fotky', description: 'Kategorie: Online', icon: 'Camera' } }),
-    prisma.service.create({ data: { name: 'Sexy fotky', description: 'Kategorie: Online', icon: 'Camera' } }),
-    prisma.service.create({ data: { name: 'Nahé fotky', description: 'Kategorie: Online', icon: 'Camera' } }),
-    prisma.service.create({ data: { name: 'Feet pics', description: 'Kategorie: Online', icon: 'Camera' } }),
+    prisma.service.create({ data: { name: 'Custom fotky', description: 'Kategorie: Online', icon: 'Camera', category: 'ONLINE_SLUZBY' } }),
+    prisma.service.create({ data: { name: 'Sexy fotky', description: 'Kategorie: Online', icon: 'Camera', category: 'ONLINE_SLUZBY' } }),
+    prisma.service.create({ data: { name: 'Nahé fotky', description: 'Kategorie: Online', icon: 'Camera', category: 'ONLINE_SLUZBY' } }),
+    prisma.service.create({ data: { name: 'Feet pics', description: 'Kategorie: Online', icon: 'Camera', category: 'ONLINE_SLUZBY' } }),
 
     // Chat a textové služby
-    prisma.service.create({ data: { name: 'Sexting', description: 'Kategorie: Online', icon: 'MessageCircle' } }),
-    prisma.service.create({ data: { name: 'Online chat', description: 'Kategorie: Online', icon: 'MessagesSquare' } }),
-    prisma.service.create({ data: { name: 'Dirty talk', description: 'Kategorie: Online', icon: 'MessageCircle' } }),
+    prisma.service.create({ data: { name: 'Sexting', description: 'Kategorie: Online', icon: 'MessageCircle', category: 'ONLINE_SLUZBY' } }),
+    prisma.service.create({ data: { name: 'Online chat', description: 'Kategorie: Online', icon: 'MessagesSquare', category: 'ONLINE_SLUZBY' } }),
+    prisma.service.create({ data: { name: 'Dirty talk', description: 'Kategorie: Online', icon: 'MessageCircle', category: 'ONLINE_SLUZBY' } }),
 
     // Platformy a předplatné
-    prisma.service.create({ data: { name: 'OnlyFans', description: 'Kategorie: Online', icon: 'Star' } }),
-    prisma.service.create({ data: { name: 'Premium Snapchat', description: 'Kategorie: Online', icon: 'Camera' } }),
-    prisma.service.create({ data: { name: 'Soukromý Instagram', description: 'Kategorie: Online', icon: 'Instagram' } }),
-    prisma.service.create({ data: { name: 'Telegram premium', description: 'Kategorie: Online', icon: 'Send' } }),
+    prisma.service.create({ data: { name: 'OnlyFans', description: 'Kategorie: Online', icon: 'Star', category: 'ONLINE_SLUZBY' } }),
+    prisma.service.create({ data: { name: 'Premium Snapchat', description: 'Kategorie: Online', icon: 'Camera', category: 'ONLINE_SLUZBY' } }),
+    prisma.service.create({ data: { name: 'Soukromý Instagram', description: 'Kategorie: Online', icon: 'Instagram', category: 'ONLINE_SLUZBY' } }),
+    prisma.service.create({ data: { name: 'Telegram premium', description: 'Kategorie: Online', icon: 'Send', category: 'ONLINE_SLUZBY' } }),
 
     // Speciální online služby
-    prisma.service.create({ data: { name: 'Dick rating', description: 'Kategorie: Online', icon: 'Star' } }),
-    prisma.service.create({ data: { name: 'Hodnocení penisu', description: 'Kategorie: Online', icon: 'Star' } }),
-    prisma.service.create({ data: { name: 'Virtual girlfriend', description: 'Kategorie: Online', icon: 'Heart' } }),
-    prisma.service.create({ data: { name: 'Virtuální přítelkyně', description: 'Kategorie: Online', icon: 'Heart' } }),
-    prisma.service.create({ data: { name: 'Dominance online', description: 'Kategorie: Online', icon: 'Crown' } }),
-    prisma.service.create({ data: { name: 'JOI (Jerk Off Instructions)', description: 'Kategorie: Online', icon: 'Video' } }),
-    prisma.service.create({ data: { name: 'CEI (Cum Eating Instructions)', description: 'Kategorie: Online', icon: 'Video' } }),
+    prisma.service.create({ data: { name: 'Dick rating', description: 'Kategorie: Online', icon: 'Star', category: 'ONLINE_SLUZBY' } }),
+    prisma.service.create({ data: { name: 'Hodnocení penisu', description: 'Kategorie: Online', icon: 'Star', category: 'ONLINE_SLUZBY' } }),
+    prisma.service.create({ data: { name: 'Virtual girlfriend', description: 'Kategorie: Online', icon: 'Heart', category: 'ONLINE_SLUZBY' } }),
+    prisma.service.create({ data: { name: 'Virtuální přítelkyně', description: 'Kategorie: Online', icon: 'Heart', category: 'ONLINE_SLUZBY' } }),
+    prisma.service.create({ data: { name: 'Dominance online', description: 'Kategorie: Online', icon: 'Crown', category: 'ONLINE_SLUZBY' } }),
+    prisma.service.create({ data: { name: 'JOI (Jerk Off Instructions)', description: 'Kategorie: Online', icon: 'Video', category: 'ONLINE_SLUZBY' } }),
+    prisma.service.create({ data: { name: 'CEI (Cum Eating Instructions)', description: 'Kategorie: Online', icon: 'Video', category: 'ONLINE_SLUZBY' } }),
 
     // Prodej
-    prisma.service.create({ data: { name: 'Použité prádlo', description: 'Kategorie: Online', icon: 'ShoppingBag' } }),
-    prisma.service.create({ data: { name: 'Používané ponožky', description: 'Kategorie: Online', icon: 'ShoppingBag' } }),
-    prisma.service.create({ data: { name: 'Selling worn items', description: 'Kategorie: Online', icon: 'ShoppingBag' } }),
+    prisma.service.create({ data: { name: 'Použité prádlo', description: 'Kategorie: Online', icon: 'ShoppingBag', category: 'ONLINE_SLUZBY' } }),
+    prisma.service.create({ data: { name: 'Používané ponožky', description: 'Kategorie: Online', icon: 'ShoppingBag', category: 'ONLINE_SLUZBY' } }),
+    prisma.service.create({ data: { name: 'Selling worn items', description: 'Kategorie: Online', icon: 'ShoppingBag', category: 'ONLINE_SLUZBY' } }),
   ]);
 
   const services = [...escortServices, ...massageServices, ...bdsmServices, ...onlineServices];

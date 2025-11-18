@@ -88,8 +88,8 @@ export async function POST(request: Request) {
       }
     }
 
-    // Extract photo data
-    const { photos, ...profileData } = data;
+    // Extract photo data and roles
+    const { photos, roles, ...profileData } = data;
 
     // Determine profile type
     const profileType = data.businessId ?
@@ -116,6 +116,7 @@ export async function POST(request: Request) {
         verified: false,
         isNew: true,
         isPopular: false,
+        role: roles && Array.isArray(roles) && roles.length > 0 ? roles.join(', ') : null,
       },
     });
 

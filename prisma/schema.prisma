@@ -40,6 +40,7 @@ enum ServiceCategory {
   DRUHY_MASAZI // Druhy masáží pro masérky
   EXTRA_SLUZBY // Extra služby pro masérky
   BDSM_PRAKTIKY // BDSM praktiky
+  ONLINE_SLUZBY // Online/digitální služby
 }
 
 enum PageType {

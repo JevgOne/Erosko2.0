@@ -48,7 +48,6 @@ import AdBanner from '@/components/AdBanner';
 import ProfileCardGrid from '@/components/ProfileCardGrid';
 import { profilesToCards } from '@/lib/profile-card-adapter';
 import { ContentBlockSection } from '@/components/ContentBlock';
-import DynamicHomepageContent from '@/components/DynamicHomepageContent';
 
 async function getProfiles() {
   const profiles = await prisma.profile.findMany({
@@ -97,9 +96,6 @@ export default async function Home() {
         className="container mx-auto px-4 sm:px-6 lg:px-8 py-8"
         itemClassName="mb-6"
       />
-
-      {/* Dynamic Homepage Content - Stats, New Profiles, Reviews, Popular */}
-      <DynamicHomepageContent />
 
       {/* Instagram-Style Profile Cards */}
       <section className="py-12 sm:py-16 lg:py-20 bg-black">

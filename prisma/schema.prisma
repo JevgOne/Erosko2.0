@@ -175,6 +175,10 @@ model Business {
   @@index([city])
   @@index([profileType])
   @@index([slug])
+  @@index([approved])
+  @@index([verified])
+  @@index([approved, verified])
+  @@index([ownerId])
 }
 
 model Profile {
@@ -288,6 +292,10 @@ model Profile {
   @@index([category])
   @@index([profileType])
   @@index([slug])
+  @@index([approved])
+  @@index([verified])
+  @@index([approved, verified])
+  @@index([ownerId])
 }
 
 model Photo {

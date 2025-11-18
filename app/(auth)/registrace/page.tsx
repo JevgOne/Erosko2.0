@@ -385,11 +385,8 @@ export default function RegistracePage() {
         }
       }
 
-      // Převést fotky na base64 pro posílání v JSON (skip for now to avoid errors)
+      // Převést fotky na base64 pro posílání v JSON
       const photoBase64Array: string[] = [];
-      // TEMPORARILY DISABLED: Photos can be added later in admin panel
-      // This prevents registration failures due to photo upload issues
-      /*
       for (const photo of photos) {
         try {
           const base64 = await new Promise<string>((resolve, reject) => {
@@ -404,7 +401,6 @@ export default function RegistracePage() {
           // Continue without this photo
         }
       }
-      */
 
       console.log('[CLIENT] About to submit registration for role:', role);
 
@@ -1562,17 +1558,10 @@ export default function RegistracePage() {
                           </div>
                         )}
 
-                        {/* Notice about photos */}
-                        <div className="p-4 rounded-xl bg-blue-500/10 border border-blue-500/20">
-                          <p className="text-sm text-blue-300">
-                            📸 Fotky přidáte po dokončení registrace v administračním rozhraní. Nejprve dokončete základní registraci.
-                          </p>
-                        </div>
-
-                        {/* Fotky - HIDDEN FOR NOW */}
-                        <div className="hidden">
+                        {/* Fotky */}
+                        <div>
                           <label className="block text-sm font-medium mb-2">
-                            Fotky (přidáte později)
+                            Fotky *
                           </label>
                           <div className="space-y-4">
                             {/* Upload button */}

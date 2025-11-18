@@ -30,6 +30,10 @@ export default function AdminPanel() {
   const [businessFilter, setBusinessFilter] = useState<'all' | 'pending_approval' | 'pending_verification'>('all');
   const [profileFilter, setProfileFilter] = useState<'all' | 'pending_approval' | 'pending_verification'>('all');
 
+  // Bulk selection states
+  const [selectedBusinessIds, setSelectedBusinessIds] = useState<string[]>([]);
+  const [selectedProfileIds, setSelectedProfileIds] = useState<string[]>([]);
+
   // Search and expand states for users
   const [userSearchQuery, setUserSearchQuery] = useState<string>('');
   const [expandedUserId, setExpandedUserId] = useState<string | null>(null);
@@ -241,6 +245,43 @@ export default function AdminPanel() {
     } catch (error) {
       console.error('Error verifying:', error);
       alert('Chyba při ověřování');
+    }
+  };
+
+  // Bulk action handlers
+  const handleBulkApprove = async (type: 'business' | 'profile', ids: string[], approved: boolean) => {
+    try {
+      await Promise.all(ids.map(id =>
+        fetch('/api/admin/approve', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type, id, approved }),
+        })
+      ));
+      fetchAdminData();
+      if (type === 'business') setSelectedBusinessIds([]);
+      else setSelectedProfileIds([]);
+      alert(`${ids.length} položek ${approved ? 'schváleno' : 'odmítnuto'}!`);
+    } catch (error) {
+      alert('Chyba při hromadné akci');
+    }
+  };
+
+  const handleBulkVerify = async (type: 'business' | 'profile', ids: string[], verified: boolean) => {
+    try {
+      await Promise.all(ids.map(id =>
+        fetch('/api/admin/verify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type, id, verified }),
+        })
+      ));
+      fetchAdminData();
+      if (type === 'business') setSelectedBusinessIds([]);
+      else setSelectedProfileIds([]);
+      alert(`${ids.length} položek ${verified ? 'ověřeno' : 'zrušeno ověření'}!`);
+    } catch (error) {
+      alert('Chyba při hromadné akci');
     }
   };
 
@@ -1126,8 +1167,66 @@ export default function AdminPanel() {
                   </button>
                 </div>
 
+                {/* Bulk actions bar */}
+                {selectedBusinessIds.length > 0 && (
+                  <div className="flex items-center gap-3 p-4 bg-primary-500/10 rounded-lg border border-primary-500/20">
+                    <span className="text-sm font-medium">
+                      Vybráno: {selectedBusinessIds.length}
+                    </span>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleBulkApprove('business', selectedBusinessIds, true)}
+                        className="px-4 py-2 bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-colors"
+                      >
+                        Schválit vše
+                      </button>
+                      <button
+                        onClick={() => handleBulkVerify('business', selectedBusinessIds, true)}
+                        className="px-4 py-2 bg-green-500/20 text-green-400 rounded-lg hover:bg-green-500/30 transition-colors"
+                      >
+                        Ověřit vše
+                      </button>
+                      <button
+                        onClick={() => setSelectedBusinessIds([])}
+                        className="px-4 py-2 bg-gray-500/20 text-gray-400 rounded-lg hover:bg-gray-500/30 transition-colors"
+                      >
+                        Zrušit výběr
+                      </button>
+                    </div>
+                  </div>
+                )}
+
                 {/* Filter buttons */}
-                <div className="flex gap-3">
+                <div className="flex gap-3 items-center">
+                  {/* Select All Checkbox */}
+                  <label className="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-lg hover:bg-white/10 cursor-pointer transition-colors">
+                    <input
+                      type="checkbox"
+                      checked={(() => {
+                        const visibleBusinesses = businesses.filter(business => {
+                          if (businessFilter === 'pending_approval') return !business.approved;
+                          if (businessFilter === 'pending_verification') return business.approved && !business.verified;
+                          return true;
+                        });
+                        return visibleBusinesses.length > 0 && visibleBusinesses.every(b => selectedBusinessIds.includes(b.id));
+                      })()}
+                      onChange={(e) => {
+                        const visibleBusinesses = businesses.filter(business => {
+                          if (businessFilter === 'pending_approval') return !business.approved;
+                          if (businessFilter === 'pending_verification') return business.approved && !business.verified;
+                          return true;
+                        });
+                        if (e.target.checked) {
+                          setSelectedBusinessIds(visibleBusinesses.map(b => b.id));
+                        } else {
+                          setSelectedBusinessIds([]);
+                        }
+                      }}
+                      className="w-4 h-4 rounded border-2 border-primary-500/50 bg-white/5 checked:bg-primary-500 checked:border-primary-500 cursor-pointer"
+                    />
+                    <span className="text-sm font-medium text-gray-300">Vybrat vše</span>
+                  </label>
+
                   <button
                     onClick={() => setBusinessFilter('all')}
                     className={`px-4 py-2 rounded-lg font-medium transition-all ${
@@ -1170,21 +1269,36 @@ export default function AdminPanel() {
                     .map((business) => (
                     <div key={business.id} className="glass rounded-xl p-6">
                       <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-2">
-                            <h3 className="text-xl font-bold">{business.name}</h3>
-                            <div className="flex items-center gap-2">
-                              {business.approved && (
-                                <span className="text-xs px-2 py-1 rounded bg-blue-500/20 text-blue-400">Schváleno</span>
-                              )}
-                              {business.verified && (
-                                <CheckCircle className="w-5 h-5 text-green-400" />
-                              )}
-                              {!business.approved && (
-                                <AlertCircle className="w-5 h-5 text-orange-400" />
-                              )}
+                        {/* Checkbox for bulk selection */}
+                        <div className="flex items-start gap-4 flex-1">
+                          <input
+                            type="checkbox"
+                            checked={selectedBusinessIds.includes(business.id)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setSelectedBusinessIds([...selectedBusinessIds, business.id]);
+                              } else {
+                                setSelectedBusinessIds(selectedBusinessIds.filter(id => id !== business.id));
+                              }
+                            }}
+                            className="mt-1 w-5 h-5 rounded border-2 border-primary-500/50 bg-white/5 checked:bg-primary-500 checked:border-primary-500 cursor-pointer"
+                          />
+
+                          <div className="flex-1">
+                            <div className="flex items-center gap-3 mb-2">
+                              <h3 className="text-xl font-bold">{business.name}</h3>
+                              <div className="flex items-center gap-2">
+                                {business.approved && (
+                                  <span className="text-xs px-2 py-1 rounded bg-blue-500/20 text-blue-400">Schváleno</span>
+                                )}
+                                {business.verified && (
+                                  <CheckCircle className="w-5 h-5 text-green-400" />
+                                )}
+                                {!business.approved && (
+                                  <AlertCircle className="w-5 h-5 text-orange-400" />
+                                )}
+                              </div>
                             </div>
-                          </div>
                           <div className="grid grid-cols-2 gap-4 text-sm">
                             <div>
                               <p className="text-gray-400">Vlastník</p>
@@ -1214,6 +1328,28 @@ export default function AdminPanel() {
                           {business.description && (
                             <p className="text-sm text-gray-400 mt-3">{business.description}</p>
                           )}
+
+                          {/* Photo previews */}
+                          {business.photos && business.photos.length > 0 && (
+                            <div className="mt-3">
+                              <div className="flex gap-2 overflow-x-auto">
+                                {business.photos.slice(0, 5).map((photo: any) => (
+                                  <img
+                                    key={photo.id}
+                                    src={photo.url}
+                                    alt="Business photo"
+                                    className="w-20 h-20 object-cover rounded-lg border border-white/10"
+                                  />
+                                ))}
+                                {business.photos.length > 5 && (
+                                  <div className="w-20 h-20 rounded-lg bg-white/5 flex items-center justify-center text-xs text-gray-400">
+                                    +{business.photos.length - 5}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                          </div>
                         </div>
 
                         <div className="flex flex-col gap-2">
@@ -1297,8 +1433,66 @@ export default function AdminPanel() {
                   </button>
                 </div>
 
+                {/* Bulk actions bar */}
+                {selectedProfileIds.length > 0 && (
+                  <div className="flex items-center gap-3 p-4 bg-primary-500/10 rounded-lg border border-primary-500/20">
+                    <span className="text-sm font-medium">
+                      Vybráno: {selectedProfileIds.length}
+                    </span>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleBulkApprove('profile', selectedProfileIds, true)}
+                        className="px-4 py-2 bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-colors"
+                      >
+                        Schválit vše
+                      </button>
+                      <button
+                        onClick={() => handleBulkVerify('profile', selectedProfileIds, true)}
+                        className="px-4 py-2 bg-green-500/20 text-green-400 rounded-lg hover:bg-green-500/30 transition-colors"
+                      >
+                        Ověřit vše
+                      </button>
+                      <button
+                        onClick={() => setSelectedProfileIds([])}
+                        className="px-4 py-2 bg-gray-500/20 text-gray-400 rounded-lg hover:bg-gray-500/30 transition-colors"
+                      >
+                        Zrušit výběr
+                      </button>
+                    </div>
+                  </div>
+                )}
+
                 {/* Filter buttons */}
-                <div className="flex gap-3">
+                <div className="flex gap-3 items-center">
+                  {/* Select All Checkbox */}
+                  <label className="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-lg hover:bg-white/10 cursor-pointer transition-colors">
+                    <input
+                      type="checkbox"
+                      checked={(() => {
+                        const visibleProfiles = profiles.filter(profile => {
+                          if (profileFilter === 'pending_approval') return !profile.approved;
+                          if (profileFilter === 'pending_verification') return profile.approved && !profile.verified;
+                          return true;
+                        });
+                        return visibleProfiles.length > 0 && visibleProfiles.every(p => selectedProfileIds.includes(p.id));
+                      })()}
+                      onChange={(e) => {
+                        const visibleProfiles = profiles.filter(profile => {
+                          if (profileFilter === 'pending_approval') return !profile.approved;
+                          if (profileFilter === 'pending_verification') return profile.approved && !profile.verified;
+                          return true;
+                        });
+                        if (e.target.checked) {
+                          setSelectedProfileIds(visibleProfiles.map(p => p.id));
+                        } else {
+                          setSelectedProfileIds([]);
+                        }
+                      }}
+                      className="w-4 h-4 rounded border-2 border-primary-500/50 bg-white/5 checked:bg-primary-500 checked:border-primary-500 cursor-pointer"
+                    />
+                    <span className="text-sm font-medium text-gray-300">Vybrat vše</span>
+                  </label>
+
                   <button
                     onClick={() => setProfileFilter('all')}
                     className={`px-4 py-2 rounded-lg font-medium transition-all ${
@@ -1341,9 +1535,24 @@ export default function AdminPanel() {
                       })
                       .map((profile: any) => (
                       <div key={profile.id} className="glass rounded-xl p-6">
-                        <div className="flex items-start justify-between mb-4">
-                          <div className="flex-1">
-                            <h3 className="text-xl font-bold mb-1">{profile.name}</h3>
+                        <div className="flex items-start gap-4 mb-4">
+                          {/* Checkbox for bulk selection */}
+                          <input
+                            type="checkbox"
+                            checked={selectedProfileIds.includes(profile.id)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setSelectedProfileIds([...selectedProfileIds, profile.id]);
+                              } else {
+                                setSelectedProfileIds(selectedProfileIds.filter(id => id !== profile.id));
+                              }
+                            }}
+                            className="mt-1 w-5 h-5 rounded border-2 border-primary-500/50 bg-white/5 checked:bg-primary-500 checked:border-primary-500 cursor-pointer"
+                          />
+
+                          <div className="flex-1 flex items-start justify-between">
+                            <div className="flex-1">
+                              <h3 className="text-xl font-bold mb-1">{profile.name}</h3>
                             <div className="space-y-1 text-sm text-gray-400">
                               <p><strong>Věk:</strong> {profile.age} let</p>
                               <p><strong>Město:</strong> {profile.city}</p>
@@ -1365,14 +1574,15 @@ export default function AdminPanel() {
                                 {profile.description}
                               </p>
                             )}
+                            </div>
+                            {profile.photos?.[0] && (
+                              <img
+                                src={profile.photos[0].url}
+                                alt={profile.name}
+                                className="w-20 h-20 object-cover rounded-lg ml-4"
+                              />
+                            )}
                           </div>
-                          {profile.photos?.[0] && (
-                            <img
-                              src={profile.photos[0].url}
-                              alt={profile.name}
-                              className="w-20 h-20 object-cover rounded-lg ml-4"
-                            />
-                          )}
                         </div>
 
                         <div className="flex items-center gap-2 pt-4 border-t border-white/10">

@@ -8,6 +8,6 @@ export default auth;
 export const config = {
   // Exclude API routes, static files, and public business pages from auth check
   matcher: [
-    '/((?!api|_next/static|_next/image|favicon.ico|eroticke-podniky).*)',
+    '/((?!api/|_next/static|_next/image|favicon.ico|eroticke-podniky).*)',
   ],
 };

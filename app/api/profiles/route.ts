@@ -239,20 +239,15 @@ export async function GET(request: Request) {
     }
 
     // Physical attributes filters - translate Czech values to English DB values
+    // NOTE: Turso/libSQL doesn't support mode: 'insensitive', use simple assignment
     if (hairColor) {
       const translatedValue = translateFilterValue('hairColor', hairColor);
-      where.hairColor = {
-        equals: translatedValue,
-        mode: 'insensitive',
-      };
+      where.hairColor = translatedValue;
     }
 
     if (eyeColor) {
       const translatedValue = translateFilterValue('eyeColor', eyeColor);
-      where.eyeColor = {
-        equals: translatedValue,
-        mode: 'insensitive',
-      };
+      where.eyeColor = translatedValue;
     }
 
     if (breastSize) {
@@ -261,34 +256,22 @@ export async function GET(request: Request) {
 
     if (bodyType) {
       const translatedValue = translateFilterValue('bodyType', bodyType);
-      where.bodyType = {
-        equals: translatedValue,
-        mode: 'insensitive',
-      };
+      where.bodyType = translatedValue;
     }
 
     if (ethnicity) {
       const translatedValue = translateFilterValue('nationality', ethnicity);
-      where.nationality = {
-        equals: translatedValue,
-        mode: 'insensitive',
-      };
+      where.nationality = translatedValue;
     }
 
     if (tattoo) {
       const translatedValue = translateFilterValue('tattoos', tattoo);
-      where.tattoos = {
-        equals: translatedValue,
-        mode: 'insensitive',
-      };
+      where.tattoos = translatedValue;
     }
 
     if (piercing) {
       const translatedValue = translateFilterValue('piercing', piercing);
-      where.piercing = {
-        equals: translatedValue,
-        mode: 'insensitive',
-      };
+      where.piercing = translatedValue;
     }
 
     // Age range filter

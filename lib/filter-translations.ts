@@ -29,7 +29,7 @@ export const filterValueMappings = {
   bodyType: {
     'Štíhlá': 'slim',
     'Atletická': 'athletic',
-    'Průměrná': 'curvy',
+    'Průměrná': 'average',
     'Kulatá': 'curvy',
     'Plus size': 'plus-size',
   },

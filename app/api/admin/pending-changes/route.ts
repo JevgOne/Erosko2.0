@@ -8,9 +8,13 @@ import path from 'path';
 
 export async function GET(request: Request) {
   try {
+    console.log('[API /admin/pending-changes] GET request received');
+
     const session = await auth();
+    console.log('[API /admin/pending-changes] Session:', session ? { userId: session.user?.id, role: session.user?.role } : null);
 
     if (!session || !session.user) {
+      console.log('[API /admin/pending-changes] No session or user');
       return NextResponse.json({ error: 'Nepřihlášen' }, { status: 401 });
     }
 
@@ -19,9 +23,14 @@ export async function GET(request: Request) {
       where: { id: session.user.id },
     });
 
+    console.log('[API /admin/pending-changes] User found:', user ? { id: user.id, role: user.role } : null);
+
     if (!user || user.role !== UserRole.ADMIN) {
+      console.log('[API /admin/pending-changes] User is not admin');
       return NextResponse.json({ error: 'Nemáte oprávnění' }, { status: 403 });
     }
+
+    console.log('[API /admin/pending-changes] Fetching pending changes...');
 
     // Fetch all pending changes (not just pending status)
     const changes = await prisma.pendingChange.findMany({
@@ -72,10 +81,19 @@ export async function GET(request: Request) {
       },
     });
 
+    console.log('[API /admin/pending-changes] Changes fetched successfully, count:', changes.length);
+
     return NextResponse.json({ changes });
   } catch (error) {
-    console.error('Error fetching pending changes:', error);
-    return NextResponse.json({ error: 'Chyba při načítání změn' }, { status: 500 });
+    console.error('[API /admin/pending-changes] Error fetching pending changes:', error);
+    console.error('[API /admin/pending-changes] Error details:', error instanceof Error ? error.message : String(error));
+    return NextResponse.json(
+      {
+        error: 'Chyba při načítání změn',
+        details: error instanceof Error ? error.message : String(error)
+      },
+      { status: 500 }
+    );
   }
 }
 

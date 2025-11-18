@@ -29,6 +29,7 @@ export default function AdminPanel() {
   const [pendingChanges, setPendingChanges] = useState<any[]>([]);
   const [businessFilter, setBusinessFilter] = useState<'all' | 'pending_approval' | 'pending_verification'>('all');
   const [profileFilter, setProfileFilter] = useState<'all' | 'pending_approval' | 'pending_verification'>('all');
+  const [error, setError] = useState<string | null>(null);
 
   // Bulk selection states
   const [selectedBusinessIds, setSelectedBusinessIds] = useState<string[]>([]);
@@ -110,38 +111,65 @@ export default function AdminPanel() {
   const [selectedSearchTags, setSelectedSearchTags] = useState<string[]>([]); // Selected search tag IDs
 
   useEffect(() => {
-    if (status === 'loading') return;
+    console.log('[Admin Panel] useEffect - status:', status, 'session:', session ? { userId: session.user?.id, role: session.user?.role } : null);
+
+    // CRITICAL: Wait for session to be fully loaded
+    if (status === 'loading') {
+      console.log('[Admin Panel] Session still loading, waiting...');
+      return;
+    }
 
     if (status === 'unauthenticated') {
+      console.log('[Admin Panel] User not authenticated, redirecting to login');
       router.push('/prihlaseni');
+      return;
+    }
+
+    // CRITICAL: Check session is fully populated before proceeding
+    if (status === 'authenticated' && !session?.user?.id) {
+      console.error('[Admin Panel] Session authenticated but user data missing!', session);
+      setError('Session není správně načtena. Zkuste se znovu přihlásit.');
+      setLoading(false);
       return;
     }
 
     // Check if user is admin
     if (session?.user && session.user.role !== 'ADMIN') {
+      console.log('[Admin Panel] User is not admin, redirecting');
       router.push('/inzerent_dashboard');
       return;
     }
 
-    if (session?.user) {
+    // CRITICAL: Only fetch data when session is authenticated AND user data exists
+    if (status === 'authenticated' && session?.user?.id) {
+      console.log('[Admin Panel] Session ready, fetching admin data...');
       fetchAdminData();
     }
-  }, [status, session, router]);
+  }, [status, session?.user?.id, session?.user?.role, router]);
 
   const fetchAdminData = async () => {
     setLoading(true);
+    setError(null); // Clear previous errors
     try {
-      console.log('[Admin Panel] Fetching admin data...');
+      console.log('[Admin Panel] ========== FETCHING ADMIN DATA ==========');
       console.log('[Admin Panel] Current session:', {
         hasSession: !!session,
         userRole: session?.user?.role,
-        userId: session?.user?.id
+        userId: session?.user?.id,
+        userEmail: session?.user?.email
       });
+      console.log('[Admin Panel] Window location:', window.location.href);
+      console.log('[Admin Panel] Cookies:', document.cookie);
 
       const fetchOptions = {
         credentials: 'include' as RequestCredentials,
         cache: 'no-store' as RequestCache,
+        headers: {
+          'Content-Type': 'application/json',
+        },
       };
+
+      console.log('[Admin Panel] Making API calls with options:', fetchOptions);
 
       const [statsRes, usersRes, businessesRes, profilesRes, changesRes, servicesRes, searchTagsRes] = await Promise.all([
         fetch('/api/admin/stats', fetchOptions),
@@ -153,19 +181,25 @@ export default function AdminPanel() {
         fetch('/api/search-tags', fetchOptions),
       ]);
 
-      console.log('[Admin Panel] API responses:', {
-        stats: statsRes.status,
-        users: usersRes.status,
-        businesses: businessesRes.status,
-        profiles: profilesRes.status,
-        changes: changesRes.status
+      console.log('[Admin Panel] API responses received:', {
+        stats: { status: statsRes.status, ok: statsRes.ok },
+        users: { status: usersRes.status, ok: usersRes.ok },
+        businesses: { status: businessesRes.status, ok: businessesRes.ok },
+        profiles: { status: profilesRes.status, ok: profilesRes.ok },
+        changes: { status: changesRes.status, ok: changesRes.ok }
       });
+
+      // Track failed requests
+      const failedRequests: string[] = [];
 
       if (statsRes.ok) {
         const data = await statsRes.json();
+        console.log('[Admin Panel] Stats loaded successfully:', data);
         setStats(data);
       } else {
-        console.error('[Admin Panel] Stats API failed:', statsRes.status, await statsRes.text());
+        const errorText = await statsRes.text();
+        console.error('[Admin Panel] Stats API failed:', statsRes.status, errorText);
+        failedRequests.push(`Stats (${statsRes.status})`);
       }
 
       if (usersRes.ok) {
@@ -173,7 +207,9 @@ export default function AdminPanel() {
         console.log('[Admin Panel] Users loaded:', data.users?.length || 0);
         setUsers(data.users || []);
       } else {
-        console.error('[Admin Panel] Users API failed:', usersRes.status, await usersRes.text());
+        const errorText = await usersRes.text();
+        console.error('[Admin Panel] Users API failed:', usersRes.status, errorText);
+        failedRequests.push(`Users (${usersRes.status})`);
       }
 
       if (businessesRes.ok) {
@@ -181,7 +217,9 @@ export default function AdminPanel() {
         console.log('[Admin Panel] Businesses loaded:', data.businesses?.length || 0);
         setBusinesses(data.businesses || []);
       } else {
-        console.error('[Admin Panel] Businesses API failed:', businessesRes.status, await businessesRes.text());
+        const errorText = await businessesRes.text();
+        console.error('[Admin Panel] Businesses API failed:', businessesRes.status, errorText);
+        failedRequests.push(`Businesses (${businessesRes.status})`);
       }
 
       if (profilesRes.ok) {
@@ -190,7 +228,9 @@ export default function AdminPanel() {
         console.log('[Admin Panel] Profiles loaded:', data.profiles?.length || 0);
         setProfiles(data.profiles || []);
       } else {
-        console.error('[Admin Panel] Profiles API failed:', profilesRes.status, await profilesRes.text());
+        const errorText = await profilesRes.text();
+        console.error('[Admin Panel] Profiles API failed:', profilesRes.status, errorText);
+        failedRequests.push(`Profiles (${profilesRes.status})`);
       }
 
       if (changesRes.ok) {
@@ -198,7 +238,9 @@ export default function AdminPanel() {
         console.log('[Admin Panel] Changes loaded:', data.changes?.length || 0);
         setPendingChanges(data.changes || []);
       } else {
-        console.error('[Admin Panel] Changes API failed:', changesRes.status, await changesRes.text());
+        const errorText = await changesRes.text();
+        console.error('[Admin Panel] Changes API failed:', changesRes.status, errorText);
+        failedRequests.push(`Changes (${changesRes.status})`);
       }
 
       if (servicesRes.ok) {
@@ -206,7 +248,8 @@ export default function AdminPanel() {
         console.log('[Admin Panel] Services loaded:', data.services?.length || 0);
         setAllServices(data.services || []);
       } else {
-        console.error('[Admin Panel] Services API failed:', servicesRes.status, await servicesRes.text());
+        const errorText = await servicesRes.text();
+        console.error('[Admin Panel] Services API failed:', servicesRes.status, errorText);
       }
 
       if (searchTagsRes.ok) {
@@ -214,10 +257,23 @@ export default function AdminPanel() {
         console.log('[Admin Panel] Search tags loaded:', data.tags?.length || 0);
         setAllSearchTags(data.tags || []);
       } else {
-        console.error('[Admin Panel] Search tags API failed:', searchTagsRes.status, await searchTagsRes.text());
+        const errorText = await searchTagsRes.text();
+        console.error('[Admin Panel] Search tags API failed:', searchTagsRes.status, errorText);
       }
+
+      // If critical requests failed, set error state
+      if (failedRequests.length > 0) {
+        const errorMsg = `Nepodařilo se načíst: ${failedRequests.join(', ')}. Zkontrolujte konzoli pro detaily.`;
+        console.error('[Admin Panel] Critical requests failed:', failedRequests);
+        setError(errorMsg);
+      }
+
+      console.log('[Admin Panel] ========== DATA FETCH COMPLETE ==========');
     } catch (error) {
-      console.error('[Admin Panel] Error fetching admin data:', error);
+      console.error('[Admin Panel] CRITICAL ERROR fetching admin data:', error);
+      console.error('[Admin Panel] Error details:', error instanceof Error ? error.message : String(error));
+      console.error('[Admin Panel] Error stack:', error instanceof Error ? error.stack : 'no stack');
+      setError(`Kritická chyba při načítání dat: ${error instanceof Error ? error.message : String(error)}`);
     } finally {
       setLoading(false);
     }
@@ -568,8 +624,28 @@ export default function AdminPanel() {
         <Header />
         <div className="flex items-center justify-center min-h-screen">
           <div className="text-center">
-            <div className="w-16 h-16 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-gray-400">Načítání admin panelu...</p>
+            {error ? (
+              <>
+                <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
+                <p className="text-red-400 text-lg font-semibold mb-2">Chyba při načítání</p>
+                <p className="text-gray-400 mb-4">{error}</p>
+                <button
+                  onClick={() => {
+                    setError(null);
+                    setLoading(true);
+                    fetchAdminData();
+                  }}
+                  className="px-6 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg"
+                >
+                  Zkusit znovu
+                </button>
+              </>
+            ) : (
+              <>
+                <div className="w-16 h-16 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                <p className="text-gray-400">Načítání admin panelu...</p>
+              </>
+            )}
           </div>
         </div>
       </main>

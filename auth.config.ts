@@ -4,6 +4,8 @@ import bcrypt from 'bcryptjs';
 import prisma from '@/lib/prisma';
 import { normalizePhoneNumber } from '@/lib/phone-utils';
 
+// Full auth config with database access (for server-side only)
+// This is used in auth.ts and includes the Credentials provider with database queries
 export default {
   providers: [
     Credentials({
@@ -60,6 +62,9 @@ export default {
   ],
   pages: {
     signIn: '/prihlaseni',
+  },
+  session: {
+    strategy: 'jwt',
   },
   callbacks: {
     async jwt({ token, user }) {

@@ -3,12 +3,17 @@ import type { NextAuthConfig } from 'next-auth';
 // Edge-compatible auth config (without database access)
 // This config is used only in middleware for session validation
 // Authentication logic (with database) is in auth.config.ts
+// IMPORTANT: callbacks and session strategy must match auth.config.ts EXACTLY
 export default {
   providers: [], // Providers are defined in auth.config.ts (server-side only)
   pages: {
     signIn: '/prihlaseni',
   },
+  session: {
+    strategy: 'jwt', // MUST match auth.config.ts
+  },
   callbacks: {
+    // These callbacks MUST be identical to auth.config.ts
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
@@ -24,7 +29,9 @@ export default {
       return session;
     },
     async redirect({ url, baseUrl }) {
+      // Check if user just logged in
       if (url.startsWith(baseUrl)) {
+        // If returning to callback, redirect based on role
         if (url === baseUrl || url === `${baseUrl}/`) {
           return `${baseUrl}/inzerent_dashboard`;
         }

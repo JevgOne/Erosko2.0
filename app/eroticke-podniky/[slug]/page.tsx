@@ -133,8 +133,8 @@ export default async function Page({ params }: PageProps) {
             where: { isMain: true },
             take: 1
           }
-        },
-        take: 6
+        }
+        // No limit - load all profiles
       },
       reviews: {
         orderBy: { createdAt: 'desc' },
@@ -175,9 +175,9 @@ export default async function Page({ params }: PageProps) {
 
     location: {
       address: business.address || mockBusiness.location.address,
-      city: business.city,
-      district: mockBusiness.location.district,
-      region: mockBusiness.location.region,
+      city: business.city.includes('Praha') ? 'Praha' : business.city,
+      district: business.address?.split(',')[1]?.trim() || business.city,
+      region: business.city.includes('Praha') ? 'Praha' : business.city,
       latitude: mockBusiness.location.latitude,
       longitude: mockBusiness.location.longitude,
       parking: business.address !== null,

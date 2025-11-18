@@ -120,7 +120,7 @@ export function businessToBusinessCard(business: BusinessWithPhotos): BusinessCa
     type: mapProfileTypeToBusinessType(business.profileType),
     category: getBusinessCategory(business.profileType),
     description: business.description || '',
-    imageUrl: mainPhoto?.url || '/placeholder-business.jpg',
+    imageUrl: mainPhoto?.url || '/placeholder-business.svg',
     imageAlt: mainPhoto?.alt || business.name,
 
     // Status

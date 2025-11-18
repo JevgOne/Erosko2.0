@@ -59,6 +59,7 @@ export default function BusinessCard({ business, onFavoriteToggle }: BusinessCar
   };
 
   const handleCardClick = () => {
+    // Use slug directly without encoding (already ASCII-safe)
     window.location.href = `/eroticke-podniky/${business.slug}`;
   };
 
@@ -159,31 +160,8 @@ export default function BusinessCard({ business, onFavoriteToggle }: BusinessCar
         {/* Opening hours */}
         {business.openingHours && (
           <div className="business-opening-hours">
-            <div className="business-opening-hours-header">
-              <div className="business-opening-hours-title">
-                <span style={{ fontSize: '1.2rem' }}>🕐</span>
-                <span>Otevírací doba</span>
-              </div>
-              {business.is24_7 ? (
-                <span className="business-status-open">
-                  <span className="business-status-dot" />
-                  24/7
-                </span>
-              ) : isCurrentlyOpen() ? (
-                <span className="business-status-open">
-                  <span className="business-status-dot" />
-                  Otevřeno
-                </span>
-              ) : (
-                <span className="business-status-closed">
-                  <span className="business-status-dot" />
-                  Zavřeno
-                </span>
-              )}
-            </div>
-
             <div className="business-hours-list">
-              {/* Show today's hours */}
+              {/* Show today's hours with status */}
               <div className="business-hours-row">
                 <span className="business-hours-day today">
                   {dayLabels[currentDay]}
@@ -191,6 +169,22 @@ export default function BusinessCard({ business, onFavoriteToggle }: BusinessCar
                 <span className="business-hours-time today">
                   {business.openingHours[currentDay]}
                 </span>
+                {business.is24_7 ? (
+                  <span className="business-status-open" style={{ marginLeft: '8px' }}>
+                    <span className="business-status-dot" />
+                    24/7
+                  </span>
+                ) : isCurrentlyOpen() ? (
+                  <span className="business-status-open" style={{ marginLeft: '8px' }}>
+                    <span className="business-status-dot" />
+                    Otevřeno
+                  </span>
+                ) : (
+                  <span className="business-status-closed" style={{ marginLeft: '8px' }}>
+                    <span className="business-status-dot" />
+                    Zavřeno
+                  </span>
+                )}
               </div>
 
               {/* Expandable week view */}

@@ -13,6 +13,17 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
+// Format phone number for display
+const formatPhone = (phone: string) => {
+  if (!phone) return '';
+  // +420731884923 → +420 731 884 923
+  const cleaned = phone.replace(/\s/g, '');
+  if (cleaned.startsWith('+420')) {
+    return `+420 ${cleaned.slice(4, 7)} ${cleaned.slice(7, 10)} ${cleaned.slice(10)}`;
+  }
+  return phone;
+};
+
 // Profile types with their colors
 const profileTypes = {
   solo: { color: 'bg-purple-500', label: 'SOLO' },
@@ -407,7 +418,7 @@ export default function ProfileDetailPage() {
                   className="flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-primary-500 to-pink-500 rounded-xl font-semibold text-lg hover:shadow-2xl hover:shadow-primary-500/50 transition-all w-full"
                 >
                   <Phone className="w-5 h-5" />
-                  {profile.phone}
+                  {formatPhone(profile.phone)}
                 </a>
 
                 {/* Divider */}

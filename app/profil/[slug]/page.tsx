@@ -567,22 +567,61 @@ export default function ProfileDetailPage() {
 
             {/* Služby Tab */}
             {activeTab === 'sluzby' && (
-              <div className="glass rounded-2xl p-8">
-                <h3 className="text-3xl font-bold mb-6">Nabízené služby</h3>
-                {services.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {services.map((service: any, index: number) => (
-                      <div
-                        key={index}
-                        className="flex items-center gap-3 p-4 bg-dark-800/30 border border-white/10 rounded-xl"
-                      >
-                        <CheckCircle className="w-5 h-5 text-green-500" />
-                        <span className="text-gray-200">{service.label}</span>
-                      </div>
-                    ))}
+              <div className="space-y-6">
+                <div className="glass rounded-2xl p-8">
+                  <h3 className="text-3xl font-bold mb-6">Nabízené služby</h3>
+                  {services.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {services.map((service: any, index: number) => (
+                        <div
+                          key={index}
+                          className="flex items-center gap-3 p-4 bg-dark-800/30 border border-white/10 rounded-xl"
+                        >
+                          <CheckCircle className="w-5 h-5 text-green-500" />
+                          <span className="text-gray-200">{service.label}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-gray-400">Žádné služby nejsou specifikovány.</p>
+                  )}
+                </div>
+
+                {/* Role / Fantasy */}
+                {profile?.role && (
+                  <div className="glass rounded-2xl p-8">
+                    <h3 className="text-3xl font-bold mb-6">Role & Fantasy</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {profile.role.split(',').map((role: string, index: number) => {
+                        const roleMap: Record<string, string> = {
+                          'schoolgirl': 'Školačka',
+                          'secretary': 'Sekretářka',
+                          'nurse': 'Zdravotní sestra',
+                          'teacher': 'Učitelka',
+                          'maid': 'Pokojská',
+                          'stewardess': 'Letuška',
+                          'police': 'Policistka',
+                          'student': 'Studentka',
+                          'boss': 'Šéfka',
+                          'neighbor': 'Sousedka',
+                          'librarian': 'Knihovnice',
+                          'athlete': 'Sportovkyně',
+                        };
+                        const roleName = role.trim();
+                        const czechLabel = roleMap[roleName] || roleName;
+
+                        return (
+                          <div
+                            key={index}
+                            className="flex items-center gap-3 p-4 bg-gradient-to-r from-pink-500/10 to-purple-500/10 border border-pink-500/20 rounded-xl"
+                          >
+                            <Sparkles className="w-5 h-5 text-pink-400" />
+                            <span className="text-gray-200">{czechLabel}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
-                ) : (
-                  <p className="text-gray-400">Žádné služby nejsou specifikovány.</p>
                 )}
               </div>
             )}

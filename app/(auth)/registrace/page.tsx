@@ -62,16 +62,10 @@ export default function RegistracePage() {
   const [selectedEquipment, setSelectedEquipment] = useState<string[]>([]);
   const [selectedSearchTags, setSelectedSearchTags] = useState<string[]>([]);
   const [availableSearchTags, setAvailableSearchTags] = useState<any[]>([]);
+  const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
 
   // Detailní údaje pro SOLO profil
   const [description, setDescription] = useState('');
-  const [height, setHeight] = useState('');
-  const [weight, setWeight] = useState('');
-  const [bust, setBust] = useState('');
-  const [waist, setWaist] = useState('');
-  const [hips, setHips] = useState('');
-  const [hairColor, setHairColor] = useState('');
-  const [eyeColor, setEyeColor] = useState('');
   const [photos, setPhotos] = useState<File[]>([]);
   const [photoPreviews, setPhotoPreviews] = useState<string[]>([]);
 
@@ -439,13 +433,7 @@ export default function RegistracePage() {
               // Detailní údaje pro SOLO
               ...(profileType === 'SOLO' && {
                 description,
-                height: height ? parseInt(height) : undefined,
-                weight: weight ? parseInt(weight) : undefined,
-                bust: bust ? parseInt(bust) : undefined,
-                waist: waist ? parseInt(waist) : undefined,
-                hips: hips ? parseInt(hips) : undefined,
-                hairColor,
-                eyeColor,
+                role: selectedRoles.length > 0 ? selectedRoles.join(', ') : undefined,
               }),
               // Detailní údaje pro PODNIK
               ...(profileType !== 'SOLO' && {
@@ -1488,6 +1476,49 @@ export default function RegistracePage() {
                           </div>
                         </div>
 
+                        {/* Role / Fantasy */}
+                        <div>
+                          <label className="block text-sm font-medium mb-3">Role & Fantasy (volitelné)</label>
+                          <p className="text-xs text-gray-400 mb-3">
+                            Vyberte role, které nabízíte (lze vybrat více)
+                          </p>
+                          <div className="grid grid-cols-2 gap-3">
+                            {[
+                              { value: 'schoolgirl', label: 'Školačka' },
+                              { value: 'secretary', label: 'Sekretářka' },
+                              { value: 'nurse', label: 'Zdravotní sestra' },
+                              { value: 'teacher', label: 'Učitelka' },
+                              { value: 'maid', label: 'Pokojská' },
+                              { value: 'stewardess', label: 'Letuška' },
+                              { value: 'police', label: 'Policistka' },
+                              { value: 'student', label: 'Studentka' },
+                              { value: 'boss', label: 'Šéfka' },
+                              { value: 'neighbor', label: 'Sousedka' },
+                              { value: 'librarian', label: 'Knihovnice' },
+                              { value: 'athlete', label: 'Sportovkyně' },
+                            ].map((role) => (
+                              <label
+                                key={role.value}
+                                className="flex items-center space-x-2 p-2 hover:bg-white/5 rounded cursor-pointer"
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={selectedRoles.includes(role.value)}
+                                  onChange={(e) => {
+                                    if (e.target.checked) {
+                                      setSelectedRoles([...selectedRoles, role.value]);
+                                    } else {
+                                      setSelectedRoles(selectedRoles.filter(r => r !== role.value));
+                                    }
+                                  }}
+                                  className="w-4 h-4"
+                                />
+                                <span className="text-sm">{role.label}</span>
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+
                         {/* Oblíbené vyhledávání - Search Tags */}
                         {availableSearchTags.length > 0 && (
                           <div>
@@ -1601,68 +1632,6 @@ export default function RegistracePage() {
                             rows={4}
                             placeholder="Napiš něco o sobě a svých službách..."
                           />
-                        </div>
-
-                        {/* Fyzické údaje */}
-                        <div>
-                          <label className="block text-sm font-medium mb-2">
-                            Fyzické údaje (volitelné)
-                          </label>
-                          <div className="grid grid-cols-3 gap-4">
-                            <input
-                              type="number"
-                              value={height}
-                              onChange={(e) => setHeight(e.target.value)}
-                              className="px-4 py-3 rounded-xl bg-dark-800/50 backdrop-blur border border-white/20 focus:border-primary-500 focus:outline-none transition-all"
-                              placeholder="Výška (cm)"
-                            />
-                            <input
-                              type="number"
-                              value={weight}
-                              onChange={(e) => setWeight(e.target.value)}
-                              className="px-4 py-3 rounded-xl bg-dark-800/50 backdrop-blur border border-white/20 focus:border-primary-500 focus:outline-none transition-all"
-                              placeholder="Váha (kg)"
-                            />
-                            <input
-                              type="number"
-                              value={bust}
-                              onChange={(e) => setBust(e.target.value)}
-                              className="px-4 py-3 rounded-xl bg-dark-800/50 backdrop-blur border border-white/20 focus:border-primary-500 focus:outline-none transition-all"
-                              placeholder="Prsa (cm)"
-                            />
-                          </div>
-                          <div className="grid grid-cols-3 gap-4 mt-4">
-                            <input
-                              type="number"
-                              value={waist}
-                              onChange={(e) => setWaist(e.target.value)}
-                              className="px-4 py-3 rounded-xl bg-dark-800/50 backdrop-blur border border-white/20 focus:border-primary-500 focus:outline-none transition-all"
-                              placeholder="Pas (cm)"
-                            />
-                            <input
-                              type="number"
-                              value={hips}
-                              onChange={(e) => setHips(e.target.value)}
-                              className="px-4 py-3 rounded-xl bg-dark-800/50 backdrop-blur border border-white/20 focus:border-primary-500 focus:outline-none transition-all"
-                              placeholder="Boky (cm)"
-                            />
-                          </div>
-                          <div className="grid grid-cols-2 gap-4 mt-4">
-                            <input
-                              type="text"
-                              value={hairColor}
-                              onChange={(e) => setHairColor(e.target.value)}
-                              className="px-4 py-3 rounded-xl bg-dark-800/50 backdrop-blur border border-white/20 focus:border-primary-500 focus:outline-none transition-all"
-                              placeholder="Barva vlasů"
-                            />
-                            <input
-                              type="text"
-                              value={eyeColor}
-                              onChange={(e) => setEyeColor(e.target.value)}
-                              className="px-4 py-3 rounded-xl bg-dark-800/50 backdrop-blur border border-white/20 focus:border-primary-500 focus:outline-none transition-all"
-                              placeholder="Barva očí"
-                            />
-                          </div>
                         </div>
                       </>
                     )}

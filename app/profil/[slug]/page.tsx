@@ -481,32 +481,6 @@ export default function ProfileDetailPage() {
             </div>
           </div>
 
-          {/* 🔥 NABÍZENÉ SLUŽBY */}
-          {services.length > 0 && (
-            <div className="glass rounded-2xl p-8 mt-8 border-2 border-primary-500/30">
-              <h2 className="text-4xl font-bold mb-6 text-center gradient-text flex items-center justify-center gap-3">
-                <CheckCircle className="w-10 h-10 text-primary-500" />
-                Nabízené služby
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
-                {services.map((service: any, index: number) => (
-                  <Link
-                    key={index}
-                    href={service.url}
-                    className="group flex items-center gap-4 p-4 bg-dark-800/30 border border-white/10 rounded-xl hover:bg-dark-800/50 hover:border-primary-500/50 transition-all"
-                  >
-                    <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <CheckCircle className="w-6 h-6 text-white" />
-                    </div>
-                    <span className="text-lg font-medium group-hover:text-primary-400 transition-colors">
-                      {service.label}
-                    </span>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          )}
-
           {/* Tab Navigation */}
           <div className="glass rounded-2xl p-2 mt-8 overflow-x-auto">
             <div className="flex gap-2 min-w-max">

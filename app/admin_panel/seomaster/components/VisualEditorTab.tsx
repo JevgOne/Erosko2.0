@@ -366,6 +366,86 @@ export default function VisualEditorTab() {
             {/* Content */}
             <div>
               <label className="block text-sm font-medium mb-2">Obsah (HTML podporováno)</label>
+
+              {/* HTML Quick Insert Buttons */}
+              <div className="mb-2 flex flex-wrap gap-1">
+                <button
+                  type="button"
+                  onClick={() => setEditingBlock({ ...editingBlock, content: editingBlock.content + '\n<p>Text</p>' })}
+                  className="px-2 py-1 text-xs bg-dark-700 hover:bg-dark-600 rounded border border-white/10"
+                  title="Přidat odstavec"
+                >
+                  &lt;p&gt;
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setEditingBlock({ ...editingBlock, content: editingBlock.content + '\n<h2>Nadpis</h2>' })}
+                  className="px-2 py-1 text-xs bg-dark-700 hover:bg-dark-600 rounded border border-white/10"
+                  title="Přidat nadpis"
+                >
+                  &lt;h2&gt;
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setEditingBlock({ ...editingBlock, content: editingBlock.content + '\n<h3>Podnadpis</h3>' })}
+                  className="px-2 py-1 text-xs bg-dark-700 hover:bg-dark-600 rounded border border-white/10"
+                  title="Přidat podnadpis"
+                >
+                  &lt;h3&gt;
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setEditingBlock({ ...editingBlock, content: editingBlock.content + '<strong>Tučný text</strong>' })}
+                  className="px-2 py-1 text-xs bg-dark-700 hover:bg-dark-600 rounded border border-white/10"
+                  title="Tučné"
+                >
+                  <strong>B</strong>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setEditingBlock({ ...editingBlock, content: editingBlock.content + '<em>Kurzíva</em>' })}
+                  className="px-2 py-1 text-xs bg-dark-700 hover:bg-dark-600 rounded border border-white/10"
+                  title="Kurzíva"
+                >
+                  <em>I</em>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setEditingBlock({ ...editingBlock, content: editingBlock.content + '\n<a href="https://erosko.cz" className="text-primary-400 hover:underline">Odkaz</a>' })}
+                  className="px-2 py-1 text-xs bg-dark-700 hover:bg-dark-600 rounded border border-white/10"
+                  title="Přidat odkaz"
+                >
+                  Link
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const url = prompt('URL obrázku:');
+                    if (url) setEditingBlock({ ...editingBlock, content: editingBlock.content + `\n<img src="${url}" alt="Obrázek" className="w-full rounded-lg my-4" />` });
+                  }}
+                  className="px-2 py-1 text-xs bg-primary-600 hover:bg-primary-500 rounded border border-primary-400"
+                  title="Vložit obrázek"
+                >
+                  Obrázek
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setEditingBlock({ ...editingBlock, content: editingBlock.content + '\n<ul>\n  <li>Položka 1</li>\n  <li>Položka 2</li>\n</ul>' })}
+                  className="px-2 py-1 text-xs bg-dark-700 hover:bg-dark-600 rounded border border-white/10"
+                  title="Seznam"
+                >
+                  • List
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setEditingBlock({ ...editingBlock, content: editingBlock.content + '\n<div className="p-4 bg-primary-500/10 border border-primary-500/30 rounded-lg">\n  <p>Zvýrazněný box</p>\n</div>' })}
+                  className="px-2 py-1 text-xs bg-dark-700 hover:bg-dark-600 rounded border border-white/10"
+                  title="Zvýrazněný box"
+                >
+                  Box
+                </button>
+              </div>
+
               <textarea
                 value={editingBlock.content}
                 onChange={(e) => setEditingBlock({ ...editingBlock, content: e.target.value })}
@@ -374,7 +454,7 @@ export default function VisualEditorTab() {
                 placeholder="<p>Váš text zde...</p>"
               />
               <div className="text-xs text-gray-400 mt-1">
-                HTML tagy: &lt;p&gt;, &lt;h2&gt;, &lt;strong&gt;, &lt;a&gt;, atd.
+                HTML tagy: &lt;p&gt;, &lt;h2&gt;, &lt;h3&gt;, &lt;strong&gt;, &lt;em&gt;, &lt;a&gt;, &lt;img&gt;, &lt;ul&gt;, &lt;li&gt;, &lt;div&gt;
               </div>
             </div>
 

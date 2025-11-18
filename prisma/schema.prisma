@@ -179,6 +179,9 @@ model Business {
   @@index([verified])
   @@index([approved, verified])
   @@index([ownerId])
+  @@index([rating])
+  @@index([viewCount])
+  @@index([createdAt])
 }
 
 model Profile {
@@ -296,6 +299,9 @@ model Profile {
   @@index([verified])
   @@index([approved, verified])
   @@index([ownerId])
+  @@index([rating])
+  @@index([viewCount])
+  @@index([createdAt])
 }
 
 model Photo {

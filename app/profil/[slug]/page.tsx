@@ -1,7 +1,10 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
+import Image from 'next/image';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ProfileSchema from '@/components/ProfileSchema';
@@ -9,7 +12,7 @@ import SearchBar from '@/components/SearchBar';
 import {
   Star, MapPin, CheckCircle, Phone, Heart, MessageCircle,
   Clock, Shield, Award, Video, Sparkles, ChevronLeft,
-  ChevronRight, X
+  ChevronRight, X, Eye
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -90,6 +93,15 @@ export default function ProfileDetailPage() {
       fetchProfile();
     }
   }, [slug]);
+
+  // Track profile view
+  useEffect(() => {
+    if (profile?.id) {
+      fetch(`/api/profiles/${profile.id}/view`, { method: 'POST' }).catch(err =>
+        console.error('Failed to track view:', err)
+      );
+    }
+  }, [profile?.id]);
 
   // Gallery navigation
   const nextPhoto = () => {
@@ -229,10 +241,14 @@ export default function ProfileDetailPage() {
             <ChevronLeft className="w-6 h-6" />
           </button>
 
-          <img
+          <Image
             src={currentPhoto?.url}
             alt={`${profile.name} ${currentPhotoIndex + 1}`}
+            width={1200}
+            height={1600}
             className="max-w-full max-h-full object-contain"
+            quality={90}
+            priority
           />
 
           <button
@@ -278,10 +294,14 @@ export default function ProfileDetailPage() {
                 className="relative h-[600px] rounded-3xl overflow-hidden glass group cursor-pointer bg-gradient-to-br from-[#1a1a1a] to-[#0d0d0d]"
                 onClick={() => setLightboxOpen(true)}
               >
-                <img
+                <Image
                   src={currentPhoto?.url}
                   alt={profile.name}
-                  className="w-full h-full object-contain"
+                  fill
+                  className="object-contain"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 66vw, 800px"
+                  quality={85}
+                  priority
                 />
 
                 {/* Photo Counter */}
@@ -329,10 +349,13 @@ export default function ProfileDetailPage() {
                         i === currentPhotoIndex ? 'ring-2 ring-primary-500' : 'hover:ring-2 hover:ring-primary-500/50'
                       }`}
                     >
-                      <img
+                      <Image
                         src={photo.url}
                         alt={`${profile.name} ${i + 1}`}
-                        className="w-full h-full object-contain"
+                        fill
+                        className="object-contain"
+                        sizes="100px"
+                        quality={75}
                       />
                     </div>
                   ))}
@@ -376,6 +399,14 @@ export default function ProfileDetailPage() {
                   </div>
                   <span className="text-sm text-gray-400">(0 recenzí)</span>
                 </div>
+
+                {/* View Count */}
+                {profile.viewCount > 0 && (
+                  <div className="flex items-center gap-2 text-gray-400">
+                    <Eye className="w-4 h-4" />
+                    <span className="text-sm">Zobrazeno {profile.viewCount.toLocaleString('cs-CZ')}×</span>
+                  </div>
+                )}
 
                 {/* Quick Stats */}
                 <div className="grid grid-cols-2 gap-3 pt-4 border-t border-white/10">

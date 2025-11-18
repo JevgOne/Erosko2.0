@@ -59,7 +59,7 @@ export default function ProfileCard({ card, onFavoriteToggle }: ProfileCardProps
           <div className="status-left">
             {card.isNew && (
               <div className="badge-new">
-                Nový profil
+                NOVÉ
               </div>
             )}
           </div>

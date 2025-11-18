@@ -27,6 +27,11 @@ export function profileToCard(
   const imageUrl = mainPhoto?.url || '/placeholder-profile.jpg';
   const imageAlt = mainPhoto?.alt || `${profile.name} - ${profile.city}`;
 
+  // Check if profile is new (created within last 7 days)
+  const isNew = profile.createdAt
+    ? new Date(profile.createdAt) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+    : false;
+
   return {
     id: profile.id,
     name: profile.name,
@@ -36,7 +41,7 @@ export function profileToCard(
     imageUrl,
     imageAlt,
 
-    isNew: profile.isNew,
+    isNew,
     isOnline: profile.isOnline,
     isVerified: profile.verified,
 
@@ -104,6 +109,11 @@ export function businessToCard(
   const imageUrl = mainPhoto?.url || '/placeholder-business.jpg';
   const imageAlt = mainPhoto?.alt || `${business.name} - ${business.city}`;
 
+  // Check if business is new (created within last 7 days)
+  const isNew = business.createdAt
+    ? new Date(business.createdAt) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+    : false;
+
   return {
     id: business.id,
     name: business.name,
@@ -113,7 +123,7 @@ export function businessToCard(
     imageUrl,
     imageAlt,
 
-    isNew: business.isNew,
+    isNew,
     isOnline: true, // Businesses are always "online"
     isVerified: business.verified,
 

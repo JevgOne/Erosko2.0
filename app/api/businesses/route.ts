@@ -26,23 +26,49 @@ export async function GET(request: Request) {
       where.profileType = type;
     }
 
-    const [businesses, total] = await Promise.all([
-      prisma.business.findMany({
-        where,
-        include: {
-          photos: true,
-          profiles: {
-            take: 3, // Show first 3 profiles for preview
+    // First, get businesses with profiles count for proper ordering
+    const allBusinesses = await prisma.business.findMany({
+      where,
+      include: {
+        photos: true,
+        profiles: {
+          take: 3, // Show first 3 profiles for preview
+        },
+        _count: {
+          select: {
+            profiles: true,
           },
         },
-        orderBy: {
-          createdAt: 'desc',
-        },
-        skip,
-        take: limit,
-      }),
-      prisma.business.count({ where }),
-    ]);
+      },
+    });
+
+    // Sort: businesses WITH profiles first (by profile count DESC), then businesses WITHOUT profiles
+    const sortedBusinesses = allBusinesses.sort((a, b) => {
+      const aCount = a._count.profiles;
+      const bCount = b._count.profiles;
+
+      // Both have profiles - sort by count DESC
+      if (aCount > 0 && bCount > 0) {
+        return bCount - aCount;
+      }
+
+      // a has profiles, b doesn't - a comes first
+      if (aCount > 0 && bCount === 0) {
+        return -1;
+      }
+
+      // b has profiles, a doesn't - b comes first
+      if (aCount === 0 && bCount > 0) {
+        return 1;
+      }
+
+      // Neither has profiles - keep original order
+      return 0;
+    });
+
+    // Apply pagination after sorting
+    const total = sortedBusinesses.length;
+    const businesses = sortedBusinesses.slice(skip, skip + limit);
 
     return NextResponse.json({
       businesses,

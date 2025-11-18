@@ -8,6 +8,13 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: Request) {
   try {
     console.log('[API /admin/businesses] Request received');
+
+    // Parse query parameters
+    const { searchParams } = new URL(request.url);
+    const approvedParam = searchParams.get('approved');
+    const approvedFilter = approvedParam === 'true' ? true : approvedParam === 'false' ? false : undefined;
+
+    console.log('[API /admin/businesses] Query params:', { approved: approvedParam, filter: approvedFilter });
     console.log('[API /admin/businesses] Environment check:', {
       hasDbUrl: !!process.env.DATABASE_URL,
       hasTursoUrl: !!process.env.TURSO_DATABASE_URL,
@@ -40,15 +47,26 @@ export async function GET(request: Request) {
 
     console.log('[API /admin/businesses] Fetching businesses...');
 
+    // Build where clause based on filter
+    const whereClause = approvedFilter !== undefined ? { approved: approvedFilter } : {};
+
     // First check total count
-    const totalCount = await prisma.business.count();
-    console.log('[API /admin/businesses] Total business count in DB:', totalCount);
+    const totalCount = await prisma.business.count({ where: whereClause });
+    console.log('[API /admin/businesses] Total business count in DB:', totalCount, 'with filter:', whereClause);
 
     const businesses = await prisma.business.findMany({
-      orderBy: { createdAt: 'desc' },
-      include: {
+      where: whereClause,
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        city: true,
+        approved: true,
+        verified: true,
+        createdAt: true,
         photos: {
           orderBy: { order: 'asc' },
+          take: 1,
         },
         owner: {
           select: {
@@ -63,6 +81,7 @@ export async function GET(request: Request) {
           },
         },
       },
+      orderBy: { createdAt: 'desc' },
     });
 
     console.log('[API /admin/businesses] Businesses fetched successfully, count:', businesses.length);

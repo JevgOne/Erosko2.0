@@ -5,9 +5,16 @@ import { UserRole } from '@prisma/client';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     console.log('[API /admin/profiles] Request received');
+
+    // Parse query parameters
+    const { searchParams } = new URL(request.url);
+    const approvedParam = searchParams.get('approved');
+    const approvedFilter = approvedParam === 'true' ? true : approvedParam === 'false' ? false : undefined;
+
+    console.log('[API /admin/profiles] Query params:', { approved: approvedParam, filter: approvedFilter });
     console.log('[API /admin/profiles] Environment check:', {
       hasDbUrl: !!process.env.DATABASE_URL,
       hasTursoUrl: !!process.env.TURSO_DATABASE_URL,
@@ -37,13 +44,24 @@ export async function GET() {
 
     console.log('[API /admin/profiles] Fetching profiles...');
 
-    // First check total count
-    const totalCount = await prisma.profile.count();
-    console.log('[API /admin/profiles] Total profile count in DB:', totalCount);
+    // Build where clause based on filter
+    const whereClause = approvedFilter !== undefined ? { approved: approvedFilter } : {};
 
-    // Fetch all profiles with owner and business info
+    // First check total count
+    const totalCount = await prisma.profile.count({ where: whereClause });
+    console.log('[API /admin/profiles] Total profile count in DB:', totalCount, 'with filter:', whereClause);
+
+    // Fetch profiles with owner and business info
     const profiles = await prisma.profile.findMany({
-      include: {
+      where: whereClause,
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        city: true,
+        approved: true,
+        verified: true,
+        createdAt: true,
         owner: {
           select: {
             email: true,

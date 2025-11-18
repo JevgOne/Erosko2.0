@@ -551,8 +551,9 @@ export default function BusinessDetailPage({ business }: BusinessDetailPageProps
                     src={business.media.photos[currentPhotoIndex].url}
                     alt={`${business.name} - foto ${currentPhotoIndex + 1}`}
                     fill
-                    className="object-cover"
+                    className="object-contain"
                     priority={currentPhotoIndex === 0}
+                    unoptimized
                   />
                 </div>
 
@@ -714,15 +715,24 @@ export default function BusinessDetailPage({ business }: BusinessDetailPageProps
                 {activeTab === 'profiles' && (
                   <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
                     {business.profiles.map((profile) => (
-                      <div
+                      <a
                         key={profile.id}
+                        href={`/profil/${profile.slug}`}
                         className="bg-[#1a1a1a] rounded-2xl border border-[#2a2a2a] overflow-hidden cursor-pointer transition-all hover:-translate-y-1.5 hover:shadow-[0_12px_32px_rgba(0,0,0,0.5)] hover:border-[#333]"
                       >
                         {/* Image */}
                         <div className="relative aspect-[3/4] bg-gradient-to-br from-[#2d3561] to-[#1a1f3a]">
-                          <div className="absolute inset-0 flex items-center justify-center text-5xl">
-                            👩
-                          </div>
+                          {profile.photo ? (
+                            <img
+                              src={profile.photo}
+                              alt={profile.name}
+                              className="absolute inset-0 w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="absolute inset-0 flex items-center justify-center text-5xl">
+                              👩
+                            </div>
+                          )}
 
                           {/* Badges */}
                           {profile.isNew && (
@@ -773,7 +783,7 @@ export default function BusinessDetailPage({ business }: BusinessDetailPageProps
                             📞 Zobrazit kontakt
                           </button>
                         </div>
-                      </div>
+                      </a>
                     ))}
                   </div>
                 )}

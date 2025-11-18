@@ -275,15 +275,14 @@ export default function ProfileDetailPage() {
             <div className="lg:col-span-2 relative">
               {/* Main Image */}
               <div
-                className="relative h-[600px] rounded-3xl overflow-hidden glass group cursor-pointer"
+                className="relative h-[600px] rounded-3xl overflow-hidden glass group cursor-pointer bg-gradient-to-br from-[#1a1a1a] to-[#0d0d0d]"
                 onClick={() => setLightboxOpen(true)}
               >
                 <img
                   src={currentPhoto?.url}
                   alt={profile.name}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain"
                 />
-                <div className="absolute inset-0 bg-gradient-to-br from-primary-500/20 to-purple-500/20"></div>
 
                 {/* Photo Counter */}
                 <div className="absolute top-4 left-4 bg-black/50 backdrop-blur-sm px-3 py-1.5 rounded-full text-sm font-semibold">
@@ -326,14 +325,14 @@ export default function ProfileDetailPage() {
                     <div
                       key={photo.id || i}
                       onClick={() => setCurrentPhotoIndex(i)}
-                      className={`relative h-20 md:h-24 rounded-xl overflow-hidden glass cursor-pointer transition-all ${
+                      className={`relative h-20 md:h-24 rounded-xl overflow-hidden glass cursor-pointer transition-all bg-gradient-to-br from-[#1a1a1a] to-[#0d0d0d] ${
                         i === currentPhotoIndex ? 'ring-2 ring-primary-500' : 'hover:ring-2 hover:ring-primary-500/50'
                       }`}
                     >
                       <img
                         src={photo.url}
                         alt={`${profile.name} ${i + 1}`}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-contain"
                       />
                     </div>
                   ))}

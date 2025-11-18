@@ -1,7 +1,10 @@
 import type { NextAuthConfig } from 'next-auth';
 
 // Edge-compatible auth config (without database access)
+// This config is used only in middleware for session validation
+// Authentication logic (with database) is in auth.config.ts
 export default {
+  providers: [], // Providers are defined in auth.config.ts (server-side only)
   pages: {
     signIn: '/prihlaseni',
   },

@@ -105,6 +105,12 @@ export async function GET(request: Request) {
               email: true,
             },
           },
+          _count: {
+            select: {
+              profiles: true,
+              reviews: true,
+            },
+          },
         },
       }),
       prisma.profile.findMany({

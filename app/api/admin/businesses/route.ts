@@ -61,12 +61,17 @@ export async function GET(request: Request) {
         name: true,
         slug: true,
         city: true,
+        phone: true,
+        email: true,
+        description: true,
+        address: true,
+        profileType: true,
+        rating: true,
         approved: true,
         verified: true,
         createdAt: true,
         photos: {
           orderBy: { order: 'asc' },
-          take: 1,
         },
         owner: {
           select: {

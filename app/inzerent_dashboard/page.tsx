@@ -1340,82 +1340,122 @@ export default function InzerentDashboard() {
                 </div>
 
                 {/* Další vlastnosti - grid */}
-                <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-6">
                   {/* Barva vlasů */}
                   <div>
-                    <label className="block text-sm font-medium mb-2">
+                    <label className="block text-sm font-medium mb-3">
                       Barva vlasů
                     </label>
-                    <select
-                      value={formData.hairColor}
-                      onChange={(e) => setFormData({ ...formData, hairColor: e.target.value })}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary-400 transition-colors"
-                    >
-                      <option value="">Vyberte...</option>
-                      <option value="blonde">Blond</option>
-                      <option value="brunette">Hnědá</option>
-                      <option value="black">Černá</option>
-                      <option value="red">Zrzavá</option>
-                      <option value="other">Jiná</option>
-                    </select>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                      {[
+                        { value: 'blonde', label: 'Blond' },
+                        { value: 'brunette', label: 'Hnědá' },
+                        { value: 'black', label: 'Černá' },
+                        { value: 'red', label: 'Zrzavá' },
+                        { value: 'other', label: 'Jiná' }
+                      ].map(option => (
+                        <button
+                          key={option.value}
+                          type="button"
+                          onClick={() => setFormData({ ...formData, hairColor: option.value })}
+                          className={`px-4 py-3 rounded-xl font-medium text-sm transition-all ${
+                            formData.hairColor === option.value
+                              ? 'bg-gradient-to-r from-primary-500 to-pink-500 text-white shadow-lg'
+                              : 'glass border border-white/10 text-gray-300 hover:bg-white/10'
+                          }`}
+                        >
+                          {option.label}
+                        </button>
+                      ))}
+                    </div>
                   </div>
 
                   {/* Typ prsou */}
                   <div>
-                    <label className="block text-sm font-medium mb-2">
+                    <label className="block text-sm font-medium mb-3">
                       Typ prsou
                     </label>
-                    <select
-                      value={formData.breastType}
-                      onChange={(e) => setFormData({ ...formData, breastType: e.target.value })}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary-400 transition-colors"
-                    >
-                      <option value="">Vyberte...</option>
-                      <option value="natural">Přírodní</option>
-                      <option value="silicone">Silikonová</option>
-                    </select>
+                    <div className="grid grid-cols-2 gap-2">
+                      {[
+                        { value: 'natural', label: 'Přírodní' },
+                        { value: 'silicone', label: 'Silikonová' }
+                      ].map(option => (
+                        <button
+                          key={option.value}
+                          type="button"
+                          onClick={() => setFormData({ ...formData, breastType: option.value })}
+                          className={`px-4 py-3 rounded-xl font-medium text-sm transition-all ${
+                            formData.breastType === option.value
+                              ? 'bg-gradient-to-r from-primary-500 to-pink-500 text-white shadow-lg'
+                              : 'glass border border-white/10 text-gray-300 hover:bg-white/10'
+                          }`}
+                        >
+                          {option.label}
+                        </button>
+                      ))}
+                    </div>
                   </div>
 
                   {/* Role */}
                   <div>
-                    <label className="block text-sm font-medium mb-2">
+                    <label className="block text-sm font-medium mb-3">
                       Role
                     </label>
-                    <select
-                      value={formData.role}
-                      onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary-400 transition-colors"
-                    >
-                      <option value="">Vyberte...</option>
-                      <option value="active">Aktivní</option>
-                      <option value="passive">Pasivní</option>
-                      <option value="switch">Switch</option>
-                      <option value="dominant">Dominantní</option>
-                      <option value="submissive">Submisivní</option>
-                    </select>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                      {[
+                        { value: 'active', label: 'Aktivní' },
+                        { value: 'passive', label: 'Pasivní' },
+                        { value: 'switch', label: 'Switch' },
+                        { value: 'dominant', label: 'Dominantní' },
+                        { value: 'submissive', label: 'Submisivní' }
+                      ].map(option => (
+                        <button
+                          key={option.value}
+                          type="button"
+                          onClick={() => setFormData({ ...formData, role: option.value })}
+                          className={`px-4 py-3 rounded-xl font-medium text-sm transition-all ${
+                            formData.role === option.value
+                              ? 'bg-gradient-to-r from-primary-500 to-pink-500 text-white shadow-lg'
+                              : 'glass border border-white/10 text-gray-300 hover:bg-white/10'
+                          }`}
+                        >
+                          {option.label}
+                        </button>
+                      ))}
+                    </div>
                   </div>
 
                   {/* Národnost */}
                   <div>
-                    <label className="block text-sm font-medium mb-2">
+                    <label className="block text-sm font-medium mb-3">
                       Národnost
                     </label>
-                    <select
-                      value={formData.nationality}
-                      onChange={(e) => setFormData({ ...formData, nationality: e.target.value })}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary-400 transition-colors"
-                    >
-                      <option value="">Vyberte...</option>
-                      <option value="czech">Česká</option>
-                      <option value="slovak">Slovenská</option>
-                      <option value="polish">Polská</option>
-                      <option value="ukrainian">Ukrajinská</option>
-                      <option value="russian">Ruská</option>
-                      <option value="romanian">Rumunská</option>
-                      <option value="bulgarian">Bulharská</option>
-                      <option value="hungarian">Maďarská</option>
-                      <option value="other">Jiná</option>
-                    </select>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                      {[
+                        { value: 'czech', label: 'Česká' },
+                        { value: 'slovak', label: 'Slovenská' },
+                        { value: 'polish', label: 'Polská' },
+                        { value: 'ukrainian', label: 'Ukrajinská' },
+                        { value: 'russian', label: 'Ruská' },
+                        { value: 'romanian', label: 'Rumunská' },
+                        { value: 'bulgarian', label: 'Bulharská' },
+                        { value: 'hungarian', label: 'Maďarská' },
+                        { value: 'other', label: 'Jiná' }
+                      ].map(option => (
+                        <button
+                          key={option.value}
+                          type="button"
+                          onClick={() => setFormData({ ...formData, nationality: option.value })}
+                          className={`px-4 py-3 rounded-xl font-medium text-sm transition-all ${
+                            formData.nationality === option.value
+                              ? 'bg-gradient-to-r from-primary-500 to-pink-500 text-white shadow-lg'
+                              : 'glass border border-white/10 text-gray-300 hover:bg-white/10'
+                          }`}
+                        >
+                          {option.label}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
 
@@ -1710,135 +1750,205 @@ export default function InzerentDashboard() {
                 </div>
 
                 {/* Další vlastnosti - grid */}
-                <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-6">
                   {/* Barva vlasů */}
                   <div>
-                    <label className="block text-sm font-medium mb-2">
+                    <label className="block text-sm font-medium mb-3">
                       Barva vlasů
                     </label>
-                    <select
-                      value={formData.hairColor}
-                      onChange={(e) => setFormData({ ...formData, hairColor: e.target.value })}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary-400 transition-colors"
-                    >
-                      <option value="">Vyberte...</option>
-                      <option value="blonde">Blond</option>
-                      <option value="brunette">Hnědá</option>
-                      <option value="black">Černá</option>
-                      <option value="red">Zrzavá</option>
-                      <option value="other">Jiná</option>
-                    </select>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                      {[
+                        { value: 'blonde', label: 'Blond' },
+                        { value: 'brunette', label: 'Hnědá' },
+                        { value: 'black', label: 'Černá' },
+                        { value: 'red', label: 'Zrzavá' },
+                        { value: 'other', label: 'Jiná' }
+                      ].map(option => (
+                        <button
+                          key={option.value}
+                          type="button"
+                          onClick={() => setFormData({ ...formData, hairColor: option.value })}
+                          className={`px-4 py-3 rounded-xl font-medium text-sm transition-all ${
+                            formData.hairColor === option.value
+                              ? 'bg-gradient-to-r from-primary-500 to-pink-500 text-white shadow-lg'
+                              : 'glass border border-white/10 text-gray-300 hover:bg-white/10'
+                          }`}
+                        >
+                          {option.label}
+                        </button>
+                      ))}
+                    </div>
                   </div>
 
                   {/* Typ prsou */}
                   <div>
-                    <label className="block text-sm font-medium mb-2">
+                    <label className="block text-sm font-medium mb-3">
                       Typ prsou
                     </label>
-                    <select
-                      value={formData.breastType}
-                      onChange={(e) => setFormData({ ...formData, breastType: e.target.value })}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary-400 transition-colors"
-                    >
-                      <option value="">Vyberte...</option>
-                      <option value="natural">Přírodní</option>
-                      <option value="silicone">Silikonová</option>
-                    </select>
+                    <div className="grid grid-cols-2 gap-2">
+                      {[
+                        { value: 'natural', label: 'Přírodní' },
+                        { value: 'silicone', label: 'Silikonová' }
+                      ].map(option => (
+                        <button
+                          key={option.value}
+                          type="button"
+                          onClick={() => setFormData({ ...formData, breastType: option.value })}
+                          className={`px-4 py-3 rounded-xl font-medium text-sm transition-all ${
+                            formData.breastType === option.value
+                              ? 'bg-gradient-to-r from-primary-500 to-pink-500 text-white shadow-lg'
+                              : 'glass border border-white/10 text-gray-300 hover:bg-white/10'
+                          }`}
+                        >
+                          {option.label}
+                        </button>
+                      ))}
+                    </div>
                   </div>
 
                   {/* Role */}
                   <div>
-                    <label className="block text-sm font-medium mb-2">
+                    <label className="block text-sm font-medium mb-3">
                       Role
                     </label>
-                    <select
-                      value={formData.role}
-                      onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary-400 transition-colors"
-                    >
-                      <option value="">Vyberte...</option>
-                      <option value="active">Aktivní</option>
-                      <option value="passive">Pasivní</option>
-                      <option value="switch">Switch</option>
-                      <option value="dominant">Dominantní</option>
-                      <option value="submissive">Submisivní</option>
-                    </select>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                      {[
+                        { value: 'active', label: 'Aktivní' },
+                        { value: 'passive', label: 'Pasivní' },
+                        { value: 'switch', label: 'Switch' },
+                        { value: 'dominant', label: 'Dominantní' },
+                        { value: 'submissive', label: 'Submisivní' }
+                      ].map(option => (
+                        <button
+                          key={option.value}
+                          type="button"
+                          onClick={() => setFormData({ ...formData, role: option.value })}
+                          className={`px-4 py-3 rounded-xl font-medium text-sm transition-all ${
+                            formData.role === option.value
+                              ? 'bg-gradient-to-r from-primary-500 to-pink-500 text-white shadow-lg'
+                              : 'glass border border-white/10 text-gray-300 hover:bg-white/10'
+                          }`}
+                        >
+                          {option.label}
+                        </button>
+                      ))}
+                    </div>
                   </div>
 
                   {/* Národnost */}
                   <div>
-                    <label className="block text-sm font-medium mb-2">
+                    <label className="block text-sm font-medium mb-3">
                       Národnost
                     </label>
-                    <select
-                      value={formData.nationality}
-                      onChange={(e) => setFormData({ ...formData, nationality: e.target.value })}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary-400 transition-colors"
-                    >
-                      <option value="">Vyberte...</option>
-                      <option value="czech">Česká</option>
-                      <option value="slovak">Slovenská</option>
-                      <option value="polish">Polská</option>
-                      <option value="ukrainian">Ukrajinská</option>
-                      <option value="russian">Ruská</option>
-                      <option value="romanian">Rumunská</option>
-                      <option value="bulgarian">Bulharská</option>
-                      <option value="hungarian">Maďarská</option>
-                      <option value="other">Jiná</option>
-                    </select>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                      {[
+                        { value: 'czech', label: 'Česká' },
+                        { value: 'slovak', label: 'Slovenská' },
+                        { value: 'polish', label: 'Polská' },
+                        { value: 'ukrainian', label: 'Ukrajinská' },
+                        { value: 'russian', label: 'Ruská' },
+                        { value: 'romanian', label: 'Rumunská' },
+                        { value: 'bulgarian', label: 'Bulharská' },
+                        { value: 'hungarian', label: 'Maďarská' },
+                        { value: 'other', label: 'Jiná' }
+                      ].map(option => (
+                        <button
+                          key={option.value}
+                          type="button"
+                          onClick={() => setFormData({ ...formData, nationality: option.value })}
+                          className={`px-4 py-3 rounded-xl font-medium text-sm transition-all ${
+                            formData.nationality === option.value
+                              ? 'bg-gradient-to-r from-primary-500 to-pink-500 text-white shadow-lg'
+                              : 'glass border border-white/10 text-gray-300 hover:bg-white/10'
+                          }`}
+                        >
+                          {option.label}
+                        </button>
+                      ))}
+                    </div>
                   </div>
 
                   {/* Orientace */}
                   <div>
-                    <label className="block text-sm font-medium mb-2">
+                    <label className="block text-sm font-medium mb-3">
                       Orientace
                     </label>
-                    <select
-                      value={formData.orientation}
-                      onChange={(e) => setFormData({ ...formData, orientation: e.target.value })}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary-400 transition-colors"
-                    >
-                      <option value="">Vyberte...</option>
-                      <option value="hetero">Heterosexuální</option>
-                      <option value="bi">Bisexuální</option>
-                      <option value="lesbian">Lesbická</option>
-                      <option value="gay">Gay</option>
-                    </select>
+                    <div className="grid grid-cols-2 gap-2">
+                      {[
+                        { value: 'hetero', label: 'Heterosexuální' },
+                        { value: 'bi', label: 'Bisexuální' },
+                        { value: 'lesbian', label: 'Lesbická' },
+                        { value: 'gay', label: 'Gay' }
+                      ].map(option => (
+                        <button
+                          key={option.value}
+                          type="button"
+                          onClick={() => setFormData({ ...formData, orientation: option.value })}
+                          className={`px-4 py-3 rounded-xl font-medium text-sm transition-all ${
+                            formData.orientation === option.value
+                              ? 'bg-gradient-to-r from-primary-500 to-pink-500 text-white shadow-lg'
+                              : 'glass border border-white/10 text-gray-300 hover:bg-white/10'
+                          }`}
+                        >
+                          {option.label}
+                        </button>
+                      ))}
+                    </div>
                   </div>
 
                   {/* Tetování */}
                   <div>
-                    <label className="block text-sm font-medium mb-2">
+                    <label className="block text-sm font-medium mb-3">
                       Tetování
                     </label>
-                    <select
-                      value={formData.tattoos}
-                      onChange={(e) => setFormData({ ...formData, tattoos: e.target.value })}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary-400 transition-colors"
-                    >
-                      <option value="">Vyberte...</option>
-                      <option value="none">Bez tetování</option>
-                      <option value="small">Malá tetování</option>
-                      <option value="medium">Střední tetování</option>
-                      <option value="large">Velká tetování</option>
-                    </select>
+                    <div className="grid grid-cols-2 gap-2">
+                      {[
+                        { value: 'none', label: 'Bez tetování' },
+                        { value: 'small', label: 'Malá tetování' },
+                        { value: 'medium', label: 'Střední tetování' },
+                        { value: 'large', label: 'Velká tetování' }
+                      ].map(option => (
+                        <button
+                          key={option.value}
+                          type="button"
+                          onClick={() => setFormData({ ...formData, tattoos: option.value })}
+                          className={`px-4 py-3 rounded-xl font-medium text-sm transition-all ${
+                            formData.tattoos === option.value
+                              ? 'bg-gradient-to-r from-primary-500 to-pink-500 text-white shadow-lg'
+                              : 'glass border border-white/10 text-gray-300 hover:bg-white/10'
+                          }`}
+                        >
+                          {option.label}
+                        </button>
+                      ))}
+                    </div>
                   </div>
 
                   {/* Piercing */}
                   <div>
-                    <label className="block text-sm font-medium mb-2">
+                    <label className="block text-sm font-medium mb-3">
                       Piercing
                     </label>
-                    <select
-                      value={formData.piercing}
-                      onChange={(e) => setFormData({ ...formData, piercing: e.target.value })}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary-400 transition-colors"
-                    >
-                      <option value="">Vyberte...</option>
-                      <option value="none">Bez piercingu</option>
-                      <option value="ears">Jen uši</option>
-                      <option value="multiple">Více piercingů</option>
-                    </select>
+                    <div className="grid grid-cols-3 gap-2">
+                      {[
+                        { value: 'none', label: 'Bez piercingu' },
+                        { value: 'ears', label: 'Jen uši' },
+                        { value: 'multiple', label: 'Více piercingů' }
+                      ].map(option => (
+                        <button
+                          key={option.value}
+                          type="button"
+                          onClick={() => setFormData({ ...formData, piercing: option.value })}
+                          className={`px-4 py-3 rounded-xl font-medium text-sm transition-all ${
+                            formData.piercing === option.value
+                              ? 'bg-gradient-to-r from-primary-500 to-pink-500 text-white shadow-lg'
+                              : 'glass border border-white/10 text-gray-300 hover:bg-white/10'
+                          }`}
+                        >
+                          {option.label}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
 
@@ -2099,44 +2209,42 @@ export default function InzerentDashboard() {
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-white border-b border-white/10 pb-2">Adresa</h3>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Město <span className="text-red-400">*</span>
-                    </label>
-                    <select
-                      required
-                      value={businessFormData.city}
-                      onChange={(e) => setBusinessFormData({ ...businessFormData, city: e.target.value })}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary-400 transition-colors"
-                    >
-                      <option value="">Vyberte město</option>
-                      <option value="Praha">Praha</option>
-                      <option value="Brno">Brno</option>
-                      <option value="Ostrava">Ostrava</option>
-                      <option value="Plzeň">Plzeň</option>
-                      <option value="Liberec">Liberec</option>
-                      <option value="Olomouc">Olomouc</option>
-                      <option value="České Budějovice">České Budějovice</option>
-                      <option value="Hradec Králové">Hradec Králové</option>
-                      <option value="Pardubice">Pardubice</option>
-                      <option value="Zlín">Zlín</option>
-                      <option value="Jiné">Jiné</option>
-                    </select>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-3">
+                    Město <span className="text-red-400">*</span>
+                  </label>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                    {[
+                      'Praha', 'Brno', 'Ostrava', 'Plzeň', 'Liberec', 'Olomouc',
+                      'České Budějovice', 'Hradec Králové', 'Pardubice', 'Zlín', 'Jiné'
+                    ].map(city => (
+                      <button
+                        key={city}
+                        type="button"
+                        onClick={() => setBusinessFormData({ ...businessFormData, city })}
+                        className={`px-4 py-3 rounded-xl font-medium text-sm transition-all ${
+                          businessFormData.city === city
+                            ? 'bg-gradient-to-r from-primary-500 to-pink-500 text-white shadow-lg'
+                            : 'glass border border-white/10 text-gray-300 hover:bg-white/10'
+                        }`}
+                      >
+                        {city}
+                      </button>
+                    ))}
                   </div>
+                </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Adresa
-                    </label>
-                    <input
-                      type="text"
-                      value={businessFormData.address}
-                      onChange={(e) => setBusinessFormData({ ...businessFormData, address: e.target.value })}
-                      placeholder="Ulice a číslo popisné"
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary-400 transition-colors"
-                    />
-                  </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Adresa
+                  </label>
+                  <input
+                    type="text"
+                    value={businessFormData.address}
+                    onChange={(e) => setBusinessFormData({ ...businessFormData, address: e.target.value })}
+                    placeholder="Ulice a číslo popisné"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary-400 transition-colors"
+                  />
                 </div>
               </div>
 

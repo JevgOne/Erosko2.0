@@ -251,7 +251,7 @@ export default function MainPagesTab() {
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
                         <button
-                          onClick={() => window.open(`https://localhost:3000${page.path}`, '_blank')}
+                          onClick={() => window.open(`https://erosko.cz${page.path}`, '_blank')}
                           className="p-2 hover:bg-white/10 rounded-lg transition-colors"
                           title="Zobrazit stránku"
                         >

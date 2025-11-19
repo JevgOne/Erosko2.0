@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, ChevronLeft, ChevronRight, Check, ImageIcon } from 'lucide-react';
 import { Category } from '@prisma/client';
 
@@ -83,6 +83,38 @@ export default function AddProfileWizard({
   });
 
   const totalSteps = 4;
+
+  // Auto-select default category based on business type when wizard opens
+  useEffect(() => {
+    if (isOpen && business && !formData.category) {
+      let defaultCategory: Category = 'HOLKY_NA_SEX'; // Default fallback
+
+      switch (business.profileType) {
+        case 'MASSAGE_SALON':
+          defaultCategory = 'EROTICKE_MASERKY';
+          break;
+        case 'PRIVAT':
+        case 'ESCORT_AGENCY':
+          defaultCategory = 'HOLKY_NA_SEX';
+          break;
+        case 'DIGITAL_AGENCY':
+          defaultCategory = 'DIGITALNI_SLUZBY';
+          break;
+        case 'SWINGERS_CLUB':
+        case 'NIGHT_CLUB':
+        case 'STRIP_CLUB':
+          defaultCategory = 'DOMINA';
+          break;
+        default:
+          defaultCategory = 'HOLKY_NA_SEX';
+      }
+
+      setFormData(prev => ({
+        ...prev,
+        category: defaultCategory
+      }));
+    }
+  }, [isOpen, business]);
 
   const handleNext = () => {
     if (currentStep < totalSteps) {

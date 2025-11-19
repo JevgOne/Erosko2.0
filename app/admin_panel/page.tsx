@@ -281,6 +281,7 @@ export default function AdminPanel() {
 
   const handleApprove = async (type: 'business' | 'profile', id: string, approved: boolean) => {
     try {
+      console.log('[Admin Panel] Approving:', { type, id, approved });
       const response = await fetch('/api/admin/approve', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -288,17 +289,23 @@ export default function AdminPanel() {
       });
 
       if (response.ok) {
+        console.log('[Admin Panel] Approval successful');
         fetchAdminData(); // Reload data
         alert(approved ? 'Úspěšně schváleno!' : 'Schválení zrušeno');
+      } else {
+        const errorData = await response.json().catch(() => ({ error: 'Neznámá chyba' }));
+        console.error('[Admin Panel] Approval failed:', response.status, errorData);
+        alert(`Chyba při schvalování: ${errorData.error || response.statusText}`);
       }
     } catch (error) {
-      console.error('Error approving:', error);
-      alert('Chyba při schvalování');
+      console.error('[Admin Panel] Error approving:', error);
+      alert(`Chyba při schvalování: ${error instanceof Error ? error.message : String(error)}`);
     }
   };
 
   const handleVerify = async (type: 'business' | 'profile', id: string, verified: boolean) => {
     try {
+      console.log('[Admin Panel] Verifying:', { type, id, verified });
       const response = await fetch('/api/admin/verify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -306,49 +313,74 @@ export default function AdminPanel() {
       });
 
       if (response.ok) {
+        console.log('[Admin Panel] Verification successful');
         fetchAdminData(); // Reload data
         alert(verified ? 'Úspěšně ověřeno!' : 'Ověření zrušeno');
+      } else {
+        const errorData = await response.json().catch(() => ({ error: 'Neznámá chyba' }));
+        console.error('[Admin Panel] Verification failed:', response.status, errorData);
+        alert(`Chyba při ověřování: ${errorData.error || response.statusText}`);
       }
     } catch (error) {
-      console.error('Error verifying:', error);
-      alert('Chyba při ověřování');
+      console.error('[Admin Panel] Error verifying:', error);
+      alert(`Chyba při ověřování: ${error instanceof Error ? error.message : String(error)}`);
     }
   };
 
   // Bulk action handlers
   const handleBulkApprove = async (type: 'business' | 'profile', ids: string[], approved: boolean) => {
     try {
-      await Promise.all(ids.map(id =>
+      console.log('[Admin Panel] Bulk approving:', { type, count: ids.length, approved });
+      const responses = await Promise.all(ids.map(id =>
         fetch('/api/admin/approve', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ type, id, approved }),
         })
       ));
+
+      const failures = responses.filter(r => !r.ok);
+      if (failures.length > 0) {
+        console.error('[Admin Panel] Some bulk approvals failed:', failures.length);
+        alert(`${ids.length - failures.length}/${ids.length} položek úspěšně ${approved ? 'schváleno' : 'odmítnuto'}`);
+      } else {
+        alert(`${ids.length} položek ${approved ? 'schváleno' : 'odmítnuto'}!`);
+      }
+
       fetchAdminData();
       if (type === 'business') setSelectedBusinessIds([]);
       else setSelectedProfileIds([]);
-      alert(`${ids.length} položek ${approved ? 'schváleno' : 'odmítnuto'}!`);
     } catch (error) {
-      alert('Chyba při hromadné akci');
+      console.error('[Admin Panel] Error in bulk approve:', error);
+      alert(`Chyba při hromadné akci: ${error instanceof Error ? error.message : String(error)}`);
     }
   };
 
   const handleBulkVerify = async (type: 'business' | 'profile', ids: string[], verified: boolean) => {
     try {
-      await Promise.all(ids.map(id =>
+      console.log('[Admin Panel] Bulk verifying:', { type, count: ids.length, verified });
+      const responses = await Promise.all(ids.map(id =>
         fetch('/api/admin/verify', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ type, id, verified }),
         })
       ));
+
+      const failures = responses.filter(r => !r.ok);
+      if (failures.length > 0) {
+        console.error('[Admin Panel] Some bulk verifications failed:', failures.length);
+        alert(`${ids.length - failures.length}/${ids.length} položek úspěšně ${verified ? 'ověřeno' : 'zrušeno ověření'}`);
+      } else {
+        alert(`${ids.length} položek ${verified ? 'ověřeno' : 'zrušeno ověření'}!`);
+      }
+
       fetchAdminData();
       if (type === 'business') setSelectedBusinessIds([]);
       else setSelectedProfileIds([]);
-      alert(`${ids.length} položek ${verified ? 'ověřeno' : 'zrušeno ověření'}!`);
     } catch (error) {
-      alert('Chyba při hromadné akci');
+      console.error('[Admin Panel] Error in bulk verify:', error);
+      alert(`Chyba při hromadné akci: ${error instanceof Error ? error.message : String(error)}`);
     }
   };
 

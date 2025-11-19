@@ -1332,6 +1332,7 @@ export default function AdminPanel() {
                     <input
                       type="checkbox"
                       checked={(() => {
+                        if (!Array.isArray(businesses) || businesses.length === 0) return false;
                         const visibleBusinesses = businesses.filter(business => {
                           if (businessFilter === 'pending_approval') return !business.approved;
                           if (businessFilter === 'pending_verification') return business.approved && !business.verified;
@@ -1340,6 +1341,7 @@ export default function AdminPanel() {
                         return visibleBusinesses.length > 0 && visibleBusinesses.every(b => selectedBusinessIds.includes(b.id));
                       })()}
                       onChange={(e) => {
+                        if (!Array.isArray(businesses)) return;
                         const visibleBusinesses = businesses.filter(business => {
                           if (businessFilter === 'pending_approval') return !business.approved;
                           if (businessFilter === 'pending_verification') return business.approved && !business.verified;
@@ -1364,7 +1366,7 @@ export default function AdminPanel() {
                         : 'bg-white/5 text-gray-400 hover:bg-white/10'
                     }`}
                   >
-                    Všechny ({businesses.length})
+                    Všechny ({Array.isArray(businesses) ? businesses.length : 0})
                   </button>
                   <button
                     onClick={() => setBusinessFilter('pending_approval')}
@@ -1374,7 +1376,7 @@ export default function AdminPanel() {
                         : 'bg-white/5 text-gray-400 hover:bg-white/10'
                     }`}
                   >
-                    Čeká na schválení ({businesses.filter(b => !b.approved).length})
+                    Čeká na schválení ({Array.isArray(businesses) ? businesses.filter(b => !b.approved).length : 0})
                   </button>
                   <button
                     onClick={() => setBusinessFilter('pending_verification')}
@@ -1384,12 +1386,12 @@ export default function AdminPanel() {
                         : 'bg-white/5 text-gray-400 hover:bg-white/10'
                     }`}
                   >
-                    Čeká na ověření ({businesses.filter(b => !b.verified).length})
+                    Čeká na ověření ({Array.isArray(businesses) ? businesses.filter(b => !b.verified).length : 0})
                   </button>
                 </div>
 
                 <div className="space-y-4">
-                  {businesses
+                  {Array.isArray(businesses) && businesses
                     .filter(business => {
                       if (businessFilter === 'pending_approval') return !business.approved;
                       if (businessFilter === 'pending_verification') return business.approved && !business.verified;

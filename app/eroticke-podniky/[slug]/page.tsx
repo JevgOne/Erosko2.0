@@ -130,7 +130,7 @@ export default async function Page({ params }: PageProps) {
         where: { approved: true },
         include: {
           photos: {
-            where: { isMain: true },
+            orderBy: { order: 'asc' },
             take: 1
           }
         }

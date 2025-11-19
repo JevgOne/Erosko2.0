@@ -54,12 +54,15 @@ export async function ContentBlockSection({
   const defaultBoxClass = 'glass rounded-2xl p-6 md:p-8 border border-white/10 backdrop-blur-sm';
   const defaultContentClass = 'prose prose-invert max-w-none prose-headings:gradient-text prose-a:text-primary-400 prose-a:hover:underline prose-strong:text-white prose-p:text-gray-300 prose-li:text-gray-300';
 
+  // Combine custom itemClassName with default box styling
+  const combinedBoxClass = itemClassName ? `${defaultBoxClass} ${itemClassName}` : defaultBoxClass;
+
   return (
     <div className={className}>
       {blocks.map((block) => (
         <div
           key={block.id}
-          className={itemClassName || defaultBoxClass}
+          className={combinedBoxClass}
           data-block-id={block.identifier}
         >
           {block.type === 'RICH_TEXT' || block.type === 'TEXT' ? (

@@ -1,0 +1,185 @@
+import { NextResponse } from 'next/server';
+import { auth } from '@/auth';
+import prisma from '@/lib/prisma';
+import { UserRole, ProfileType } from '@prisma/client';
+import { ContentImporter } from '@/lib/content-importer';
+import { ImageProcessor } from '@/lib/image-processor';
+import { put } from '@vercel/blob';
+
+export const dynamic = 'force-dynamic';
+export const maxDuration = 300; // 5 minutes for long imports
+
+export async function POST(request: Request) {
+  try {
+    console.log('[Import Content] Request received');
+
+    const session = await auth();
+    if (!session || !session.user) {
+      return NextResponse.json({ error: 'Nepřihlášen' }, { status: 401 });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+    });
+
+    if (!user || user.role !== UserRole.ADMIN) {
+      return NextResponse.json({ error: 'Nemáte oprávnění' }, { status: 403 });
+    }
+
+    const body = await request.json();
+    const { businessUrl, processImages = true } = body;
+
+    if (!businessUrl) {
+      return NextResponse.json(
+        { error: 'URL podniku je povinná' },
+        { status: 400 }
+      );
+    }
+
+    console.log('[Import Content] Importing from URL:', businessUrl);
+
+    const importer = new ContentImporter();
+    const imageProcessor = new ImageProcessor();
+
+    // Extract business data
+    console.log('[Import Content] Extracting business data...');
+    const businessData = await importer.extractBusinessData(businessUrl);
+    console.log('[Import Content] Business data extracted:', businessData.name);
+
+    // Check if business already exists (by phone or name)
+    const existingBusiness = await prisma.business.findFirst({
+      where: {
+        OR: [
+          { phone: businessData.phone },
+          { name: businessData.name },
+        ],
+      },
+    });
+
+    if (existingBusiness) {
+      return NextResponse.json(
+        { error: 'Podnik již existuje', businessId: existingBusiness.id },
+        { status: 409 }
+      );
+    }
+
+    // Create business
+    console.log('[Import Content] Creating business...');
+    const business = await prisma.business.create({
+      data: {
+        name: businessData.name,
+        slug: businessData.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+        phone: businessData.phone,
+        email: businessData.email,
+        website: businessData.website,
+        address: businessData.address,
+        city: businessData.city,
+        description: businessData.description,
+        profileType: businessData.profileType as ProfileType,
+        ownerId: user.id,
+        approved: false, // Requires admin approval
+        verified: false,
+      },
+    });
+
+    console.log('[Import Content] Business created:', business.id);
+
+    // Extract and create profiles
+    const createdProfiles = [];
+
+    for (const profileRef of businessData.profiles) {
+      try {
+        console.log('[Import Content] Extracting profile:', profileRef.name);
+
+        // Extract full profile data from detail page
+        const profileData = await importer.extractProfileData(profileRef.profileUrl);
+
+        console.log('[Import Content] Profile data extracted:', profileData.name);
+
+        // Process images if enabled
+        let processedPhotos: string[] = [];
+
+        if (processImages && profileData.photos && profileData.photos.length > 0) {
+          console.log(`[Import Content] Processing ${profileData.photos.length} images...`);
+
+          const processed = await imageProcessor.processBatch(profileData.photos);
+
+          // Upload processed images to Vercel Blob
+          for (let i = 0; i < processed.length; i++) {
+            const { buffer } = processed[i];
+            const filename = `profile-${Date.now()}-${i}.jpg`;
+
+            const blob = await put(filename, buffer, {
+              access: 'public',
+              contentType: 'image/jpeg',
+            });
+
+            processedPhotos.push(blob.url);
+            console.log('[Import Content] Image uploaded:', blob.url);
+          }
+        } else {
+          processedPhotos = profileData.photos || [];
+        }
+
+        // Map services to our service IDs
+        let mappedServices: string[] = [];
+        if (profileData.services && profileData.services.length > 0) {
+          mappedServices = await importer.mapServices(profileData.services);
+          console.log('[Import Content] Services mapped:', mappedServices);
+        }
+
+        // Create profile
+        const profile = await prisma.profile.create({
+          data: {
+            name: profileData.name,
+            slug: profileData.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+            phone: profileData.phone || businessData.phone,
+            age: profileData.age,
+            city: profileData.city || businessData.city,
+            description: profileData.description,
+            businessId: business.id,
+            ownerId: user.id,
+            approved: false, // Requires admin approval
+            verified: false,
+            category: businessData.profileType === 'MASSAGE' ? 'MASSAGE' : 'ESCORT',
+          },
+        });
+
+        // Create photos
+        if (processedPhotos.length > 0) {
+          await prisma.photo.createMany({
+            data: processedPhotos.map((url, index) => ({
+              url,
+              order: index,
+              profileId: profile.id,
+            })),
+          });
+        }
+
+        console.log('[Import Content] Profile created:', profile.id);
+        createdProfiles.push(profile.id);
+
+      } catch (profileError) {
+        console.error('[Import Content] Failed to create profile:', profileError);
+        // Continue with next profile
+      }
+    }
+
+    return NextResponse.json({
+      success: true,
+      businessId: business.id,
+      profileIds: createdProfiles,
+      message: `Import dokončen: 1 podnik, ${createdProfiles.length} profilů`,
+    });
+
+  } catch (error) {
+    console.error('[Import Content] Error:', error);
+    return NextResponse.json(
+      {
+        error: 'Chyba při importu obsahu',
+        details: error instanceof Error ? error.message : String(error),
+      },
+      { status: 500 }
+    );
+  }
+}

@@ -66,7 +66,7 @@ export default function AddProfileWizard({
     bodyType: '',
 
     // Additional info
-    role: '',
+    role: [] as string[],
     nationality: '',
     orientation: '',
     tattoos: '',
@@ -146,6 +146,15 @@ export default function AddProfileWizard({
       languages: prev.languages.includes(lang)
         ? prev.languages.filter(l => l !== lang)
         : [...prev.languages, lang]
+    }));
+  };
+
+  const handleRoleToggle = (role: string) => {
+    setFormData(prev => ({
+      ...prev,
+      role: prev.role.includes(role)
+        ? prev.role.filter(r => r !== role)
+        : [...prev.role, role]
     }));
   };
 
@@ -330,22 +339,21 @@ export default function AddProfileWizard({
                   Kategorie <span className="text-red-400">*</span>
                 </label>
                 <div className="grid grid-cols-2 gap-3">
-                  {CATEGORIES.map((cat) => (
+                  {CATEGORIES.filter(cat => cat.value === formData.category).map((cat) => (
                     <button
                       key={cat.value}
                       type="button"
-                      onClick={() => setFormData({ ...formData, category: cat.value as Category })}
-                      className={`p-4 rounded-xl border-2 transition-all ${
-                        formData.category === cat.value
-                          ? 'border-primary-500 bg-primary-500/20'
-                          : 'border-white/10 hover:border-white/20 bg-white/5'
-                      }`}
+                      disabled
+                      className="p-4 rounded-xl border-2 border-primary-500 bg-primary-500/20 cursor-not-allowed"
                     >
                       <div className="text-3xl mb-2">{cat.icon}</div>
                       <div className="text-sm font-medium">{cat.label}</div>
                     </button>
                   ))}
                 </div>
+                <p className="text-xs text-gray-400 mt-2">
+                  Kategorie je automaticky nastavena podle typu vašeho podniku
+                </p>
               </div>
 
               <div>
@@ -404,17 +412,23 @@ export default function AddProfileWizard({
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Role</label>
-                <select
-                  value={formData.role}
-                  onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary-400 transition-colors"
-                >
-                  <option value="">Vyberte...</option>
+                <label className="block text-sm font-medium mb-3">Role (můžete vybrat více)</label>
+                <div className="grid grid-cols-3 gap-2">
                   {ROLES.map((role) => (
-                    <option key={role} value={role}>{role}</option>
+                    <button
+                      key={role}
+                      type="button"
+                      onClick={() => handleRoleToggle(role)}
+                      className={`px-3 py-2 rounded-lg border transition-all text-sm ${
+                        formData.role.includes(role)
+                          ? 'bg-primary-500/20 border-primary-500 text-primary-400'
+                          : 'border-white/10 hover:bg-white/5'
+                      }`}
+                    >
+                      {role}
+                    </button>
                   ))}
-                </select>
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">

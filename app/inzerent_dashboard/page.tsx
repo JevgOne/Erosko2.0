@@ -1697,7 +1697,7 @@ export default function InzerentDashboard() {
 
                       {/* Služby podle aktivního tabu */}
                       <div className="grid grid-cols-2 gap-2 max-h-80 overflow-y-auto p-2 bg-white/5 rounded-lg">
-                        {activeServiceTab === 'escort' && getServicesByCategory('Escort').map((service) => (
+                        {activeServiceTab === 'escort' && getServicesByCategory('escort').map((service) => (
                           <button
                             key={service.id}
                             type="button"
@@ -1712,7 +1712,7 @@ export default function InzerentDashboard() {
                           </button>
                         ))}
 
-                        {activeServiceTab === 'massage' && getServicesByCategory('Masáže').map((service) => (
+                        {activeServiceTab === 'massage' && getServicesByCategory('massage').map((service) => (
                           <button
                             key={service.id}
                             type="button"
@@ -1727,7 +1727,7 @@ export default function InzerentDashboard() {
                           </button>
                         ))}
 
-                        {activeServiceTab === 'bdsm' && getServicesByCategory('BDSM').map((service) => (
+                        {activeServiceTab === 'bdsm' && getServicesByCategory('bdsm').map((service) => (
                           <button
                             key={service.id}
                             type="button"
@@ -1742,7 +1742,7 @@ export default function InzerentDashboard() {
                           </button>
                         ))}
 
-                        {activeServiceTab === 'online' && getServicesByCategory('Online').map((service) => (
+                        {activeServiceTab === 'online' && getServicesByCategory('online').map((service) => (
                           <button
                             key={service.id}
                             type="button"
@@ -2274,7 +2274,7 @@ export default function InzerentDashboard() {
 
                       {/* Služby podle aktivního tabu */}
                       <div className="grid grid-cols-2 gap-2 max-h-80 overflow-y-auto p-2 bg-white/5 rounded-lg">
-                        {activeServiceTab === 'escort' && getServicesByCategory('Escort').map((service) => (
+                        {activeServiceTab === 'escort' && getServicesByCategory('escort').map((service) => (
                           <button
                             key={service.id}
                             type="button"
@@ -2289,7 +2289,7 @@ export default function InzerentDashboard() {
                           </button>
                         ))}
 
-                        {activeServiceTab === 'massage' && getServicesByCategory('Masáže').map((service) => (
+                        {activeServiceTab === 'massage' && getServicesByCategory('massage').map((service) => (
                           <button
                             key={service.id}
                             type="button"
@@ -2304,7 +2304,7 @@ export default function InzerentDashboard() {
                           </button>
                         ))}
 
-                        {activeServiceTab === 'bdsm' && getServicesByCategory('BDSM').map((service) => (
+                        {activeServiceTab === 'bdsm' && getServicesByCategory('bdsm').map((service) => (
                           <button
                             key={service.id}
                             type="button"
@@ -2319,7 +2319,7 @@ export default function InzerentDashboard() {
                           </button>
                         ))}
 
-                        {activeServiceTab === 'online' && getServicesByCategory('Online').map((service) => (
+                        {activeServiceTab === 'online' && getServicesByCategory('online').map((service) => (
                           <button
                             key={service.id}
                             type="button"

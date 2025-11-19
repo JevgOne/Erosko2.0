@@ -69,7 +69,7 @@ function HolkyNaSexContent() {
             </p>
           </div>
 
-          <SearchWithMap cityPrefix="Escort" pageType="holky-na-sex" />
+          <SearchWithMap cityPrefix="Holky na sex" pageType="holky-na-sex" />
         </div>
       </section>
 

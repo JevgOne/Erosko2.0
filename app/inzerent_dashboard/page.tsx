@@ -1413,16 +1413,26 @@ export default function InzerentDashboard() {
                   {/* Role */}
                   <div>
                     <label className="block text-sm font-medium mb-3">
-                      Role
+                      Typ / Role
                     </label>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                       {[
                         { value: '', label: 'Vyberte...' },
-                        { value: 'Aktivní', label: 'Aktivní' },
-                        { value: 'Pasivní', label: 'Pasivní' },
-                        { value: 'Switch', label: 'Switch' },
-                        { value: 'Dominantní', label: 'Dominantní' },
-                        { value: 'Submisivní', label: 'Submisivní' }
+                        { value: 'Studentka', label: 'Studentka' },
+                        { value: 'Školačka', label: 'Školačka' },
+                        { value: 'MILF', label: 'MILF' },
+                        { value: 'Zralá žena', label: 'Zralá žena' },
+                        { value: 'Holka odvedle', label: 'Holka odvedle' },
+                        { value: 'Modelka', label: 'Modelka' },
+                        { value: 'Fitness', label: 'Fitness' },
+                        { value: 'Businesswoman', label: 'Businesswoman' },
+                        { value: 'Sekretářka', label: 'Sekretářka' },
+                        { value: 'Domina', label: 'Domina' },
+                        { value: 'Submisivní', label: 'Submisivní' },
+                        { value: 'Sugar Baby', label: 'Sugar Baby' },
+                        { value: 'Pornohvězda', label: 'Pornohvězda' },
+                        { value: 'Umělkyně', label: 'Umělkyně' },
+                        { value: 'Tanečnice', label: 'Tanečnice' }
                       ].map(option => (
                         <button
                           key={option.value}
@@ -2043,16 +2053,26 @@ export default function InzerentDashboard() {
                   {/* Role */}
                   <div>
                     <label className="block text-sm font-medium mb-3">
-                      Role
+                      Typ / Role
                     </label>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                       {[
                         { value: '', label: 'Vyberte...' },
-                        { value: 'Aktivní', label: 'Aktivní' },
-                        { value: 'Pasivní', label: 'Pasivní' },
-                        { value: 'Switch', label: 'Switch' },
-                        { value: 'Dominantní', label: 'Dominantní' },
-                        { value: 'Submisivní', label: 'Submisivní' }
+                        { value: 'Studentka', label: 'Studentka' },
+                        { value: 'Školačka', label: 'Školačka' },
+                        { value: 'MILF', label: 'MILF' },
+                        { value: 'Zralá žena', label: 'Zralá žena' },
+                        { value: 'Holka odvedle', label: 'Holka odvedle' },
+                        { value: 'Modelka', label: 'Modelka' },
+                        { value: 'Fitness', label: 'Fitness' },
+                        { value: 'Businesswoman', label: 'Businesswoman' },
+                        { value: 'Sekretářka', label: 'Sekretářka' },
+                        { value: 'Domina', label: 'Domina' },
+                        { value: 'Submisivní', label: 'Submisivní' },
+                        { value: 'Sugar Baby', label: 'Sugar Baby' },
+                        { value: 'Pornohvězda', label: 'Pornohvězda' },
+                        { value: 'Umělkyně', label: 'Umělkyně' },
+                        { value: 'Tanečnice', label: 'Tanečnice' }
                       ].map(option => (
                         <button
                           key={option.value}

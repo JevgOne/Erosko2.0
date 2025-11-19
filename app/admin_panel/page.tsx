@@ -1035,7 +1035,7 @@ export default function AdminPanel() {
                           <div>
                             <p className="font-medium">{user.email}</p>
                             <p className="text-sm text-gray-400">
-                              {user._count.businesses} podniků, {user._count.profiles} profilů
+                              {user._count?.businesses || 0} podniků, {user._count?.profiles || 0} profilů
                             </p>
                           </div>
                           <span className={`text-xs px-2 py-1 rounded ${
@@ -1175,15 +1175,15 @@ export default function AdminPanel() {
                               <div className="flex items-center gap-6 text-sm">
                                 <div className="text-center">
                                   <div className="text-gray-400">Podniky</div>
-                                  <div className="font-bold">{user._count.businesses}</div>
+                                  <div className="font-bold">{user._count?.businesses || 0}</div>
                                 </div>
                                 <div className="text-center">
                                   <div className="text-gray-400">Profily</div>
-                                  <div className="font-bold">{user._count.profiles}</div>
+                                  <div className="font-bold">{user._count?.profiles || 0}</div>
                                 </div>
                                 <div className="text-center">
                                   <div className="text-gray-400">Recenze</div>
-                                  <div className="font-bold">{user._count.reviews}</div>
+                                  <div className="font-bold">{user._count?.reviews || 0}</div>
                                 </div>
                                 <div className="text-gray-400 text-xs">
                                   {new Date(user.createdAt).toLocaleDateString('cs-CZ')}
@@ -1220,7 +1220,7 @@ export default function AdminPanel() {
                                             <div className="text-xs text-gray-400 space-y-0.5">
                                               <div>📞 {business.phone}</div>
                                               <div>📍 {business.city}</div>
-                                              <div>👥 {business._count.profiles} profilů</div>
+                                              <div>👥 {business._count?.profiles || 0} profilů</div>
                                             </div>
                                           </div>
                                         </div>
@@ -1449,11 +1449,11 @@ export default function AdminPanel() {
                             </div>
                             <div>
                               <p className="text-gray-400">Profily</p>
-                              <p>{business._count.profiles}</p>
+                              <p>{business._count?.profiles || 0}</p>
                             </div>
                             <div>
                               <p className="text-gray-400">Hodnocení</p>
-                              <p>{business.rating.toFixed(1)} ({business._count.reviews})</p>
+                              <p>{business.rating ? business.rating.toFixed(1) : '0.0'} ({business._count?.reviews || 0})</p>
                             </div>
                           </div>
                           {business.description && (

@@ -3,8 +3,8 @@
 import { useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { List, Map } from 'lucide-react';
-import SearchBar from './SearchBar';
+import { List, Map, ChevronLeft, ChevronRight } from 'lucide-react';
+import SearchBarModern from './SearchBarModern';
 import SexMap from './SexMap';
 
 interface SearchWithMapProps {
@@ -86,29 +86,40 @@ function SearchWithMapContent({ cityPrefix = 'SEX', pageType, businessMode = fal
 
   return (
     <div className="w-full">
-      {/* City Buttons */}
-      <div className="flex flex-wrap justify-center gap-2 mb-8">
-        {buttons.map((button) => {
-          const isActive = currentCity === button.city;
-          return (
-            <Link
-              key={button.label}
-              href={getCityUrl(button.city)}
-              className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
-                isActive
-                  ? 'bg-gradient-to-r from-primary-500 to-pink-500 text-white'
-                  : 'bg-white/5 text-gray-300 hover:bg-white/10 border border-white/10'
-              }`}
-            >
-              {button.label}
-            </Link>
-          );
-        })}
+      {/* Modern Search Bar */}
+      <div className="mb-8">
+        <SearchBarModern pageType={pageType} />
       </div>
 
-      {/* Search Bar */}
-      <div className="mb-6">
-        <SearchBar pageType={pageType} />
+      {/* City Carousel */}
+      <div className="mb-8">
+        <div className="relative max-w-6xl mx-auto">
+          {/* Scrollable Container */}
+          <div className="overflow-x-auto scrollbar-hide">
+            <div className="flex gap-2 pb-2 px-1">
+              {buttons.map((button) => {
+                const isActive = currentCity === button.city;
+                return (
+                  <Link
+                    key={button.label}
+                    href={getCityUrl(button.city)}
+                    className={`flex-shrink-0 px-4 py-2 rounded-full font-medium text-sm transition-all whitespace-nowrap ${
+                      isActive
+                        ? 'bg-gradient-to-r from-primary-500 to-pink-500 text-white shadow-lg shadow-primary-500/30'
+                        : 'glass border border-white/10 text-gray-300 hover:bg-white/10'
+                    }`}
+                  >
+                    {button.label}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Gradient Fade Edges */}
+          <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-dark-950 to-transparent pointer-events-none"></div>
+          <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-dark-950 to-transparent pointer-events-none"></div>
+        </div>
       </div>
 
       {/* Tab Switcher - Smaller */}

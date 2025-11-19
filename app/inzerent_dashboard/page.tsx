@@ -166,7 +166,10 @@ export default function InzerentDashboard() {
 
   // Get available tabs based on business type
   const getAvailableTabs = () => {
-    if (businesses.length === 0) return [];
+    // If no business yet, show all tabs so user can select any services
+    if (businesses.length === 0) {
+      return ['escort', 'massage', 'bdsm', 'online'];
+    }
 
     const businessType = businesses[0].profileType;
 

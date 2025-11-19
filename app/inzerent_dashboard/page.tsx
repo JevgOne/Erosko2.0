@@ -1403,11 +1403,12 @@ export default function InzerentDashboard() {
                     </label>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                       {[
-                        { value: 'active', label: 'Aktivní' },
-                        { value: 'passive', label: 'Pasivní' },
-                        { value: 'switch', label: 'Switch' },
-                        { value: 'dominant', label: 'Dominantní' },
-                        { value: 'submissive', label: 'Submisivní' }
+                        { value: '', label: 'Vyberte...' },
+                        { value: 'Aktivní', label: 'Aktivní' },
+                        { value: 'Pasivní', label: 'Pasivní' },
+                        { value: 'Switch', label: 'Switch' },
+                        { value: 'Dominantní', label: 'Dominantní' },
+                        { value: 'Submisivní', label: 'Submisivní' }
                       ].map(option => (
                         <button
                           key={option.value}
@@ -1448,6 +1449,89 @@ export default function InzerentDashboard() {
                           onClick={() => setFormData({ ...formData, nationality: option.value })}
                           className={`px-4 py-3 rounded-xl font-medium text-sm transition-all ${
                             formData.nationality === option.value
+                              ? 'bg-gradient-to-r from-primary-500 to-pink-500 text-white shadow-lg'
+                              : 'glass border border-white/10 text-gray-300 hover:bg-white/10'
+                          }`}
+                        >
+                          {option.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Orientace */}
+                  <div>
+                    <label className="block text-sm font-medium mb-3">
+                      Orientace
+                    </label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {[
+                        { value: 'hetero', label: 'Heterosexuální' },
+                        { value: 'bi', label: 'Bisexuální' },
+                        { value: 'lesbian', label: 'Lesbická' },
+                        { value: 'gay', label: 'Gay' }
+                      ].map(option => (
+                        <button
+                          key={option.value}
+                          type="button"
+                          onClick={() => setFormData({ ...formData, orientation: option.value })}
+                          className={`px-4 py-3 rounded-xl font-medium text-sm transition-all ${
+                            formData.orientation === option.value
+                              ? 'bg-gradient-to-r from-primary-500 to-pink-500 text-white shadow-lg'
+                              : 'glass border border-white/10 text-gray-300 hover:bg-white/10'
+                          }`}
+                        >
+                          {option.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Tetování */}
+                  <div>
+                    <label className="block text-sm font-medium mb-3">
+                      Tetování
+                    </label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {[
+                        { value: 'none', label: 'Bez tetování' },
+                        { value: 'small', label: 'Malá tetování' },
+                        { value: 'medium', label: 'Střední tetování' },
+                        { value: 'large', label: 'Velká tetování' }
+                      ].map(option => (
+                        <button
+                          key={option.value}
+                          type="button"
+                          onClick={() => setFormData({ ...formData, tattoos: option.value })}
+                          className={`px-4 py-3 rounded-xl font-medium text-sm transition-all ${
+                            formData.tattoos === option.value
+                              ? 'bg-gradient-to-r from-primary-500 to-pink-500 text-white shadow-lg'
+                              : 'glass border border-white/10 text-gray-300 hover:bg-white/10'
+                          }`}
+                        >
+                          {option.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Piercing */}
+                  <div>
+                    <label className="block text-sm font-medium mb-3">
+                      Piercing
+                    </label>
+                    <div className="grid grid-cols-3 gap-2">
+                      {[
+                        { value: 'none', label: 'Bez piercingu' },
+                        { value: 'ears', label: 'Jen uši' },
+                        { value: 'multiple', label: 'Více piercingů' }
+                      ].map(option => (
+                        <button
+                          key={option.value}
+                          type="button"
+                          onClick={() => setFormData({ ...formData, piercing: option.value })}
+                          className={`px-4 py-3 rounded-xl font-medium text-sm transition-all ${
+                            formData.piercing === option.value
                               ? 'bg-gradient-to-r from-primary-500 to-pink-500 text-white shadow-lg'
                               : 'glass border border-white/10 text-gray-300 hover:bg-white/10'
                           }`}
@@ -1520,6 +1604,142 @@ export default function InzerentDashboard() {
                       );
                     })}
                   </div>
+                </div>
+
+                {/* Jazyky */}
+                <div>
+                  <label className="block text-sm font-medium mb-3">
+                    Jazyky
+                  </label>
+                  <div className="grid grid-cols-4 gap-2">
+                    {['Čeština', 'Angličtina', 'Němčina', 'Ruština', 'Slovenština', 'Polština', 'Španělština', 'Francouzština'].map((lang) => (
+                      <button
+                        key={lang}
+                        type="button"
+                        onClick={() => handleLanguageToggle(lang)}
+                        className={`px-3 py-2 rounded-lg border transition-all text-sm ${
+                          formData.languages.includes(lang)
+                            ? 'bg-primary-500/20 border-primary-500 text-primary-400'
+                            : 'border-white/10 hover:bg-white/5'
+                        }`}
+                      >
+                        {lang}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Služby s taby */}
+                <div>
+                  <label className="block text-sm font-medium mb-3">
+                    Nabízené služby (volitelné)
+                  </label>
+
+                  {servicesLoading ? (
+                    <div className="text-center py-8">
+                      <div className="animate-spin w-8 h-8 border-4 border-primary-500 border-t-transparent rounded-full mx-auto"></div>
+                      <p className="text-sm text-gray-400 mt-2">Načítám služby...</p>
+                    </div>
+                  ) : (
+                    <>
+                      {/* Taby - zobrazit jen podle typu podniku */}
+                      {getAvailableTabs().length > 1 && (
+                        <div className="flex gap-2 mb-4 bg-white/5 p-1 rounded-lg">
+                          {getAvailableTabs().map((tab) => (
+                            <button
+                              key={tab}
+                              type="button"
+                              onClick={() => setActiveServiceTab(tab as any)}
+                              className={`flex-1 px-4 py-2 rounded-lg transition-all font-medium ${
+                                activeServiceTab === tab
+                                  ? 'bg-primary-500 text-white'
+                                  : 'text-gray-400 hover:text-white'
+                              }`}
+                            >
+                              {getTabLabel(tab)}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Pokud je jen 1 tab, ukázat název */}
+                      {getAvailableTabs().length === 1 && (
+                        <div className="mb-4">
+                          <p className="text-sm text-gray-400 font-medium">
+                            Kategorie: {getTabLabel(getAvailableTabs()[0])}
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Služby podle aktivního tabu */}
+                      <div className="grid grid-cols-2 gap-2 max-h-80 overflow-y-auto p-2 bg-white/5 rounded-lg">
+                        {activeServiceTab === 'escort' && getServicesByCategory('Escort').map((service) => (
+                          <button
+                            key={service.id}
+                            type="button"
+                            onClick={() => handleServiceToggle(service.id)}
+                            className={`px-3 py-2 rounded-lg border transition-all text-sm ${
+                              formData.services.includes(service.id)
+                                ? 'bg-primary-500/20 border-primary-500 text-primary-400'
+                                : 'border-white/10 hover:bg-white/5 text-gray-300'
+                            }`}
+                          >
+                            {service.name}
+                          </button>
+                        ))}
+
+                        {activeServiceTab === 'massage' && getServicesByCategory('Masáže').map((service) => (
+                          <button
+                            key={service.id}
+                            type="button"
+                            onClick={() => handleServiceToggle(service.id)}
+                            className={`px-3 py-2 rounded-lg border transition-all text-sm ${
+                              formData.services.includes(service.id)
+                                ? 'bg-primary-500/20 border-primary-500 text-primary-400'
+                                : 'border-white/10 hover:bg-white/5 text-gray-300'
+                            }`}
+                          >
+                            {service.name}
+                          </button>
+                        ))}
+
+                        {activeServiceTab === 'bdsm' && getServicesByCategory('BDSM').map((service) => (
+                          <button
+                            key={service.id}
+                            type="button"
+                            onClick={() => handleServiceToggle(service.id)}
+                            className={`px-3 py-2 rounded-lg border transition-all text-sm ${
+                              formData.services.includes(service.id)
+                                ? 'bg-primary-500/20 border-primary-500 text-primary-400'
+                                : 'border-white/10 hover:bg-white/5 text-gray-300'
+                            }`}
+                          >
+                            {service.name}
+                          </button>
+                        ))}
+
+                        {activeServiceTab === 'online' && getServicesByCategory('Online').map((service) => (
+                          <button
+                            key={service.id}
+                            type="button"
+                            onClick={() => handleServiceToggle(service.id)}
+                            className={`px-3 py-2 rounded-lg border transition-all text-sm ${
+                              formData.services.includes(service.id)
+                                ? 'bg-primary-500/20 border-primary-500 text-primary-400'
+                                : 'border-white/10 hover:bg-white/5 text-gray-300'
+                            }`}
+                          >
+                            {service.name}
+                          </button>
+                        ))}
+                      </div>
+
+                      {/* Počet vybraných služeb */}
+                      <p className="text-xs text-gray-400 mt-2">
+                        Vybráno služeb: {formData.services.length}
+                      </p>
+                    </>
+                  )}
                 </div>
 
                 {/* Buttons */}
@@ -1813,11 +2033,12 @@ export default function InzerentDashboard() {
                     </label>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                       {[
-                        { value: 'active', label: 'Aktivní' },
-                        { value: 'passive', label: 'Pasivní' },
-                        { value: 'switch', label: 'Switch' },
-                        { value: 'dominant', label: 'Dominantní' },
-                        { value: 'submissive', label: 'Submisivní' }
+                        { value: '', label: 'Vyberte...' },
+                        { value: 'Aktivní', label: 'Aktivní' },
+                        { value: 'Pasivní', label: 'Pasivní' },
+                        { value: 'Switch', label: 'Switch' },
+                        { value: 'Dominantní', label: 'Dominantní' },
+                        { value: 'Submisivní', label: 'Submisivní' }
                       ].map(option => (
                         <button
                           key={option.value}

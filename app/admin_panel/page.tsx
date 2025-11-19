@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-type MenuItem = 'dashboard' | 'users' | 'businesses' | 'profiles' | 'profile-business-links' | 'pending-changes' | 'reviews' | 'payments' | 'banners';
+type MenuItem = 'dashboard' | 'users' | 'businesses' | 'profiles' | 'pending-changes' | 'reviews' | 'payments' | 'banners';
 
 export default function AdminPanel() {
   const router = useRouter();
@@ -27,7 +27,6 @@ export default function AdminPanel() {
   const [businesses, setBusinesses] = useState<any[]>([]);
   const [profiles, setProfiles] = useState<any[]>([]);
   const [pendingChanges, setPendingChanges] = useState<any[]>([]);
-  const [profileBusinessSuggestions, setProfileBusinessSuggestions] = useState<any[]>([]);
   const [businessFilter, setBusinessFilter] = useState<'all' | 'pending_approval' | 'pending_verification'>('all');
   const [profileFilter, setProfileFilter] = useState<'all' | 'pending_approval' | 'pending_verification'>('all');
   const [error, setError] = useState<string | null>(null);

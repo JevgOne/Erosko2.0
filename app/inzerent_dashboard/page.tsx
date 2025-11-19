@@ -152,7 +152,16 @@ export default function InzerentDashboard() {
 
   // Filter services by category for tabs
   const getServicesByCategory = (category: string) => {
-    return availableServices.filter(s => s.description?.includes(category));
+    // Map tab names to ServiceCategory enum values
+    const categoryMap: Record<string, string[]> = {
+      'escort': ['PRAKTIKY'],
+      'massage': ['DRUHY_MASAZI', 'EXTRA_SLUZBY'],
+      'bdsm': ['BDSM_PRAKTIKY'],
+      'online': ['ONLINE_SLUZBY']
+    };
+
+    const categories = categoryMap[category] || [];
+    return availableServices.filter(s => categories.includes(s.category));
   };
 
   // Get available tabs based on business type

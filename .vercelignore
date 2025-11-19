@@ -1,0 +1,4 @@
+scrapers.disabled/
+scrapers/
+node_modules/
+.git/

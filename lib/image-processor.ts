@@ -131,8 +131,8 @@ IMPORTANT:
 
       // Create form data
       const formData = new FormData();
-      const imageBlob = new Blob([imageBuffer], { type: 'image/jpeg' });
-      const maskBlob = new Blob([maskBuffer], { type: 'image/png' });
+      const imageBlob = new Blob([new Uint8Array(imageBuffer)], { type: 'image/jpeg' });
+      const maskBlob = new Blob([new Uint8Array(maskBuffer)], { type: 'image/png' });
 
       formData.append('image', imageBlob, 'image.jpg');
       formData.append('mask', maskBlob, 'mask.png');

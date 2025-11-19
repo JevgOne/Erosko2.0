@@ -72,12 +72,16 @@ export async function POST(request: Request) {
     let category: Category;
     if (business.profileType === ProfileType.MASSAGE_SALON) {
       category = Category.EROTICKE_MASERKY;
-    } else if (business.profileType === ProfileType.PRIVAT) {
+    } else if (business.profileType === ProfileType.PRIVAT || business.profileType === ProfileType.ESCORT_AGENCY) {
       category = Category.HOLKY_NA_SEX;
     } else if (business.profileType === ProfileType.DIGITAL_AGENCY) {
       category = Category.DIGITALNI_SLUZBY;
+    } else if (business.profileType === ProfileType.SWINGERS_CLUB ||
+               business.profileType === ProfileType.NIGHT_CLUB ||
+               business.profileType === ProfileType.STRIP_CLUB) {
+      category = Category.DOMINA; // BDSM clubs → Domina category
     } else {
-      category = Category.HOLKY_NA_SEX; // Default
+      category = Category.HOLKY_NA_SEX; // Default pro SOLO a ostatní
     }
 
     // Generate slug

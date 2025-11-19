@@ -732,7 +732,7 @@ export default function AdminPanel() {
                   <Users className="w-5 h-5" />
                   <span>Uživatelé</span>
                   {stats?.stats?.totalUsers && (
-                    <span className="ml-auto text-sm text-gray-400">{stats.stats.totalUsers}</span>
+                    <span className="ml-auto text-sm text-gray-400">{stats?.stats?.totalUsers}</span>
                   )}
                 </button>
 
@@ -748,7 +748,7 @@ export default function AdminPanel() {
                   <span>Podniky</span>
                   {stats?.stats?.pendingApprovalBusinesses > 0 && (
                     <span className="ml-auto bg-orange-500 text-white text-xs px-2 py-0.5 rounded-full">
-                      {stats.stats.pendingApprovalBusinesses}
+                      {stats?.stats?.pendingApprovalBusinesses}
                     </span>
                   )}
                 </button>
@@ -765,7 +765,7 @@ export default function AdminPanel() {
                   <span>Profily</span>
                   {stats?.stats?.pendingApprovalProfiles > 0 && (
                     <span className="ml-auto bg-orange-500 text-white text-xs px-2 py-0.5 rounded-full">
-                      {stats.stats.pendingApprovalProfiles}
+                      {stats?.stats?.pendingApprovalProfiles}
                     </span>
                   )}
                 </button>
@@ -780,7 +780,7 @@ export default function AdminPanel() {
                 >
                   <AlertCircle className="w-5 h-5" />
                   <span>Změny</span>
-                  {pendingChanges.filter(c => c.status === 'PENDING').length > 0 && (
+                  {Array.isArray(pendingChanges) && pendingChanges.filter(c => c.status === 'PENDING').length > 0 && (
                     <span className="ml-auto bg-orange-500 text-white text-xs px-2 py-0.5 rounded-full">
                       {pendingChanges.filter(c => c.status === 'PENDING').length}
                     </span>
@@ -843,7 +843,7 @@ export default function AdminPanel() {
                       <h3 className="text-sm font-medium text-gray-400">Celkem uživatelů</h3>
                       <Users className="w-5 h-5 text-primary-400" />
                     </div>
-                    <p className="text-3xl font-bold">{stats.stats.totalUsers}</p>
+                    <p className="text-3xl font-bold">{stats?.stats?.totalUsers || 0}</p>
                     <p className="text-sm text-gray-400 mt-2">Registrovaní uživatelé</p>
                   </div>
 
@@ -852,10 +852,10 @@ export default function AdminPanel() {
                       <h3 className="text-sm font-medium text-gray-400">Celkem podniků</h3>
                       <Building2 className="w-5 h-5 text-primary-400" />
                     </div>
-                    <p className="text-3xl font-bold">{stats.stats.totalBusinesses}</p>
-                    {stats.stats.pendingApprovalBusinesses > 0 && (
+                    <p className="text-3xl font-bold">{stats?.stats?.totalBusinesses || 0}</p>
+                    {(stats?.stats?.pendingApprovalBusinesses || 0) > 0 && (
                       <span className="inline-block text-xs px-2 py-1 bg-orange-500/20 text-orange-400 rounded mt-2">
-                        {stats.stats.pendingApprovalBusinesses} čeká
+                        {stats?.stats?.pendingApprovalBusinesses} čeká
                       </span>
                     )}
                   </div>
@@ -865,10 +865,10 @@ export default function AdminPanel() {
                       <h3 className="text-sm font-medium text-gray-400">Celkem profilů</h3>
                       <UserCircle className="w-5 h-5 text-primary-400" />
                     </div>
-                    <p className="text-3xl font-bold">{stats.stats.totalProfiles}</p>
-                    {stats.stats.pendingApprovalProfiles > 0 && (
+                    <p className="text-3xl font-bold">{stats?.stats?.totalProfiles}</p>
+                    {stats?.stats?.pendingApprovalProfiles > 0 && (
                       <span className="inline-block text-xs px-2 py-1 bg-orange-500/20 text-orange-400 rounded mt-2">
-                        {stats.stats.pendingApprovalProfiles} čeká
+                        {stats?.stats?.pendingApprovalProfiles} čeká
                       </span>
                     )}
                   </div>
@@ -878,7 +878,7 @@ export default function AdminPanel() {
                       <h3 className="text-sm font-medium text-gray-400">Hodnocení</h3>
                       <MessageSquare className="w-5 h-5 text-primary-400" />
                     </div>
-                    <p className="text-3xl font-bold">{stats.stats.totalReviews}</p>
+                    <p className="text-3xl font-bold">{stats?.stats?.totalReviews}</p>
                     <p className="text-sm text-gray-400 mt-2">Celkem recenzí</p>
                   </div>
                 </div>
@@ -966,21 +966,21 @@ export default function AdminPanel() {
                       <div className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
                         <div>
                           <p className="text-sm text-gray-400">Podniky</p>
-                          <p className="text-2xl font-bold">{stats.stats.pendingApprovalBusinesses}</p>
+                          <p className="text-2xl font-bold">{stats?.stats?.pendingApprovalBusinesses}</p>
                         </div>
                         <Building2 className="w-8 h-8 text-orange-400 opacity-50" />
                       </div>
                       <div className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
                         <div>
                           <p className="text-sm text-gray-400">Profily</p>
-                          <p className="text-2xl font-bold">{stats.stats.pendingApprovalProfiles}</p>
+                          <p className="text-2xl font-bold">{stats?.stats?.pendingApprovalProfiles}</p>
                         </div>
                         <UserCircle className="w-8 h-8 text-orange-400 opacity-50" />
                       </div>
                       <div className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
                         <div>
                           <p className="text-sm text-gray-400">Změny k revizi</p>
-                          <p className="text-2xl font-bold">{stats.stats.pendingChanges}</p>
+                          <p className="text-2xl font-bold">{stats?.stats?.pendingChanges}</p>
                         </div>
                         <MessageSquare className="w-8 h-8 text-orange-400 opacity-50" />
                       </div>
@@ -1002,21 +1002,21 @@ export default function AdminPanel() {
                       <div className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
                         <div>
                           <p className="text-sm text-gray-400">Podniky</p>
-                          <p className="text-2xl font-bold">{stats.stats.pendingVerificationBusinesses}</p>
+                          <p className="text-2xl font-bold">{stats?.stats?.pendingVerificationBusinesses}</p>
                         </div>
                         <Building2 className="w-8 h-8 text-blue-400 opacity-50" />
                       </div>
                       <div className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
                         <div>
                           <p className="text-sm text-gray-400">Profily</p>
-                          <p className="text-2xl font-bold">{stats.stats.pendingVerificationProfiles}</p>
+                          <p className="text-2xl font-bold">{stats?.stats?.pendingVerificationProfiles}</p>
                         </div>
                         <UserCircle className="w-8 h-8 text-blue-400 opacity-50" />
                       </div>
                       <div className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
                         <div>
                           <p className="text-sm text-gray-400">Celkem schválených</p>
-                          <p className="text-2xl font-bold">{stats.stats.approvedBusinesses + stats.stats.approvedProfiles}</p>
+                          <p className="text-2xl font-bold">{stats?.stats?.approvedBusinesses + stats?.stats?.approvedProfiles}</p>
                         </div>
                         <CheckCircle className="w-8 h-8 text-blue-400 opacity-50" />
                       </div>

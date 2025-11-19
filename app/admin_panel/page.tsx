@@ -1056,7 +1056,7 @@ export default function AdminPanel() {
                         <div key={business.id} className="flex items-center justify-between p-3 bg-white/5 rounded-lg">
                           <div>
                             <p className="font-medium">{business.name}</p>
-                            <p className="text-sm text-gray-400">{business.city} • {business.owner.email}</p>
+                            <p className="text-sm text-gray-400">{business.city} • {business.owner?.email || 'Bez majitele'}</p>
                           </div>
                           {business.verified ? (
                             <CheckCircle className="w-5 h-5 text-green-400" />
@@ -1433,7 +1433,7 @@ export default function AdminPanel() {
                           <div className="grid grid-cols-2 gap-4 text-sm">
                             <div>
                               <p className="text-gray-400">Vlastník</p>
-                              <p>{business.owner.email}</p>
+                              <p>{business.owner?.email || 'Bez majitele'}</p>
                             </div>
                             <div>
                               <p className="text-gray-400">Město</p>

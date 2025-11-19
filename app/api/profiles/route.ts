@@ -36,7 +36,8 @@ export async function POST(request: Request) {
       offersEscort,
       travels,
       services,
-      businessId
+      businessId,
+      category: userSelectedCategory
     } = body;
 
     if (!name || !age) {
@@ -68,20 +69,27 @@ export async function POST(request: Request) {
       );
     }
 
-    // Automaticky namapuj kategorii podle typu podniku
+    // Použij uživatelem vybranou kategorii, nebo automaticky namapuj podle typu podniku
     let category: Category;
-    if (business.profileType === ProfileType.MASSAGE_SALON) {
-      category = Category.EROTICKE_MASERKY;
-    } else if (business.profileType === ProfileType.PRIVAT || business.profileType === ProfileType.ESCORT_AGENCY) {
-      category = Category.HOLKY_NA_SEX;
-    } else if (business.profileType === ProfileType.DIGITAL_AGENCY) {
-      category = Category.DIGITALNI_SLUZBY;
-    } else if (business.profileType === ProfileType.SWINGERS_CLUB ||
-               business.profileType === ProfileType.NIGHT_CLUB ||
-               business.profileType === ProfileType.STRIP_CLUB) {
-      category = Category.DOMINA; // BDSM clubs → Domina category
+
+    if (userSelectedCategory) {
+      // Uživatel vybral kategorii manuálně
+      category = userSelectedCategory as Category;
     } else {
-      category = Category.HOLKY_NA_SEX; // Default pro SOLO a ostatní
+      // Fallback: Automaticky namapuj podle typu podniku
+      if (business.profileType === ProfileType.MASSAGE_SALON) {
+        category = Category.EROTICKE_MASERKY;
+      } else if (business.profileType === ProfileType.PRIVAT || business.profileType === ProfileType.ESCORT_AGENCY) {
+        category = Category.HOLKY_NA_SEX;
+      } else if (business.profileType === ProfileType.DIGITAL_AGENCY) {
+        category = Category.DIGITALNI_SLUZBY;
+      } else if (business.profileType === ProfileType.SWINGERS_CLUB ||
+                 business.profileType === ProfileType.NIGHT_CLUB ||
+                 business.profileType === ProfileType.STRIP_CLUB) {
+        category = Category.DOMINA;
+      } else {
+        category = Category.HOLKY_NA_SEX; // Default
+      }
     }
 
     // Generate slug

@@ -23,6 +23,13 @@ export async function GET(request: Request) {
       include: {
         profiles: {
           orderBy: { createdAt: 'desc' },
+          include: {
+            services: {
+              include: {
+                service: true,
+              },
+            },
+          },
         },
         businesses: {
           orderBy: { createdAt: 'desc' },

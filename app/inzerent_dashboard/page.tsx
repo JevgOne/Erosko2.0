@@ -298,6 +298,9 @@ export default function InzerentDashboard() {
   const handleOpenEditModal = (profile: any) => {
     setEditingProfile(profile);
 
+    // Extrahovat service IDs z profile.services
+    const serviceIds = profile.services?.map((ps: any) => ps.serviceId) || [];
+
     // Předvyplnit formulář aktuálními daty profilu
     setFormData({
       name: profile.name || '',
@@ -316,7 +319,7 @@ export default function InzerentDashboard() {
       piercing: profile.piercing || '',
       offersEscort: profile.offersEscort || false,
       travels: profile.travels || false,
-      services: [], // Services se načtou zvlášť
+      services: serviceIds,
       photos: [],
       openingHours: profile.openingHours || {
         monday: '',
@@ -329,6 +332,8 @@ export default function InzerentDashboard() {
       },
     });
 
+    // Načíst dostupné služby
+    fetchServices();
     setShowEditProfileModal(true);
   };
 

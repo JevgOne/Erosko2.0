@@ -50,10 +50,28 @@ export async function POST(request: Request) {
           where: { id: { in: photoChanges.photosToDelete } },
         });
 
+        const publicDir = path.join(process.cwd(), 'public');
+
         for (const photo of photosToDelete) {
-          // Delete file from disk
+          // Delete file from disk with path traversal protection
           try {
-            const publicPath = path.join(process.cwd(), 'public', photo.url);
+            // Security: Prevent path traversal attacks
+            const normalizedPath = path.normalize(photo.url);
+
+            // Check for path traversal attempts
+            if (normalizedPath.includes('..') || path.isAbsolute(normalizedPath)) {
+              console.error('Path traversal attempt detected:', photo.url);
+              continue; // Skip file deletion but continue with DB delete
+            }
+
+            const publicPath = path.join(publicDir, normalizedPath);
+
+            // Verify the resolved path is still within public directory
+            if (!publicPath.startsWith(publicDir)) {
+              console.error('Path outside public directory:', publicPath);
+              continue; // Skip this file
+            }
+
             if (fs.existsSync(publicPath)) {
               fs.unlinkSync(publicPath);
             }

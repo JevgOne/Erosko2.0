@@ -18,7 +18,6 @@ export default function ZapomenuteHesloPage() {
 
   // Code step
   const [verificationCode, setVerificationCode] = useState('');
-  const [devCode, setDevCode] = useState<string>(''); // Pro dev mode
 
   // Password step
   const [newPassword, setNewPassword] = useState('');
@@ -46,13 +45,8 @@ export default function ZapomenuteHesloPage() {
         throw new Error(data.error || 'Chyba při odesílání SMS');
       }
 
-      // V dev mode zobraz kód
-      if (data.code) {
-        setDevCode(data.code);
-        setSuccess(`SMS kód odeslán! (DEV MODE: ${data.code})`);
-      } else {
-        setSuccess('SMS kód byl odeslán na vaše telefonní číslo');
-      }
+      // SECURITY: Never display verification codes
+      setSuccess('SMS kód byl odeslán na vaše telefonní číslo');
 
       setStep('code');
     } catch (err: any) {
@@ -232,11 +226,6 @@ export default function ZapomenuteHesloPage() {
                     <p className="text-xs text-gray-400 mt-2">
                       Zadejte 6-místný kód z SMS
                     </p>
-                    {devCode && (
-                      <p className="text-xs text-green-400 mt-2">
-                        DEV MODE: Váš kód je {devCode}
-                      </p>
-                    )}
                   </div>
 
                   <button

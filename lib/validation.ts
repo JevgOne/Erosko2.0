@@ -49,23 +49,46 @@ export function validateEmail(email: string): { valid: boolean; message?: string
 
 /**
  * Validates password strength
- * SIMPLIFIED for launch - just check minimum length
+ * SECURITY: Enforces strong password policy (min 12 chars, complexity required)
  */
 export function validatePassword(password: string): { valid: boolean; message?: string; strength?: 'weak' | 'medium' | 'strong' } {
   if (!password || password.length === 0) {
     return { valid: false, message: 'Heslo je povinné' };
   }
 
-  if (password.length < 4) {
+  if (password.length < 12) {
     return {
       valid: false,
-      message: 'Heslo musí mít alespoň 4 znaky',
+      message: 'Heslo musí mít alespoň 12 znaků',
       strength: 'weak',
     };
   }
 
-  // Always return medium strength for now
-  return { valid: true, strength: 'medium' };
+  // Check password complexity
+  const hasLowerCase = /[a-z]/.test(password);
+  const hasUpperCase = /[A-Z]/.test(password);
+  const hasNumber = /\d/.test(password);
+  const hasSpecialChar = /[@$!%*?&]/.test(password);
+
+  const complexityCount = [hasLowerCase, hasUpperCase, hasNumber, hasSpecialChar].filter(Boolean).length;
+
+  if (complexityCount < 3) {
+    return {
+      valid: false,
+      message: 'Heslo musí obsahovat alespoň 3 z následujících: malá písmena, velká písmena, čísla, speciální znaky (@$!%*?&)',
+      strength: 'weak',
+    };
+  }
+
+  // Determine strength
+  let strength: 'weak' | 'medium' | 'strong' = 'medium';
+  if (password.length >= 16 && complexityCount === 4) {
+    strength = 'strong';
+  } else if (password.length >= 12 && complexityCount >= 3) {
+    strength = 'medium';
+  }
+
+  return { valid: true, strength };
 }
 
 /**

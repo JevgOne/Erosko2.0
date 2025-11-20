@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { verifyCode, normalizePhoneNumber } from '@/lib/sms';
+import { validatePassword } from '@/lib/validation';
 import bcrypt from 'bcryptjs';
 
 export async function POST(request: Request) {
@@ -14,9 +15,11 @@ export async function POST(request: Request) {
       );
     }
 
-    if (newPassword.length < 6) {
+    // Use the same password validation as registration
+    const passwordValidation = validatePassword(newPassword);
+    if (!passwordValidation.valid) {
       return NextResponse.json(
-        { error: 'Heslo musí mít alespoň 6 znaků' },
+        { error: passwordValidation.message },
         { status: 400 }
       );
     }

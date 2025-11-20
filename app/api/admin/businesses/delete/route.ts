@@ -46,15 +46,33 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Podnik nenalezen' }, { status: 404 });
     }
 
-    // Delete all photos from disk
+    // Delete all photos from disk with path traversal protection
     const allPhotos = [
       ...business.photos,
       ...business.profiles.flatMap(p => p.photos),
     ];
 
+    const publicDir = path.join(process.cwd(), 'public');
+
     for (const photo of allPhotos) {
       try {
-        const publicPath = path.join(process.cwd(), 'public', photo.url);
+        // Security: Prevent path traversal attacks
+        const normalizedPath = path.normalize(photo.url);
+
+        // Check for path traversal attempts
+        if (normalizedPath.includes('..') || path.isAbsolute(normalizedPath)) {
+          console.error('Path traversal attempt detected:', photo.url);
+          continue; // Skip this file
+        }
+
+        const publicPath = path.join(publicDir, normalizedPath);
+
+        // Verify the resolved path is still within public directory
+        if (!publicPath.startsWith(publicDir)) {
+          console.error('Path outside public directory:', publicPath);
+          continue; // Skip this file
+        }
+
         if (fs.existsSync(publicPath)) {
           fs.unlinkSync(publicPath);
         }

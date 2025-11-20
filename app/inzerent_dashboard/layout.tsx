@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import { redirect } from 'next/navigation';
+import { auth } from '@/auth';
 
 export const metadata: Metadata = {
   robots: {
@@ -12,10 +14,16 @@ export const metadata: Metadata = {
   },
 };
 
-export default function InzerentDashboardLayout({
+export default async function InzerentDashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await auth();
+
+  if (!session?.user) {
+    redirect('/prihlaseni');
+  }
+
   return <>{children}</>;
 }

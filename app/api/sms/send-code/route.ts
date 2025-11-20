@@ -25,15 +25,8 @@ export async function POST(request: Request) {
       );
     }
 
-    // In development mode, return the code for testing
-    if (result.code && process.env.NODE_ENV === 'development') {
-      return NextResponse.json({
-        success: true,
-        message: 'Ověřovací kód byl odeslán',
-        code: result.code, // Only in dev mode
-      });
-    }
-
+    // SECURITY: Never expose verification codes in responses
+    // Use a separate testing endpoint or check the database directly in development
     return NextResponse.json({
       success: true,
       message: 'Ověřovací kód byl odeslán na váš telefon',

@@ -1,6 +1,5 @@
 'use client';
 
-export const dynamic = 'force-dynamic';
 
 import { Suspense, useEffect, useState } from 'react';
 import Header from '@/components/Header';

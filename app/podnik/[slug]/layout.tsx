@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import prisma from '@/lib/prisma';
+import { getCurrentDomain, getBusinessCanonical, getDomainName } from '@/lib/domain-utils';
 
 interface Props {
   params: { slug: string };
@@ -8,6 +9,10 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = params;
+
+  // Get current domain from request headers
+  const domain = getCurrentDomain();
+  const siteName = getDomainName(domain);
 
   try {
     // Fetch business from database with SEO data
@@ -31,20 +36,31 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
     if (!business) {
       return {
-        title: 'Podnik nenalezen | Erosko.cz',
+        title: `Podnik nenalezen | ${siteName}`,
         description: 'Tento podnik neexistuje nebo byl odstraněn.',
       };
     }
 
-    // Fallback values if SEO data not generated yet
-    const title = business.seoTitle || `${business.name} - ${business.city} | Erosko.cz`;
+    // Fallback values if SEO data not generated yet (domain-aware)
+    const defaultTitle = domain === 'nhescort.com'
+      ? `${business.name} - ${business.city} | ${siteName}`
+      : `${business.name} - ${business.city} | ${siteName}`;
+
+    const defaultDescription = domain === 'nhescort.com'
+      ? `${business.name} in ${business.city}. Verified adult business with reviews.`
+      : `${business.name} v ${business.city}. Ověřený erotický podnik s recenzemi.`;
+
+    const title = business.seoTitle || defaultTitle;
     const description =
       business.seoDescription ||
       business.description ||
-      `${business.name} v ${business.city}. Ověřený erotický podnik s recenzemi.`;
+      defaultDescription;
 
     // Get main photo for OG image
     const ogImage = business.ogImageUrl || business.photos[0]?.url || '/default-og-image.jpg';
+
+    // Generate canonical URL for current domain
+    const canonical = getBusinessCanonical(slug, domain);
 
     return {
       title,
@@ -62,7 +78,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           },
         ],
         type: 'website',
-        siteName: 'Erosko.cz',
+        siteName,
       },
       twitter: {
         card: 'summary_large_image',
@@ -71,13 +87,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         images: [ogImage],
       },
       alternates: {
-        canonical: `https://erosko.cz/podnik/${slug}`,
+        canonical,
       },
     };
   } catch (error) {
     console.error('Error generating metadata:', error);
     return {
-      title: 'Erosko.cz - Erotické podniky',
+      title: `${siteName} - Erotické podniky`,
       description: 'Najděte ty nejlepší erotické podniky v České republice.',
     };
   }

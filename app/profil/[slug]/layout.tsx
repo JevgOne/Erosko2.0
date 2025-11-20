@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import prisma from '@/lib/prisma';
+import { getCurrentDomain, getProfileCanonical, getDomainName } from '@/lib/domain-utils';
 
 interface Props {
   params: { slug: string };
@@ -8,6 +9,10 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = params;
+
+  // Get current domain from request headers
+  const domain = getCurrentDomain();
+  const siteName = getDomainName(domain);
 
   try {
     // Fetch profile from database with SEO data
@@ -34,7 +39,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
     if (!profile) {
       return {
-        title: 'Profil nenalezen | Erosko.cz',
+        title: `Profil nenalezen | ${siteName}`,
         description: 'Tento profil neexistuje nebo byl odstraněn.',
       };
     }
@@ -47,14 +52,23 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       seoDescription = profile.seoDescriptionC;
     }
 
-    // Fallback values if SEO data not generated yet
-    const title = profile.seoTitle || `${profile.name} (${profile.age}) - ${profile.city} | Erosko.cz`;
-    const description =
-      seoDescription ||
-      `Profil ${profile.name}, ${profile.age} let, ${profile.city}. Ověřený escort profil s recenzemi.`;
+    // Fallback values if SEO data not generated yet (domain-aware)
+    const defaultTitle = domain === 'nhescort.com'
+      ? `${profile.name} (${profile.age}) - ${profile.city} | ${siteName}`
+      : `${profile.name} (${profile.age}) - ${profile.city} | ${siteName}`;
+
+    const defaultDescription = domain === 'nhescort.com'
+      ? `Profile of ${profile.name}, ${profile.age} years old, ${profile.city}. Verified escort profile with reviews.`
+      : `Profil ${profile.name}, ${profile.age} let, ${profile.city}. Ověřený escort profil s recenzemi.`;
+
+    const title = profile.seoTitle || defaultTitle;
+    const description = seoDescription || defaultDescription;
 
     // Get main photo for OG image
     const ogImage = profile.ogImageUrl || profile.photos[0]?.url || '/default-og-image.jpg';
+
+    // Generate canonical URL for current domain
+    const canonical = getProfileCanonical(slug, domain);
 
     return {
       title,
@@ -72,7 +86,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           },
         ],
         type: 'profile',
-        siteName: 'Erosko.cz',
+        siteName,
       },
       twitter: {
         card: 'summary_large_image',
@@ -81,13 +95,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         images: [ogImage],
       },
       alternates: {
-        canonical: `https://erosko.cz/profil/${slug}`,
+        canonical,
       },
     };
   } catch (error) {
     console.error('Error generating metadata:', error);
     return {
-      title: 'Erosko.cz - Premium escort služby',
+      title: `${siteName} - Premium escort služby`,
       description: 'Najděte ty nejlepší escort služby v České republice.',
     };
   }

@@ -118,6 +118,7 @@ model Business {
   id          String      @id @default(cuid())
   name        String
   slug        String      @unique
+  domain      String?     // Optional: erosko.cz or nhescort.com
   description String?
   phone       String
   email       String?
@@ -182,12 +183,14 @@ model Business {
   @@index([rating])
   @@index([viewCount])
   @@index([createdAt])
+  @@index([domain])
 }
 
 model Profile {
   id          String  @id @default(cuid())
   name        String
   slug        String  @unique
+  domain      String? // Optional: erosko.cz or nhescort.com
   age         Int
   description String?
   phone       String
@@ -302,6 +305,7 @@ model Profile {
   @@index([rating])
   @@index([viewCount])
   @@index([createdAt])
+  @@index([domain])
 }
 
 model Photo {
@@ -437,9 +441,10 @@ model PendingChange {
 
 // Static Pages for Landing Pages & SEO
 model StaticPage {
-  id   String   @id @default(cuid())
-  path String   @unique // URL path (e.g., "/holky-na-sex", "/praha")
-  type PageType @default(CUSTOM)
+  id     String   @id @default(cuid())
+  path   String   @unique // URL path (e.g., "/holky-na-sex", "/praha")
+  domain String?  // Optional: erosko.cz or nhescort.com
+  type   PageType @default(CUSTOM)
 
   // SEO Fields
   seoTitle       String
@@ -469,6 +474,7 @@ model StaticPage {
   @@index([path])
   @@index([type])
   @@index([published])
+  @@index([domain])
 }
 
 // Redirect Management

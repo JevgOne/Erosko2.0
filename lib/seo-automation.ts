@@ -3,7 +3,11 @@
  *
  * Automatically generates SEO metadata for profiles and businesses
  * using OpenAI (META tags) and Claude (ALT texts)
+ *
+ * Domain is detected automatically from HTTP request headers
  */
+
+import { getCurrentDomain, type Domain } from './domain-utils';
 
 interface ProfileData {
   id: string;
@@ -37,6 +41,7 @@ interface SEOResult {
 /**
  * Generate complete SEO for a profile
  * Calls OpenAI for META, generates OG image URL, and calls Claude for ALT texts
+ * Domain is detected automatically from HTTP request headers
  */
 export async function generateProfileSEO(
   profile: ProfileData,
@@ -44,6 +49,9 @@ export async function generateProfileSEO(
 ): Promise<SEOResult> {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+
+    // Detect current domain from request headers
+    const domain = getCurrentDomain();
 
     // Step 1: Generate META tags using OpenAI
     let metaData: any = {};
@@ -53,6 +61,7 @@ export async function generateProfileSEO(
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           type: 'profile',
+          domain, // Add domain to request
           data: {
             name: profile.name,
             age: profile.age,
@@ -76,7 +85,7 @@ export async function generateProfileSEO(
     }
 
     // Step 2: Generate OG Image URL (dynamic URL, not actual generation)
-    const ogImageUrl = `${baseUrl}/api/seo/generate-og-image?name=${encodeURIComponent(profile.name)}&city=${encodeURIComponent(profile.city)}&category=${profile.category}&age=${profile.age}&verified=false`;
+    const ogImageUrl = `${baseUrl}/api/seo/generate-og-image?name=${encodeURIComponent(profile.name)}&city=${encodeURIComponent(profile.city)}&category=${profile.category}&age=${profile.age}&verified=false&domain=${domain}`;
 
     // Step 3: Generate ALT texts using Claude (only if photos exist)
     let photoAlts: Array<{ id: string; alt: string; altQualityScore: number }> = [];
@@ -136,6 +145,7 @@ export async function generateProfileSEO(
 /**
  * Generate complete SEO for a business
  * Calls OpenAI for META and generates OG image URL
+ * Domain is detected automatically from HTTP request headers
  */
 export async function generateBusinessSEO(business: {
   id: string;
@@ -147,6 +157,9 @@ export async function generateBusinessSEO(business: {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 
+    // Detect current domain from request headers
+    const domain = getCurrentDomain();
+
     // Step 1: Generate META tags using OpenAI
     let metaData: any = {};
     try {
@@ -155,6 +168,7 @@ export async function generateBusinessSEO(business: {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           type: 'business',
+          domain, // Add domain to request
           data: {
             name: business.name,
             city: business.city,
@@ -175,7 +189,7 @@ export async function generateBusinessSEO(business: {
     }
 
     // Step 2: Generate OG Image URL
-    const ogImageUrl = `${baseUrl}/api/seo/generate-og-image?name=${encodeURIComponent(business.name)}&city=${encodeURIComponent(business.city)}&category=${business.profileType}&verified=false`;
+    const ogImageUrl = `${baseUrl}/api/seo/generate-og-image?name=${encodeURIComponent(business.name)}&city=${encodeURIComponent(business.city)}&category=${business.profileType}&verified=false&domain=${domain}`;
 
     return {
       success: true,

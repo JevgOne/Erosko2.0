@@ -14,6 +14,7 @@ export interface ProfileData {
   services?: string[];
   description?: string;
   verified?: boolean;
+  domain?: 'erosko.cz' | 'nhescort.com'; // NEW: Domain context for SEO
 }
 
 export const SEO_EXPERT_SYSTEM_PROMPT = `
@@ -50,7 +51,24 @@ Create SEO metadata that:
 export const getProfileSEOPrompt = (data: ProfileData): string => {
   const categoryContext = getCategoryContext(data.category, data.type);
 
+  // NEW: Domain context for SEO
+  const domain = data.domain || 'erosko.cz';
+  const domainContext = domain === 'nhescort.com'
+    ? `Target Domain: NHescort.com (US-focused market, English-compatible branding, international audience)
+Language: English primary, Czech secondary
+Branding: Professional, discreet, upscale
+Keywords: escort, companion, adult services, ${data.city} escorts`
+    : `Target Domain: Erosko.cz (Czech market, Czech-first language)
+Language: Czech primary
+Branding: Local, authentic, accessible
+Keywords: escort ${data.city}, společnice, erotické služby`;
+
+  const siteName = domain === 'nhescort.com' ? 'NHESCORT.COM' : 'EROSKO.CZ';
+
   return `${SEO_EXPERT_SYSTEM_PROMPT}
+
+**DOMAIN CONTEXT:**
+${domainContext}
 
 **CLIENT DATA:**
 Type: ${data.type}
@@ -65,18 +83,18 @@ ${data.verified ? 'Status: VERIFIED profile ✓' : ''}
 ${categoryContext}
 
 **YOUR TASK:**
-Generate SEO-optimized metadata for this ${data.type.toLowerCase()} on erosko.cz (Czech adult directory).
+Generate SEO-optimized metadata for this ${data.type.toLowerCase()} on ${domain}.
 
 **DELIVERABLES:**
 
 1. **META Title** (max 60 chars)
-   **POVINNÁ STRUKTURA:** "${data.name}${data.age ? ` ${data.age}` : ''} - [SLUŽBA] ${data.city} | EROSKO.CZ"
+   **POVINNÁ STRUKTURA:** "${data.name}${data.age ? ` ${data.age}` : ''} - [SLUŽBA] ${data.city} | ${siteName}"
 
    **PRAVIDLA:**
    - První VŽDY: Jméno profilu (+ věk pokud je)
    - Druhé VŽDY: KONKRÉTNÍ služba (NE generic!)
    - Třetí VŽDY: Město
-   - Konec: | EROSKO.CZ
+   - Konec: | ${siteName}
 
    **Příklady SPRÁVNĚ:**
    - "Sexy Lucie 25 - Erotický salon Praha 5 | EROSKO.CZ" (podnik)

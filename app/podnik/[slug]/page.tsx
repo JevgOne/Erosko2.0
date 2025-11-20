@@ -119,10 +119,16 @@ interface PageProps {
 
 export default async function Page({ params }: PageProps) {
   const { slug } = params;
+  const domain = 'erosko.cz'; // Default domain
 
   // Try to fetch business from database
   const business = await prisma.business.findUnique({
-    where: { slug },
+    where: {
+      slug_domain: {
+        slug,
+        domain
+      }
+    },
     include: {
       photos: {
         orderBy: { order: 'asc' }
@@ -277,9 +283,15 @@ export default async function Page({ params }: PageProps) {
 // Generate metadata for SEO
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = params;
+  const domain = 'erosko.cz'; // Default domain
 
   const business = await prisma.business.findUnique({
-    where: { slug },
+    where: {
+      slug_domain: {
+        slug,
+        domain
+      }
+    },
     select: {
       name: true,
       seoTitle: true,

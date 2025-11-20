@@ -117,7 +117,8 @@ enum VerificationStatus {
 model Business {
   id          String      @id @default(cuid())
   name        String
-  slug        String      @unique
+  slug        String
+  domain      String      @default("erosko.cz") // erosko.cz or nhescort.com
   description String?
   phone       String
   email       String?
@@ -172,6 +173,9 @@ model Business {
   pendingChanges PendingChange[]
   verifications  Verification[]  // ➕ NEW: Multi-tier verification badges
 
+  @@unique([slug, domain])
+  @@index([domain])
+  @@index([domain, approved])
   @@index([city])
   @@index([profileType])
   @@index([slug])
@@ -187,7 +191,8 @@ model Business {
 model Profile {
   id          String  @id @default(cuid())
   name        String
-  slug        String  @unique
+  slug        String
+  domain      String  @default("erosko.cz") // erosko.cz or nhescort.com
   age         Int
   description String?
   phone       String
@@ -291,6 +296,9 @@ model Profile {
   verifications  Verification[]   // ➕ NEW: Multi-tier verification badges
   searchTags     ProfileSearchTag[] // Oblíbené vyhledávání tags
 
+  @@unique([slug, domain])
+  @@index([domain])
+  @@index([domain, approved])
   @@index([city])
   @@index([category])
   @@index([profileType])
@@ -437,9 +445,10 @@ model PendingChange {
 
 // Static Pages for Landing Pages & SEO
 model StaticPage {
-  id   String   @id @default(cuid())
-  path String   @unique // URL path (e.g., "/holky-na-sex", "/praha")
-  type PageType @default(CUSTOM)
+  id     String   @id @default(cuid())
+  path   String   // URL path (e.g., "/holky-na-sex", "/praha")
+  domain String   @default("erosko.cz") // erosko.cz or nhescort.com
+  type   PageType @default(CUSTOM)
 
   // SEO Fields
   seoTitle       String
@@ -466,6 +475,8 @@ model StaticPage {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@unique([path, domain])
+  @@index([domain])
   @@index([path])
   @@index([type])
   @@index([published])

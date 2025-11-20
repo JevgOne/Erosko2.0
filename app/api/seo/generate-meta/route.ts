@@ -6,9 +6,10 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
 export async function POST(req: Request) {
   try {
-    const { type, data } = await req.json();
+    const { type, data, domain = 'erosko.cz' } = await req.json(); // NEW: Accept domain
     // type: "profile" | "business"
     // data: { name, age?, city, category, services?, description?, verified? }
+    // domain: "erosko.cz" | "nhescort.com"
 
     const profileData: ProfileData = {
       name: data.name,
@@ -19,6 +20,7 @@ export async function POST(req: Request) {
       services: data.services,
       description: data.description,
       verified: data.verified,
+      domain, // NEW: Pass domain to prompt
     };
 
     const prompt = getProfileSEOPrompt(profileData);

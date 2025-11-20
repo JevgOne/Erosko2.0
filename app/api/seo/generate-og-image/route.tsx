@@ -1,5 +1,6 @@
 import { ImageResponse } from 'next/og';
 import { NextRequest } from 'next/server';
+import { getDomainColor, type Domain } from '@/lib/domain-utils';
 
 export const runtime = 'edge';
 
@@ -13,6 +14,7 @@ export async function GET(req: NextRequest) {
     const age = searchParams.get('age') || '';
     const verified = searchParams.get('verified') === 'true';
     const rating = searchParams.get('rating') || '';
+    const domain = (searchParams.get('domain') || 'erosko.cz') as Domain; // NEW: Domain parameter
 
     // Category labels in Czech
     const categoryLabels: Record<string, string> = {
@@ -24,6 +26,10 @@ export async function GET(req: NextRequest) {
     };
 
     const categoryLabel = categoryLabels[category] || category;
+
+    // NEW: Get domain-specific color
+    const primaryColor = getDomainColor(domain);
+    const siteName = domain === 'nhescort.com' ? 'NHESCORT.COM' : 'EROSKO.CZ';
 
     return new ImageResponse(
       (
@@ -47,7 +53,7 @@ export async function GET(req: NextRequest) {
               left: 0,
               right: 0,
               bottom: 0,
-              backgroundImage: 'radial-gradient(circle at 25px 25px, rgba(219, 39, 119, 0.1) 2%, transparent 0%), radial-gradient(circle at 75px 75px, rgba(219, 39, 119, 0.1) 2%, transparent 0%)',
+              backgroundImage: `radial-gradient(circle at 25px 25px, ${primaryColor}1a 2%, transparent 0%), radial-gradient(circle at 75px 75px, ${primaryColor}1a 2%, transparent 0%)`,
               backgroundSize: '100px 100px',
               opacity: 0.3,
             }}
@@ -71,14 +77,14 @@ export async function GET(req: NextRequest) {
               style={{
                 fontSize: 48,
                 fontWeight: 800,
-                background: 'linear-gradient(135deg, #ec4899 0%, #db2777 50%, #be185d 100%)',
+                background: `linear-gradient(135deg, ${primaryColor} 0%, ${primaryColor}dd 50%, ${primaryColor}bb 100%)`,
                 backgroundClip: 'text',
                 color: 'transparent',
                 marginBottom: 40,
                 letterSpacing: '-0.02em',
               }}
             >
-              EROSKO.CZ
+              {siteName}
             </div>
 
             {/* Profile name */}

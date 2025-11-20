@@ -39,9 +39,15 @@ export async function POST(request: Request) {
     const timestamp = Date.now();
     const slug = `${data.name.toLowerCase().replace(/\s+/g, '-')}-${data.city.toLowerCase().replace(/\s+/g, '-')}-${data.phone.replace(/\D/g, '')}`;
 
-    // Check if slug already exists
+    // Check if slug already exists (for current domain)
+    const domain = 'erosko.cz'; // Default domain for admin creation
     const existingBusiness = await prisma.business.findUnique({
-      where: { slug },
+      where: {
+        slug_domain: {
+          slug,
+          domain
+        }
+      },
     });
 
     if (existingBusiness) {

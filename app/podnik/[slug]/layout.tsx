@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import prisma from '@/lib/prisma';
+import { getCurrentDomain, getBusinessCanonical, type Domain } from '@/lib/domain-utils';
 
 interface Props {
   params: { slug: string };
@@ -8,11 +9,17 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = params;
+  const domain = getCurrentDomain();
 
   try {
     // Fetch business from database with SEO data
     const business = await prisma.business.findUnique({
-      where: { slug },
+      where: {
+        slug_domain: {
+          slug,
+          domain
+        }
+      },
       select: {
         name: true,
         city: true,
@@ -71,7 +78,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         images: [ogImage],
       },
       alternates: {
-        canonical: `https://erosko.cz/podnik/${slug}`,
+        canonical: getBusinessCanonical(slug, domain as Domain),
       },
     };
   } catch (error) {

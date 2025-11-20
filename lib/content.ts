@@ -89,3 +89,36 @@ export async function getRequiredContentBlock(identifier: string): Promise<strin
 
   return content;
 }
+
+/**
+ * Get all content blocks for a specific page (all sections at once)
+ * Use this instead of calling getContentBlocks multiple times
+ */
+export async function getAllPageContentBlocks(page: string) {
+  try {
+    const blocks = await prisma.contentBlock.findMany({
+      where: {
+        page,
+        published: true,
+      },
+      orderBy: {
+        order: 'asc',
+      },
+    });
+
+    // Group blocks by section
+    const grouped: Record<string, typeof blocks> = {};
+    blocks.forEach((block) => {
+      const section = block.section || 'default';
+      if (!grouped[section]) {
+        grouped[section] = [];
+      }
+      grouped[section].push(block);
+    });
+
+    return grouped;
+  } catch (error) {
+    console.error(`Error fetching all content blocks for page "${page}":`, error);
+    return {};
+  }
+}

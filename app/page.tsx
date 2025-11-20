@@ -2,7 +2,8 @@ import Header from '@/components/Header';
 import { Metadata } from 'next';
 import prisma from '@/lib/prisma';
 
-export const dynamic = 'force-dynamic';
+// Revalidate every 5 minutes instead of force-dynamic
+export const revalidate = 300;
 
 // Generate metadata from database
 export async function generateMetadata(): Promise<Metadata> {
@@ -47,7 +48,8 @@ import Footer from '@/components/Footer';
 import AdBanner from '@/components/AdBanner';
 import ProfileCardGrid from '@/components/ProfileCardGrid';
 import { profilesToCards } from '@/lib/profile-card-adapter';
-import { ContentBlockSection } from '@/components/ContentBlock';
+import { PreloadedContentBlockSection } from '@/components/ContentBlock';
+import { getAllPageContentBlocks } from '@/lib/content';
 
 async function getProfiles() {
   const profiles = await prisma.profile.findMany({
@@ -73,16 +75,19 @@ async function getProfiles() {
 }
 
 export default async function Home() {
-  const cards = await getProfiles();
+  // Fetch all data in parallel for better performance
+  const [cards, contentBlocks] = await Promise.all([
+    getProfiles(),
+    getAllPageContentBlocks('homepage')
+  ]);
 
   return (
     <main className="min-h-screen">
       <Header />
 
       {/* Content Blocks - Above Hero (Promo Banners) */}
-      <ContentBlockSection
-        page="homepage"
-        section="hero-top"
+      <PreloadedContentBlockSection
+        blocks={contentBlocks['hero-top']}
         className="container mx-auto px-4 sm:px-6 lg:px-8 py-4"
         itemClassName="mb-4 bg-gradient-to-r from-primary-500/10 to-pink-500/10 border border-primary-500/30 rounded-2xl p-4 md:p-6"
       />
@@ -90,9 +95,8 @@ export default async function Home() {
       <Hero />
 
       {/* Content Blocks - After Hero */}
-      <ContentBlockSection
-        page="homepage"
-        section="after-hero"
+      <PreloadedContentBlockSection
+        blocks={contentBlocks['after-hero']}
         className="container mx-auto px-4 sm:px-6 lg:px-8 py-8"
         itemClassName="mb-6"
       />
@@ -114,9 +118,8 @@ export default async function Home() {
       </section>
 
       {/* Content Blocks - After Profiles */}
-      <ContentBlockSection
-        page="homepage"
-        section="after-profiles"
+      <PreloadedContentBlockSection
+        blocks={contentBlocks['after-profiles']}
         className="container mx-auto px-4 sm:px-6 lg:px-8 py-8"
         itemClassName="mb-6"
       />
@@ -134,9 +137,8 @@ export default async function Home() {
       <Categories />
 
       {/* Content Blocks Section - Editable from Admin */}
-      <ContentBlockSection
-        page="homepage"
-        section="main"
+      <PreloadedContentBlockSection
+        blocks={contentBlocks['main']}
         className="container mx-auto px-4 sm:px-6 lg:px-8 py-12"
         itemClassName="mb-8"
       />
@@ -145,9 +147,8 @@ export default async function Home() {
       <HowItWorks />
 
       {/* Content Blocks Section - Footer area */}
-      <ContentBlockSection
-        page="homepage"
-        section="footer"
+      <PreloadedContentBlockSection
+        blocks={contentBlocks['footer']}
         className="container mx-auto px-4 sm:px-6 lg:px-8 py-8"
         itemClassName="mb-6"
       />

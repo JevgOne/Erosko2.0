@@ -64,6 +64,22 @@ export default function AdminPanel() {
   const [businessPhotosPreviews, setBusinessPhotosPreviews] = useState<string[]>([]);
   const [photosToDelete, setPhotosToDelete] = useState<string[]>([]);
 
+  // Profile edit modal states
+  const [showEditProfileModal, setShowEditProfileModal] = useState(false);
+  const [editingProfile, setEditingProfile] = useState<any>(null);
+  const [profileFormData, setProfileFormData] = useState({
+    name: '',
+    age: '',
+    phone: '',
+    city: '',
+    description: '',
+    price: '',
+    businessId: '',
+  });
+  const [profilePhotos, setProfilePhotos] = useState<File[]>([]);
+  const [profilePhotosPreviews, setProfilePhotosPreviews] = useState<string[]>([]);
+  const [profilePhotosToDelete, setProfilePhotosToDelete] = useState<string[]>([]);
+
   // Add new business modal states
   const [showAddBusinessModal, setShowAddBusinessModal] = useState(false);
   const [newBusinessFormData, setNewBusinessFormData] = useState({
@@ -526,6 +542,75 @@ export default function AdminPanel() {
     } catch (error) {
       console.error('Error editing business:', error);
       alert('Chyba při úpravě podniku');
+    }
+  };
+
+  // Profile edit handlers
+  const handleEditProfileOpen = (profile: any) => {
+    setEditingProfile(profile);
+    setProfileFormData({
+      name: profile.name || '',
+      age: profile.age?.toString() || '',
+      phone: profile.phone || '',
+      city: profile.city || '',
+      description: profile.description || '',
+      price: profile.price || '',
+      businessId: profile.businessId || '',
+    });
+    setProfilePhotos([]);
+    setProfilePhotosPreviews([]);
+    setProfilePhotosToDelete([]);
+    setShowEditProfileModal(true);
+  };
+
+  const handleEditProfileSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingProfile) return;
+
+    try {
+      // Convert photos to base64
+      const photoPromises = profilePhotos.map((file) => {
+        return new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+      });
+      const base64Photos = await Promise.all(photoPromises);
+
+      // Prepare data
+      const data: any = {
+        ...profileFormData,
+        age: profileFormData.age ? parseInt(profileFormData.age) : undefined,
+      };
+
+      if (profilePhotosToDelete.length > 0 || base64Photos.length > 0) {
+        data.photoChanges = {
+          photosToDelete: profilePhotosToDelete.length > 0 ? profilePhotosToDelete : undefined,
+          newPhotos: base64Photos.length > 0 ? base64Photos : undefined,
+        };
+      }
+
+      // Send to API
+      const response = await fetch('/api/admin/profiles/edit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ profileId: editingProfile.id, data }),
+      });
+
+      if (response.ok) {
+        alert('Profil úspěšně upraven!');
+        setShowEditProfileModal(false);
+        setEditingProfile(null);
+        fetchAdminData(); // Reload
+      } else {
+        const result = await response.json();
+        alert(result.error || 'Chyba při úpravě profilu');
+      }
+    } catch (error) {
+      console.error('Error editing profile:', error);
+      alert('Chyba při úpravě profilu');
     }
   };
 
@@ -1735,6 +1820,15 @@ export default function AdminPanel() {
                           </div>
 
                           <div className="ml-auto flex gap-2">
+                            {/* Edit Button */}
+                            <button
+                              onClick={() => handleEditProfileOpen(profile)}
+                              className="flex items-center gap-2 px-4 py-2 bg-primary-500/20 text-primary-400 rounded-lg hover:bg-primary-500/30 transition-colors text-sm"
+                            >
+                              <Eye className="w-4 h-4" />
+                              Upravit
+                            </button>
+
                             {/* Approve/Reject Button */}
                             {!profile.approved ? (
                               <button
@@ -2228,6 +2322,245 @@ export default function AdminPanel() {
                 <button
                   type="submit"
                   className="flex-1 px-6 py-3 bg-gradient-to-r from-primary-500 to-pink-500 rounded-lg hover:shadow-lg hover:shadow-primary-500/50 transition-all font-semibold"
+                >
+                  Uložit změny
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Profile Modal */}
+      {showEditProfileModal && editingProfile && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="glass rounded-3xl p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold">Upravit profil</h2>
+              <button
+                onClick={() => setShowEditProfileModal(false)}
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                <XCircle className="w-6 h-6" />
+              </button>
+            </div>
+
+            <form onSubmit={handleEditProfileSave} className="space-y-6">
+              {/* Basic Info */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Jméno *
+                  </label>
+                  <input
+                    type="text"
+                    value={profileFormData.name}
+                    onChange={(e) => setProfileFormData({ ...profileFormData, name: e.target.value })}
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary-500 transition-colors"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Věk *
+                  </label>
+                  <input
+                    type="number"
+                    value={profileFormData.age}
+                    onChange={(e) => setProfileFormData({ ...profileFormData, age: e.target.value })}
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary-500 transition-colors"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Telefon *
+                  </label>
+                  <input
+                    type="tel"
+                    value={profileFormData.phone}
+                    onChange={(e) => setProfileFormData({ ...profileFormData, phone: e.target.value })}
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary-500 transition-colors"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Město *
+                  </label>
+                  <input
+                    type="text"
+                    value={profileFormData.city}
+                    onChange={(e) => setProfileFormData({ ...profileFormData, city: e.target.value })}
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary-500 transition-colors"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Cena (Kč/hod)
+                  </label>
+                  <input
+                    type="text"
+                    value={profileFormData.price}
+                    onChange={(e) => setProfileFormData({ ...profileFormData, price: e.target.value })}
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary-500 transition-colors"
+                    placeholder="např. 2000"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Přiřazený podnik
+                  </label>
+                  <select
+                    value={profileFormData.businessId}
+                    onChange={(e) => setProfileFormData({ ...profileFormData, businessId: e.target.value })}
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary-500 transition-colors"
+                  >
+                    <option value="">-- SOLO profil (bez podniku) --</option>
+                    {businesses.map((business: any) => (
+                      <option key={business.id} value={business.id}>
+                        {business.name} ({business.city})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Description */}
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Popis
+                </label>
+                <textarea
+                  value={profileFormData.description}
+                  onChange={(e) => setProfileFormData({ ...profileFormData, description: e.target.value })}
+                  rows={4}
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary-500 transition-colors resize-none"
+                />
+              </div>
+
+              {/* Photos Management */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-white border-b border-white/10 pb-2">
+                  Fotky profilu
+                </h3>
+
+                {/* Existing Photos */}
+                {editingProfile.photos && editingProfile.photos.length > 0 && (
+                  <div>
+                    <p className="text-sm text-gray-400 mb-3">Současné fotky (klikněte na fotku pro smazání)</p>
+                    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
+                      {editingProfile.photos.map((photo: any) => (
+                        <div
+                          key={photo.id}
+                          className={`relative group aspect-square rounded-lg overflow-hidden cursor-pointer border-2 transition-all ${
+                            profilePhotosToDelete.includes(photo.id)
+                              ? 'border-red-500 opacity-50'
+                              : 'border-transparent hover:border-primary-400'
+                          }`}
+                          onClick={() => {
+                            if (profilePhotosToDelete.includes(photo.id)) {
+                              setProfilePhotosToDelete(profilePhotosToDelete.filter(id => id !== photo.id));
+                            } else {
+                              setProfilePhotosToDelete([...profilePhotosToDelete, photo.id]);
+                            }
+                          }}
+                        >
+                          <img src={photo.url} alt={`Fotka ${photo.order + 1}`} className="w-full h-full object-cover" />
+                          {profilePhotosToDelete.includes(photo.id) && (
+                            <div className="absolute inset-0 flex items-center justify-center bg-red-500/20">
+                              <XCircle className="w-8 h-8 text-red-400" />
+                            </div>
+                          )}
+                          {photo.isMain && (
+                            <div className="absolute top-1 left-1 px-2 py-0.5 bg-primary-500 rounded text-[10px] font-bold">
+                              HLAVNÍ
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Add New Photos */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Přidat nové fotky
+                  </label>
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/jpg,image/png,image/webp"
+                    multiple
+                    onChange={(e) => {
+                      const files = Array.from(e.target.files || []);
+
+                      // HEIC validation
+                      const invalidFiles = files.filter(file => {
+                        const extension = file.name.split('.').pop()?.toLowerCase();
+                        return extension === 'heic' || extension === 'heif';
+                      });
+
+                      if (invalidFiles.length > 0) {
+                        alert('HEIC formát není podporován. Použijte prosím JPG, PNG nebo WebP.');
+                        return;
+                      }
+
+                      setProfilePhotos(files);
+
+                      // Generate previews
+                      const previews: string[] = [];
+                      files.forEach(file => {
+                        const reader = new FileReader();
+                        reader.onloadend = () => {
+                          previews.push(reader.result as string);
+                          if (previews.length === files.length) {
+                            setProfilePhotosPreviews(previews);
+                          }
+                        };
+                        reader.readAsDataURL(file);
+                      });
+                    }}
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary-500 transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-primary-500 file:text-white file:cursor-pointer hover:file:bg-primary-600"
+                  />
+                </div>
+
+                {/* New Photos Preview */}
+                {profilePhotosPreviews.length > 0 && (
+                  <div>
+                    <p className="text-sm text-gray-400 mb-3">Náhled nových fotek ({profilePhotosPreviews.length})</p>
+                    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
+                      {profilePhotosPreviews.map((preview, index) => (
+                        <div key={index} className="relative aspect-square rounded-lg overflow-hidden border-2 border-green-500">
+                          <img src={preview} alt={`Nová fotka ${index + 1}`} className="w-full h-full object-cover" />
+                          <div className="absolute top-1 left-1 px-2 py-0.5 bg-green-500 rounded text-[10px] font-bold">
+                            NOVÁ
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-3 justify-end pt-4 border-t border-white/10">
+                <button
+                  type="button"
+                  onClick={() => setShowEditProfileModal(false)}
+                  className="px-6 py-3 bg-white/5 rounded-lg font-semibold hover:bg-white/10 transition-colors"
+                >
+                  Zrušit
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-3 bg-gradient-to-r from-primary-500 to-pink-500 rounded-lg font-semibold hover:shadow-lg hover:shadow-primary-500/50 transition-all"
                 >
                   Uložit změny
                 </button>

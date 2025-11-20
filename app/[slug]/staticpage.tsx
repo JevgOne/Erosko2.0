@@ -2,7 +2,6 @@ import { notFound } from 'next/navigation';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import prisma from '@/lib/prisma';
-import { getCurrentDomain, getStaticPageCanonical, type Domain } from '@/lib/domain-utils';
 import type { Metadata } from 'next';
 
 interface Props {
@@ -11,14 +10,8 @@ interface Props {
 
 // Generate SEO metadata
 export async function generateStaticPageMetadata(path: string): Promise<Metadata | null> {
-  const domain = getCurrentDomain();
   const page = await prisma.staticPage.findUnique({
-    where: {
-      path_domain: {
-        path,
-        domain
-      }
-    },
+    where: { path },
     select: {
       seoTitle: true,
       seoDescription: true,
@@ -46,22 +39,16 @@ export async function generateStaticPageMetadata(path: string): Promise<Metadata
       images: page.ogImageUrl ? [page.ogImageUrl] : [],
     },
     alternates: {
-      canonical: getStaticPageCanonical(path, domain as Domain),
+      canonical: `https://erosko.cz${path}`,
     },
   };
 }
 
 export default async function StaticPageView({ params }: Props) {
   const path = `/${params.slug}`;
-  const domain = getCurrentDomain();
 
   const page = await prisma.staticPage.findUnique({
-    where: {
-      path_domain: {
-        path,
-        domain
-      }
-    },
+    where: { path },
   });
 
   if (!page || !page.published) {

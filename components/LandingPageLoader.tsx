@@ -1,5 +1,4 @@
 import prisma from '@/lib/prisma';
-import { getCurrentDomain } from '@/lib/domain-utils';
 import { notFound } from 'next/navigation';
 
 interface LandingPageLoaderProps {
@@ -7,17 +6,11 @@ interface LandingPageLoaderProps {
 }
 
 export default async function LandingPageLoader({ path }: LandingPageLoaderProps) {
-  const domain = getCurrentDomain();
   const page = await prisma.staticPage.findUnique({
-    where: {
-      path_domain: {
-        path,
-        domain
-      }
-    },
+    where: { path, published: true },
   });
 
-  if (!page || !page.published) {
+  if (!page) {
     notFound();
   }
 
@@ -83,17 +76,11 @@ export default async function LandingPageLoader({ path }: LandingPageLoaderProps
 
 // Helper to generate metadata
 export async function getLandingPageMetadata(path: string) {
-  const domain = getCurrentDomain();
   const page = await prisma.staticPage.findUnique({
-    where: {
-      path_domain: {
-        path,
-        domain
-      }
-    },
+    where: { path, published: true },
   });
 
-  if (!page || !page.published) {
+  if (!page) {
     return {
       title: 'Page Not Found | EROSKO.CZ',
     };

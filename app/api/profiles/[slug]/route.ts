@@ -1,19 +1,14 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { getCurrentDomain } from '@/lib/domain-utils';
 
 export async function GET(
   request: Request,
   { params }: { params: { slug: string } }
 ) {
   try {
-    const domain = getCurrentDomain();
     const profile = await prisma.profile.findUnique({
       where: {
-        slug_domain: {
-          slug: params.slug,
-          domain
-        }
+        slug: params.slug,
       },
       include: {
         photos: {
@@ -55,14 +50,8 @@ export async function POST(
 
     // Check if this is a view tracking request
     if (body.action === 'track_view') {
-      const domain = getCurrentDomain();
       await prisma.profile.update({
-        where: {
-          slug_domain: {
-            slug: params.slug,
-            domain
-          }
-        },
+        where: { slug: params.slug },
         data: {
           viewCount: {
             increment: 1

@@ -38,16 +38,10 @@ export async function PATCH(request: Request, { params }: { params: { id: string
       return NextResponse.json({ success: false, error: 'Page not found' }, { status: 404 });
     }
 
-    // If path is changing, check it's not taken by another page (on same domain)
+    // If path is changing, check it's not taken by another page
     if (path && path !== existing.path) {
-      const domain = existing.domain || 'erosko.cz';
       const pathTaken = await prisma.staticPage.findUnique({
-        where: {
-          path_domain: {
-            path,
-            domain
-          }
-        },
+        where: { path },
       });
 
       if (pathTaken) {

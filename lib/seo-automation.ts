@@ -13,7 +13,6 @@ interface ProfileData {
   category: string;
   description?: string | null;
   services?: Array<{ service: { name: string } }>;
-  domain?: string; // NEW: Domain for SEO context
 }
 
 interface PhotoData {
@@ -35,22 +34,16 @@ interface SEOResult {
   error?: string;
 }
 
-interface SEOOptions {
-  domain?: 'erosko.cz' | 'nhescort.com';
-}
-
 /**
  * Generate complete SEO for a profile
  * Calls OpenAI for META, generates OG image URL, and calls Claude for ALT texts
  */
 export async function generateProfileSEO(
   profile: ProfileData,
-  photos: PhotoData[] = [],
-  options: SEOOptions = {} // NEW: Options parameter
+  photos: PhotoData[] = []
 ): Promise<SEOResult> {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-    const domain = options.domain || profile.domain || 'erosko.cz'; // NEW: Get domain
 
     // Step 1: Generate META tags using OpenAI
     let metaData: any = {};
@@ -60,7 +53,6 @@ export async function generateProfileSEO(
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           type: 'profile',
-          domain, // NEW: Pass domain to API
           data: {
             name: profile.name,
             age: profile.age,
@@ -84,7 +76,7 @@ export async function generateProfileSEO(
     }
 
     // Step 2: Generate OG Image URL (dynamic URL, not actual generation)
-    const ogImageUrl = `${baseUrl}/api/seo/generate-og-image?name=${encodeURIComponent(profile.name)}&city=${encodeURIComponent(profile.city)}&category=${profile.category}&age=${profile.age}&verified=false&domain=${domain}`; // NEW: Added domain param
+    const ogImageUrl = `${baseUrl}/api/seo/generate-og-image?name=${encodeURIComponent(profile.name)}&city=${encodeURIComponent(profile.city)}&category=${profile.category}&age=${profile.age}&verified=false`;
 
     // Step 3: Generate ALT texts using Claude (only if photos exist)
     let photoAlts: Array<{ id: string; alt: string; altQualityScore: number }> = [];

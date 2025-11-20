@@ -50,4 +50,3 @@ fix-*.sh
 recreate-admin.ts
 stats.ts
 test-*.ts
-backup-seo-domain-split-*/

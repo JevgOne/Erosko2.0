@@ -1,4 +1,3 @@
-
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import prisma from '@/lib/prisma';
@@ -119,16 +118,10 @@ interface PageProps {
 
 export default async function Page({ params }: PageProps) {
   const { slug } = params;
-  const domain = 'erosko.cz'; // Default domain
 
   // Try to fetch business from database
   const business = await prisma.business.findUnique({
-    where: {
-      slug_domain: {
-        slug,
-        domain
-      }
-    },
+    where: { slug },
     include: {
       photos: {
         orderBy: { order: 'asc' }
@@ -137,11 +130,11 @@ export default async function Page({ params }: PageProps) {
         where: { approved: true },
         include: {
           photos: {
-            where: { isMain: true },
+            orderBy: { order: 'asc' },
             take: 1
           }
-        },
-        take: 6
+        }
+        // No limit - load all profiles
       },
       reviews: {
         orderBy: { createdAt: 'desc' },
@@ -182,9 +175,9 @@ export default async function Page({ params }: PageProps) {
 
     location: {
       address: business.address || mockBusiness.location.address,
-      city: business.city,
-      district: mockBusiness.location.district,
-      region: mockBusiness.location.region,
+      city: business.city.includes('Praha') ? 'Praha' : business.city,
+      district: business.address?.split(',')[1]?.trim() || business.city,
+      region: business.city.includes('Praha') ? 'Praha' : business.city,
       latitude: mockBusiness.location.latitude,
       longitude: mockBusiness.location.longitude,
       parking: business.address !== null,
@@ -283,15 +276,9 @@ export default async function Page({ params }: PageProps) {
 // Generate metadata for SEO
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = params;
-  const domain = 'erosko.cz'; // Default domain
 
   const business = await prisma.business.findUnique({
-    where: {
-      slug_domain: {
-        slug,
-        domain
-      }
-    },
+    where: { slug },
     select: {
       name: true,
       seoTitle: true,

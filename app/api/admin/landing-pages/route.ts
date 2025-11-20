@@ -96,15 +96,9 @@ export async function POST(request: Request) {
       );
     }
 
-    // Check if path already exists (for current domain)
-    const domain = 'erosko.cz'; // Default domain for admin
+    // Check if path already exists
     const existing = await prisma.staticPage.findUnique({
-      where: {
-        path_domain: {
-          path,
-          domain
-        }
-      },
+      where: { path },
     });
 
     if (existing) {

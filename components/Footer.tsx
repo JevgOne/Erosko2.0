@@ -2,8 +2,11 @@
 
 import { Heart, Mail, Phone, MapPin, Facebook, Instagram, Twitter } from 'lucide-react';
 import Link from 'next/link';
+import { useDomainName } from '@/hooks/useDomain';
 
 export default function Footer() {
+  const logoText = useDomainName();
+
   return (
     <footer className="relative border-t border-white/5 pt-16 pb-8">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -12,7 +15,7 @@ export default function Footer() {
           <div>
             <Link href="/" className="flex items-center space-x-2 mb-4 group">
               <Heart className="w-8 h-8 text-primary-400" fill="currentColor" />
-              <span className="text-2xl font-bold gradient-text">EROSKO.CZ</span>
+              <span className="text-2xl font-bold gradient-text">{logoText}</span>
             </Link>
             <p className="text-gray-400 mb-6">
               Prémiová platforma pro erotické služby v České republice. Bezpečně, diskrétně a profesionálně.
@@ -83,7 +86,7 @@ export default function Footer() {
         <div className="border-t border-white/5 pt-8 pb-8">
           <div className="max-w-4xl mx-auto text-center">
             <p className="text-xs text-gray-500 leading-relaxed">
-              EROSKO.CZ funguje jako inzertní platforma, kde za pravdivost a aktuálnost jednotlivých inzerátů odpovídá výhradně jejich autor.
+              {logoText} funguje jako inzertní platforma, kde za pravdivost a aktuálnost jednotlivých inzerátů odpovídá výhradně jejich autor.
               Naše stránky slouží pouze pro prezentaci reklamních sdělení a nezabýváme se poskytováním eskortních ani jiných služeb.
               Pokud narazíte na podezřelý či nevhodný obsah, prosíme o jeho nahlášení.
               Neneseme odpovědnost za obsah externích webů nebo jednání třetích stran, které mohou být z našeho portálu odkazovány.
@@ -95,7 +98,7 @@ export default function Footer() {
         <div className="border-t border-white/5 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <p className="text-gray-400 text-sm">
-              © 2025 EROSKO.CZ. Všechna práva vyhrazena.
+              © 2025 {logoText}. Všechna práva vyhrazena.
             </p>
             <div className="flex flex-wrap justify-center gap-6 text-sm">
               <Link href="/podminky" className="text-gray-400 hover:text-primary-400 transition-colors">

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Menu, X, User, Heart, Bell, LogOut } from 'lucide-react';
 import Link from 'next/link';
 import { useSession, signOut } from 'next-auth/react';
+import { useDomainName } from '@/hooks/useDomain';
 
 const FAVORITES_KEY = 'erosko_favorites';
 
@@ -11,6 +12,7 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const { data: session, status } = useSession();
+  const logoText = useDomainName();
 
   // Auto-sync localStorage favorites when user logs in
   useEffect(() => {
@@ -57,7 +59,7 @@ export default function Header() {
               <div className="absolute inset-0 gradient-primary blur-xl opacity-50 group-hover:opacity-75 transition-opacity"></div>
               <Heart className="w-8 h-8 text-primary-400 relative z-10" fill="currentColor" />
             </div>
-            <span className="text-2xl font-bold gradient-text">EROSKO.CZ</span>
+            <span className="text-2xl font-bold gradient-text">{logoText}</span>
           </Link>
 
           {/* Desktop Navigation */}

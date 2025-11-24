@@ -13,8 +13,17 @@ export async function GET() {
       data: redirects,
     });
   } catch (error) {
-    console.error('Get redirects error:', error);
-    return NextResponse.json({ success: false, error: 'Failed to fetch redirects' }, { status: 500 });
+    console.error('[Redirects API] Get redirects error:', error);
+    console.error('[Redirects API] Error details:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+      type: typeof error,
+    });
+    return NextResponse.json({
+      success: false,
+      error: 'Failed to fetch redirects',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    }, { status: 500 });
   }
 }
 
@@ -50,7 +59,16 @@ export async function POST(request: Request) {
       data: redirect,
     });
   } catch (error) {
-    console.error('Create redirect error:', error);
-    return NextResponse.json({ success: false, error: 'Failed to create redirect' }, { status: 500 });
+    console.error('[Redirects API] Create redirect error:', error);
+    console.error('[Redirects API] Error details:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+      type: typeof error,
+    });
+    return NextResponse.json({
+      success: false,
+      error: 'Failed to create redirect',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    }, { status: 500 });
   }
 }

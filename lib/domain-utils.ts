@@ -4,13 +4,13 @@ export type Domain = 'erosko.cz' | 'nhescort.com';
 
 const DOMAIN_CONFIG: Record<Domain, { url: string; name: string; color: string; language: string }> = {
   'erosko.cz': {
-    url: 'https://erosko.cz',
+    url: 'https://www.erosko.cz',
     name: 'Erosko.cz',
     color: '#ec4899', // Pink
     language: 'cs'
   },
   'nhescort.com': {
-    url: 'https://nhescort.com',
+    url: 'https://www.nhescort.com',
     name: 'NHescort.com',
     color: '#1e40af', // Blue
     language: 'en'

@@ -81,14 +81,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       })),
       // Profile pages
       ...profiles.map(p => ({
-        url: `${baseUrl}/profil/${p.slug}`,
+        url: `${baseUrl}/profil/${encodeURIComponent(p.slug)}`,
         lastModified: p.updatedAt,
         changeFrequency: 'weekly' as const,
         priority: 0.8,
       })),
       // Business pages
       ...businesses.map(b => ({
-        url: `${baseUrl}/podnik/${b.slug}`,
+        url: `${baseUrl}/podnik/${encodeURIComponent(b.slug)}`,
         lastModified: b.updatedAt,
         changeFrequency: 'weekly' as const,
         priority: 0.8,

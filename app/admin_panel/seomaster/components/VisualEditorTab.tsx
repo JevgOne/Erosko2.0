@@ -411,7 +411,7 @@ export default function VisualEditorTab() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => setEditingBlock({ ...editingBlock, content: editingBlock.content + '\n<a href="https://erosko.cz" className="text-primary-400 hover:underline">Odkaz</a>' })}
+                  onClick={() => setEditingBlock({ ...editingBlock, content: editingBlock.content + '\n<a href="https://www.erosko.cz" className="text-primary-400 hover:underline">Odkaz</a>' })}
                   className="px-2 py-1 text-xs bg-dark-700 hover:bg-dark-600 rounded border border-white/10"
                   title="Přidat odkaz"
                 >

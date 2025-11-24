@@ -50,7 +50,7 @@ export default function BusinessSchema({ business }: BusinessSchemaProps) {
     "serviceType": typeMap[business.profileType] || business.profileType,
     "telephone": business.phone,
     "email": business.email,
-    "url": business.website || `https://erosko.cz/podnik/${business.id}`,
+    "url": business.website || `https://www.erosko.cz/podnik/${business.id}`,
     "address": {
       "@type": "PostalAddress",
       "streetAddress": business.address,

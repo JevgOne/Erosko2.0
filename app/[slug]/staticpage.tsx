@@ -39,7 +39,7 @@ export async function generateStaticPageMetadata(path: string): Promise<Metadata
       images: page.ogImageUrl ? [page.ogImageUrl] : [],
     },
     alternates: {
-      canonical: `https://erosko.cz${path}`,
+      canonical: `https://www.erosko.cz${path}`,
     },
   };
 }

@@ -7,13 +7,13 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'BDSM Praha, Brno | Domina služby | EROSKO.CZ',
     description: 'BDSM služby, domina a SM privát v České republice. Profesionální dominy.',
-    url: 'https://erosko.cz/bdsm',
+    url: 'https://www.erosko.cz/bdsm',
     siteName: 'EROSKO.CZ',
     locale: 'cs_CZ',
     type: 'website',
   },
   alternates: {
-    canonical: 'https://erosko.cz/bdsm',
+    canonical: 'https://www.erosko.cz/bdsm',
   },
 };
 

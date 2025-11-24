@@ -7,13 +7,13 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Luxusní společnice Praha, Brno | VIP doprovod | EROSKO.CZ',
     description: 'Luxusní společnice a VIP doprovod v ČR. High-class společnice pro večírky a akce.',
-    url: 'https://erosko.cz/escort',
+    url: 'https://www.erosko.cz/escort',
     siteName: 'EROSKO.CZ',
     locale: 'cs_CZ',
     type: 'website',
   },
   alternates: {
-    canonical: 'https://erosko.cz/escort',
+    canonical: 'https://www.erosko.cz/escort',
   },
 };
 

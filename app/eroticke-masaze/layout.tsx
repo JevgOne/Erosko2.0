@@ -7,13 +7,13 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Erotické masáže Praha, Brno, Ostrava | Tantra | EROSKO.CZ',
     description: 'Erotické a tantrické masáže v ČR. Profesionální maséřky a masážní salony.',
-    url: 'https://erosko.cz/eroticke-masaze',
+    url: 'https://www.erosko.cz/eroticke-masaze',
     siteName: 'EROSKO.CZ',
     locale: 'cs_CZ',
     type: 'website',
   },
   alternates: {
-    canonical: 'https://erosko.cz/eroticke-masaze',
+    canonical: 'https://www.erosko.cz/eroticke-masaze',
   },
 };
 

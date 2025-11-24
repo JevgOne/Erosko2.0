@@ -10,7 +10,7 @@ export const siteConfig = {
   name: "Erosko.cz",
   title: "Erosko.cz - Escort služby a erotické inzeráty v ČR",
   description: "Najděte nejlepší escort služby, erotické masérky a doprovod v České republice. Ověřené profily s recenzemi.",
-  url: "https://erosko.cz",
+  url: "https://www.erosko.cz",
 
   // Social & SEO
   ogImage: "/og-image.png",

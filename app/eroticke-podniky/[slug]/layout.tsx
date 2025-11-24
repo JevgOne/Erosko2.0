@@ -71,7 +71,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         images: [ogImage],
       },
       alternates: {
-        canonical: `https://erosko.cz/podnik/${slug}`,
+        canonical: `https://www.erosko.cz/podnik/${slug}`,
       },
     };
   } catch (error) {

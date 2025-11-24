@@ -110,7 +110,7 @@ export default function MainPageEditor({ pageId, initialData }: MainPageEditorPr
           </div>
           <div className="flex items-center gap-3">
             <button
-              onClick={() => window.open(`https://erosko.cz${formData.path}`, '_blank')}
+              onClick={() => window.open(`https://www.erosko.cz${formData.path}`, '_blank')}
               className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors"
             >
               <Eye className="w-4 h-4" />

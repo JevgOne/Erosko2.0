@@ -24,7 +24,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title,
       description,
-      url: 'https://erosko.cz',
+      url: 'https://www.erosko.cz',
       siteName: 'EROSKO.CZ',
       locale: 'cs_CZ',
       type: 'website',
@@ -35,7 +35,7 @@ export async function generateMetadata(): Promise<Metadata> {
       description,
     },
     alternates: {
-      canonical: 'https://erosko.cz',
+      canonical: 'https://www.erosko.cz',
     },
   };
 }

@@ -40,7 +40,7 @@ export default function ProfileSchema({ profile }: ProfileSchemaProps) {
         "reviewCount": profile.reviewCount
       }
     } : {}),
-    "url": `https://erosko.cz/divky/${(profile as any).slug || profile.id}`
+    "url": `https://www.erosko.cz/divky/${(profile as any).slug || profile.id}`
   };
 
   return (

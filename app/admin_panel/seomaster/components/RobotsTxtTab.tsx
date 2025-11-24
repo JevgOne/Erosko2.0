@@ -101,7 +101,7 @@ User-agent: *
 Allow: /
 
 # Sitemaps
-Sitemap: https://erosko.cz/sitemap.xml
+Sitemap: https://www.erosko.cz/sitemap.xml
 
 # Block admin areas
 Disallow: /admin_panel/
@@ -241,7 +241,7 @@ Disallow: /*?*filter=
           <div>
             <p className="text-gray-400 mb-2">Add sitemap:</p>
             <code className="block bg-dark-900 p-3 rounded-lg text-primary-400">
-              Sitemap: https://erosko.cz/sitemap.xml
+              Sitemap: https://www.erosko.cz/sitemap.xml
             </code>
           </div>
         </div>

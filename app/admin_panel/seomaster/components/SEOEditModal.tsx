@@ -371,7 +371,7 @@ export default function SEOEditModal({ isOpen, onClose, profile, onSave }: SEOEd
                 <div className="max-w-xl">
                   {/* Google Snippet */}
                   <div className="text-xs text-gray-500 mb-1">
-                    https://erosko.cz/{profile.slug}
+                    https://www.erosko.cz/{profile.slug}
                   </div>
                   <div className="text-xl text-blue-600 mb-1 font-normal hover:underline cursor-pointer">
                     {formData.seoTitle || 'No title'}

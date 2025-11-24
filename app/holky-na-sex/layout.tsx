@@ -7,13 +7,13 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Dívky na sex Praha, Brno, Ostrava | EROSKO.CZ',
     description: 'Najděte dívky na sex ve vašem městě. Ověřené profily společnic s fotkami a kontakty.',
-    url: 'https://erosko.cz/holky-na-sex',
+    url: 'https://www.erosko.cz/holky-na-sex',
     siteName: 'EROSKO.CZ',
     locale: 'cs_CZ',
     type: 'website',
   },
   alternates: {
-    canonical: 'https://erosko.cz/holky-na-sex',
+    canonical: 'https://www.erosko.cz/holky-na-sex',
   },
 };
 

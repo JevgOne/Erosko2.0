@@ -19,7 +19,7 @@ User-agent: *
 Allow: /
 
 # Sitemaps
-Sitemap: https://erosko.cz/sitemap.xml
+Sitemap: https://www.erosko.cz/sitemap.xml
 
 # Block admin areas
 Disallow: /admin_panel/

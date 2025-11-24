@@ -75,7 +75,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           images: [ogImage],
         },
         alternates: {
-          canonical: `https://erosko.cz/${slug}`,
+          canonical: `https://www.erosko.cz/${slug}`,
         },
       };
     }
@@ -135,7 +135,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           images: [ogImage],
         },
         alternates: {
-          canonical: `https://erosko.cz/${slug}`,
+          canonical: `https://www.erosko.cz/${slug}`,
         },
       };
     }

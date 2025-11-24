@@ -305,7 +305,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     openGraph: {
       title,
       description,
-      url: `https://erosko.cz/podnik/${slug}`,
+      url: `https://www.erosko.cz/podnik/${slug}`,
       siteName: 'EROSKO.CZ',
       locale: 'cs_CZ',
       type: 'website',
@@ -316,7 +316,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       description,
     },
     alternates: {
-      canonical: `https://erosko.cz/podnik/${slug}`,
+      canonical: `https://www.erosko.cz/podnik/${slug}`,
     },
   };
 }

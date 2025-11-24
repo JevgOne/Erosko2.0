@@ -196,7 +196,7 @@ export function generateBusinessImageAlt(data: BusinessSEOData, imageType: 'main
  * Generuje canonical URL
  */
 export function generateCanonicalUrl(type: 'profile' | 'business', slug: string): string {
-  const base = 'https://erosko.cz';
+  const base = 'https://www.erosko.cz';
   return type === 'profile'
     ? `${base}/divky/${slug}`  // ← SEO keyword "dívky" v URL!
     : `${base}/podnik/${slug}`;

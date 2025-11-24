@@ -286,7 +286,7 @@ export default function SEOEditModalEnhanced({
 
               {showPreview && (
                 <div className="glass rounded-lg p-4 border border-white/10">
-                  <div className="text-xs text-gray-500 mb-1">https://erosko.cz/{profile.slug}</div>
+                  <div className="text-xs text-gray-500 mb-1">https://www.erosko.cz/{profile.slug}</div>
                   <div className="text-xl text-blue-600 mb-1 font-normal hover:underline cursor-pointer">
                     {formData.seoTitle || 'No title'}
                   </div>

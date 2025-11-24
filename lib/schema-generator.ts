@@ -206,7 +206,7 @@ export function generateProfilePageSchema(profile: {
   reviewCount?: number;
   mainPhotoUrl?: string;
 }): object {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://erosko.cz';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.erosko.cz';
 
   return generatePersonSchema({
     name: `${profile.name}, ${profile.age}`,
@@ -237,7 +237,7 @@ export function generateBusinessPageSchema(business: {
   mainPhotoUrl?: string;
   openingHours?: any;
 }): object {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://erosko.cz';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.erosko.cz';
 
   // Convert opening hours to Schema.org format
   const openingHoursArray: string[] = [];

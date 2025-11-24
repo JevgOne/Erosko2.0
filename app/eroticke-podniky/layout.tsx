@@ -7,13 +7,13 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Erotické podniky Praha, Brno | Salony, kluby | EROSKO.CZ',
     description: 'Najděte ověřené erotické podniky v ČR. Erotické salony, swingers kluby a strip kluby.',
-    url: 'https://erosko.cz/eroticke-podniky',
+    url: 'https://www.erosko.cz/eroticke-podniky',
     siteName: 'EROSKO.CZ',
     locale: 'cs_CZ',
     type: 'website',
   },
   alternates: {
-    canonical: 'https://erosko.cz/eroticke-podniky',
+    canonical: 'https://www.erosko.cz/eroticke-podniky',
   },
 };
 
